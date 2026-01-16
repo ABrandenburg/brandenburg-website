@@ -464,25 +464,7 @@ export function Header() {
                 >
                   Contact Us
                 </Link>
-                <div className="pt-4 space-y-3 border-t border-gray-100">
-                  <Link
-                    href="tel:512-756-9847"
-                    className="block text-center py-2 text-base text-text-primary font-medium"
-                  >
-                    (512) 756-9847
-                  </Link>
-                  <Button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setMobileMenuOpen(false);
-                      setTimeout(() => openScheduler(), 100);
-                    }}
-                    className="w-full bg-brand-red hover:bg-brand-red/90 text-white btn-brand-red"
-                  >
-                    Book Online
-                  </Button>
-                </div>
+
               </div>
             </motion.div>
           )}
