@@ -2,11 +2,10 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { locations, getLocationBySlug, getAllLocationSlugs } from '@/lib/locations-data'
 import { getGeneralFAQs } from '@/lib/faqs-data'
-import { fetchGoogleReviews } from '@/lib/google-reviews'
 import { LocationHero } from '@/components/location-hero'
 import { LocationServices } from '@/components/location-services'
 import { TrustSection } from '@/components/trust-section'
-import { ReviewsCarousel } from '@/components/reviews-carousel'
+import { ReviewsCarouselClient } from '@/components/reviews-carousel-client'
 import { FAQAccordion } from '@/components/faq-accordion'
 import { CTASection } from '@/components/cta-section'
 import { Header } from '@/components/header'
@@ -71,8 +70,6 @@ export default async function LocationPage({ params }: LocationPageProps) {
     notFound()
   }
 
-  // Fetch reviews and FAQs
-  const reviews = await fetchGoogleReviews()
   const faqs = getGeneralFAQs(8)
 
   return (
@@ -80,23 +77,18 @@ export default async function LocationPage({ params }: LocationPageProps) {
       <Header />
       <main>
         <LocationHero location={location} />
-        <LocationServices 
-          locationName={location.name} 
-          header={location.servicesHeader} 
+        <LocationServices
+          locationName={location.name}
+          header={location.servicesHeader}
         />
-        <TrustSection 
-          locationName={location.name} 
-          header={location.trustHeader} 
+        <TrustSection
+          locationName={location.name}
+          header={location.trustHeader}
         />
-        {reviews && reviews.length > 0 && (
-          <ReviewsCarousel 
-            reviews={reviews} 
-            locationName={location.name} 
-          />
-        )}
-        <FAQAccordion 
-          faqs={faqs} 
-          header={location.faqHeader} 
+        <ReviewsCarouselClient locationName={location.name} />
+        <FAQAccordion
+          faqs={faqs}
+          header={location.faqHeader}
         />
         <CTASection locationName={location.name} />
       </main>
