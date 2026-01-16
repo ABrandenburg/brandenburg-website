@@ -3,6 +3,7 @@ import Script from 'next/script'
 import { SkipLink } from '@/components/skip-link'
 import { BackToTop } from '@/components/back-to-top'
 import { MobilePhoneCTA } from '@/components/mobile-phone-cta'
+import { DNILoader } from '@/components/dni-loader'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -234,6 +235,7 @@ export default function RootLayout({
 
         <BackToTop />
         <MobilePhoneCTA />
+        <DNILoader />
       </body>
     </html>
   )
