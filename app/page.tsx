@@ -3,7 +3,7 @@ import { Header } from '@/components/header'
 import { Hero } from '@/components/hero'
 import { ServicesSection } from '@/components/services-section'
 import { HomeTrustSection } from '@/components/home-trust-section'
-import { HomeReviewsSection } from '@/components/home-reviews-section'
+import { ReviewsCarouselClient } from '@/components/reviews-carousel-client'
 import { BrandLogos } from '@/components/brand-logos'
 import { HomeCTASection } from '@/components/home-cta-section'
 import { Footer } from '@/components/footer'
@@ -38,7 +38,7 @@ export default function Home() {
         <Hero />
         <HomeTrustSection />
         <ServicesSection />
-        <HomeReviewsSection />
+        <ReviewsCarouselClient locationName="the Highland Lakes & North Austin" />
         <BrandLogos />
         <HomeCTASection />
       </main>
