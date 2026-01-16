@@ -37,7 +37,7 @@ const locationsRight = [
 
 const utilityLinks = [
   { name: 'Customer Portal', href: 'https://brandenburgplumbing.myservicetitan.com/login', icon: User },
-  { name: 'Membership', href: '/commercial-membership', icon: Key },
+  { name: 'Membership', href: '/membership', icon: Key },
   { name: 'Financing', href: '/financing', icon: CreditCard },
   { name: 'Careers', href: '/careers', icon: Users },
 ]

@@ -5,7 +5,7 @@ import { getServicesForFooter } from '@/lib/services-data'
 const navigationLinks = [
   { name: 'Home', href: '/' },
   { name: 'FAQ', href: '/frequently-asked-questions' },
-  { name: 'Membership', href: '/commercial-membership' },
+  { name: 'Membership', href: '/membership' },
   { name: 'Financing', href: '/financing' },
   { name: 'Blog', href: '/blog' },
   { name: 'Service Area', href: '/service-area' },

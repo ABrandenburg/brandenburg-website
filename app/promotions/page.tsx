@@ -69,7 +69,7 @@ export default function PromotionsPage() {
                   asChild
                   className="bg-white text-brand-blue hover:bg-gray-100"
                 >
-                  <Link href="/commercial-membership">Learn More</Link>
+                  <Link href="/membership">Learn More</Link>
                 </Button>
               </div>
 
