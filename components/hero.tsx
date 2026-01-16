@@ -57,7 +57,7 @@ export function Hero() {
               animate="animate"
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Expert Plumbers in Highland Lakes & Austin
+              Expert Plumbers in the Highland Lakes & Austin
             </motion.h1>
 
             {/* Value Props */}

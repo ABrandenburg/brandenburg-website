@@ -13,6 +13,15 @@ const nextConfig = {
     return config
   },
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.prod.website-files.com',
+      },
+    ],
+  },
+
   async redirects() {
     return [
       // Fix typo in FAQ URL (from live site)
