@@ -57,7 +57,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-text-primary hover:text-brand-blue transition-colors duration-200"
+                    className="inline-block text-text-primary hover:text-brand-blue hover:translate-x-1 transition-all duration-200"
                   >
                     {link.name}
                   </Link>
@@ -76,7 +76,7 @@ export function Footer() {
                 <li key={service.slug}>
                   <Link
                     href={`/service/${service.slug}`}
-                    className="text-text-primary hover:text-brand-blue transition-colors duration-200"
+                    className="inline-block text-text-primary hover:text-brand-blue hover:translate-x-1 transition-all duration-200"
                   >
                     {service.name}
                   </Link>
@@ -95,7 +95,7 @@ export function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-text-primary hover:text-brand-blue transition-colors duration-200"
+                    className="inline-block text-text-primary hover:text-brand-blue hover:translate-x-1 transition-all duration-200"
                   >
                     {link.name}
                   </Link>

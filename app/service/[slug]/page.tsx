@@ -6,6 +6,8 @@ import { ServiceHero } from '@/components/service-hero'
 import { ServiceDescription } from '@/components/service-description'
 import { FAQAccordion } from '@/components/faq-accordion'
 import { CTASection } from '@/components/cta-section'
+import { ServiceAreasList } from '@/components/service-areas-list'
+import { generateServiceSchema, generateBreadcrumbSchema } from '@/lib/json-ld'
 
 interface ServicePageProps {
   params: Promise<{ slug: string }>
@@ -69,17 +71,34 @@ export default async function ServicePage({ params }: ServicePageProps) {
   // Get FAQs for this service
   const faqs = getFAQsByServiceSlug(slug)
 
+  // JSON-LD
+  const serviceSchema = generateServiceSchema(service)
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', item: '/' },
+    { name: 'Services', item: '/#services' },
+    { name: service.name, item: `/service/${service.slug}` },
+  ])
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <main>
         <ServiceHero service={service} />
         <ServiceDescription service={service} />
         {faqs.length > 0 && (
-          <FAQAccordion 
-            faqs={faqs} 
-            header={service.faqHeader} 
+          <FAQAccordion
+            faqs={faqs}
+            header={service.faqHeader}
           />
         )}
+        <ServiceAreasList />
         <CTASection serviceName={service.name} />
       </main>
     </>

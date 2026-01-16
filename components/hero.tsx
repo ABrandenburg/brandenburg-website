@@ -40,13 +40,13 @@ export function Hero() {
           <div className="order-2 lg:order-1">
             {/* Subheadline */}
             <motion.p
-              className="text-text-muted text-sm lg:text-base font-medium uppercase tracking-wider mb-4"
+              className="text-text-muted text-sm lg:text-base font-medium uppercase tracking-widest mb-4"
               variants={fadeInUp}
               initial="initial"
               animate="animate"
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              Local and Family Owned Since 1997
+              Three Generations of Reliability & Trust
             </motion.p>
 
             {/* Main Headline */}
@@ -57,7 +57,7 @@ export function Hero() {
               animate="animate"
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Three Generations of Plumbing Expertise
+              Expert Plumbers in Highland Lakes & Austin
             </motion.h1>
 
             {/* Value Props */}
@@ -114,12 +114,19 @@ export function Hero() {
 
             {/* Google Rating - Enhanced Card */}
             <motion.div
-              className="inline-flex flex-col items-center bg-white rounded-2xl px-8 py-6 shadow-soft-md border border-gray-100"
+              className="relative overflow-hidden inline-flex flex-col items-center bg-white rounded-2xl px-8 py-6 shadow-soft-md border border-gray-100"
               variants={fadeInUp}
               initial="initial"
               animate="animate"
               transition={{ duration: 0.5, delay: 0.7 }}
             >
+              {/* Shimmer Effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-12 z-10 pointer-events-none"
+                initial={{ x: '-100%' }}
+                animate={{ x: '200%' }}
+                transition={{ duration: 1.5, delay: 1.5, ease: "easeInOut" }}
+              />
               {/* Google Logo */}
               <svg className="w-7 h-7 mb-3" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -211,6 +218,7 @@ export function Hero() {
           </div>
         </div>
       </div>
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-b from-transparent to-gray-50 pointer-events-none" />
     </section>
   )
 }

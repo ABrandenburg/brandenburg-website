@@ -8,6 +8,7 @@ import { TrustSection } from '@/components/trust-section'
 import { ReviewsCarouselClient } from '@/components/reviews-carousel-client'
 import { FAQAccordion } from '@/components/faq-accordion'
 import { CTASection } from '@/components/cta-section'
+import { generateLocationSchema, generateBreadcrumbSchema } from '@/lib/json-ld'
 
 interface LocationPageProps {
   params: Promise<{ slug: string }>
@@ -70,8 +71,24 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
   const faqs = getGeneralFAQs(8)
 
+  // JSON-LD
+  const locationSchema = generateLocationSchema(location)
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', item: '/' },
+    { name: 'Locations', item: '/#locations' }, // Or just pointing to home if no locations index
+    { name: location.name, item: `/location/${location.slug}` },
+  ])
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(locationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <main>
         <LocationHero location={location} />
         <LocationServices

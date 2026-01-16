@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronDown, User, Key, CreditCard, Users } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { getServicesForNav } from '@/lib/services-data'
 import { openScheduler } from '@/lib/scheduler'
@@ -193,17 +194,23 @@ export function Header() {
                 </button>
                 {activeDropdown === 'about' && (
                   <div className="absolute top-full left-0 pt-2">
-                    <div className="bg-white rounded-lg shadow-lg border border-gray-100 py-4 px-2 min-w-[200px]">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="bg-white rounded-lg shadow-lg border border-gray-100 py-4 px-2 min-w-[200px]"
+                    >
                       {aboutLinks.map((link) => (
                         <Link
                           key={link.name}
                           href={link.href}
-                          className="block px-4 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 rounded-md transition-colors"
+                          className="block px-4 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:text-brand-blue hover:translate-x-1 rounded-md transition-all duration-200"
                         >
                           {link.name}
                         </Link>
                       ))}
-                    </div>
+                    </motion.div>
                   </div>
                 )}
               </div>
@@ -220,7 +227,13 @@ export function Header() {
                 </button>
                 {activeDropdown === 'services' && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
-                    <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-6 min-w-[500px]">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="bg-white rounded-lg shadow-lg border border-gray-100 p-6 min-w-[500px]"
+                    >
                       <div className="grid grid-cols-2 gap-x-8 gap-y-1">
                         {/* Left Column */}
                         <div className="space-y-1">
@@ -228,12 +241,12 @@ export function Header() {
                             <Link
                               key={service.slug}
                               href={`/service/${service.slug}`}
-                              className="flex items-center gap-3 px-2 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 rounded-md transition-colors"
+                              className="group flex items-center gap-3 px-2 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:translate-x-1 rounded-md transition-all duration-200"
                             >
-                              <div className="w-10 h-10 bg-text-primary rounded-full flex items-center justify-center text-white">
+                              <div className="w-10 h-10 bg-text-primary rounded-full flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-brand-blue transition-all duration-300">
                                 <ServiceIcon type={service.icon} />
                               </div>
-                              <span>{service.name}</span>
+                              <span className="group-hover:text-brand-blue transition-colors">{service.name}</span>
                             </Link>
                           ))}
                         </div>
@@ -243,12 +256,12 @@ export function Header() {
                             <Link
                               key={service.slug}
                               href={`/service/${service.slug}`}
-                              className="flex items-center gap-3 px-2 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 rounded-md transition-colors"
+                              className="group flex items-center gap-3 px-2 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:translate-x-1 rounded-md transition-all duration-200"
                             >
-                              <div className="w-10 h-10 bg-text-primary rounded-full flex items-center justify-center text-white">
+                              <div className="w-10 h-10 bg-text-primary rounded-full flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-brand-blue transition-all duration-300">
                                 <ServiceIcon type={service.icon} />
                               </div>
-                              <span>{service.name}</span>
+                              <span className="group-hover:text-brand-blue transition-colors">{service.name}</span>
                             </Link>
                           ))}
                         </div>
@@ -258,7 +271,7 @@ export function Header() {
                           Serving the Highland Lakes & North Austin with expert plumbing, gas, and sewer services since 1997.
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 )}
               </div>
@@ -275,7 +288,13 @@ export function Header() {
                 </button>
                 {activeDropdown === 'locations' && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
-                    <div className="bg-white rounded-lg shadow-lg border border-gray-100 py-4 px-2 min-w-[320px]">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="bg-white rounded-lg shadow-lg border border-gray-100 py-4 px-2 min-w-[320px]"
+                    >
                       <div className="grid grid-cols-2 gap-x-4">
                         {/* Left Column */}
                         <div>
@@ -283,7 +302,7 @@ export function Header() {
                             <Link
                               key={location.name}
                               href={location.href}
-                              className="block px-4 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 rounded-md transition-colors"
+                              className="block px-4 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:text-brand-blue hover:translate-x-1 rounded-md transition-all duration-200"
                             >
                               {location.name}
                             </Link>
@@ -295,7 +314,7 @@ export function Header() {
                             <Link
                               key={location.name}
                               href={location.href}
-                              className="block px-4 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 rounded-md transition-colors"
+                              className="block px-4 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:text-brand-blue hover:translate-x-1 rounded-md transition-all duration-200"
                             >
                               {location.name}
                             </Link>
@@ -310,7 +329,7 @@ export function Header() {
                           View All Locations →
                         </Link>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
                 )}
               </div>
@@ -368,100 +387,106 @@ export function Header() {
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 bg-white">
-            <div className="px-4 py-4 space-y-2">
-              <div className="py-2">
-                <p className="font-medium text-text-primary mb-2">About Us</p>
-                {aboutLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className="block py-2 pl-4 text-sm text-text-muted"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-              <div className="py-2 border-t border-gray-100">
-                <p className="font-medium text-text-primary mb-2">Services</p>
-                {[...servicesLeft, ...servicesRight].map((service) => (
-                  <Link
-                    key={service.slug}
-                    href={`/service/${service.slug}`}
-                    className="block py-2 pl-4 text-sm text-text-muted"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {service.name}
-                  </Link>
-                ))}
-              </div>
-              <div className="py-2 border-t border-gray-100">
-                <p className="font-medium text-text-primary mb-2">Locations</p>
-                {[...locationsLeft, ...locationsRight].map((location) => (
-                  <Link
-                    key={location.name}
-                    href={location.href}
-                    className="block py-2 pl-4 text-sm text-text-muted"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {location.name}
-                  </Link>
-                ))}
-              </div>
-              <div className="py-2 border-t border-gray-100">
-                <p className="font-medium text-text-primary mb-2">Resources</p>
-                {utilityLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className="flex items-center gap-2 py-2 pl-4 text-sm text-text-muted"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <link.icon className="w-4 h-4" />
-                    <span>{link.name}</span>
-                  </Link>
-                ))}
-              </div>
-              <Link
-                href="/blog"
-                className="block py-3 text-base text-text-primary border-t border-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Blogs
-              </Link>
-              <Link
-                href="/contact"
-                className="block py-3 text-base text-text-primary border-t border-gray-100"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Contact Us
-              </Link>
-              <div className="pt-4 space-y-3 border-t border-gray-100">
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="lg:hidden border-t border-gray-200 bg-white overflow-hidden"
+            >
+              <div className="px-4 py-4 space-y-2">
+                <div className="py-2">
+                  <p className="font-medium text-text-primary mb-2">About Us</p>
+                  {aboutLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      className="block py-2 pl-4 text-sm text-text-muted hover:text-brand-blue hover:translate-x-1 transition-all"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+                <div className="py-2 border-t border-gray-100">
+                  <p className="font-medium text-text-primary mb-2">Services</p>
+                  {[...servicesLeft, ...servicesRight].map((service) => (
+                    <Link
+                      key={service.slug}
+                      href={`/service/${service.slug}`}
+                      className="block py-2 pl-4 text-sm text-text-muted hover:text-brand-blue hover:translate-x-1 transition-all"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {service.name}
+                    </Link>
+                  ))}
+                </div>
+                <div className="py-2 border-t border-gray-100">
+                  <p className="font-medium text-text-primary mb-2">Locations</p>
+                  {[...locationsLeft, ...locationsRight].map((location) => (
+                    <Link
+                      key={location.name}
+                      href={location.href}
+                      className="block py-2 pl-4 text-sm text-text-muted hover:text-brand-blue hover:translate-x-1 transition-all"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {location.name}
+                    </Link>
+                  ))}
+                </div>
+                <div className="py-2 border-t border-gray-100">
+                  <p className="font-medium text-text-primary mb-2">Resources</p>
+                  {utilityLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      className="flex items-center gap-2 py-2 pl-4 text-sm text-text-muted hover:text-brand-blue hover:translate-x-1 transition-all"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <link.icon className="w-4 h-4" />
+                      <span>{link.name}</span>
+                    </Link>
+                  ))}
+                </div>
                 <Link
-                  href="tel:512-756-9847"
-                  className="block text-center py-2 text-base text-text-primary font-medium"
+                  href="/blog"
+                  className="block py-3 text-base text-text-primary border-t border-gray-100"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
-                  (512) 756-9847
+                  Blogs
                 </Link>
-                <Button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Close the menu first
-                    setMobileMenuOpen(false);
-                    // Then open scheduler in a slight delay to ensure UI updates
-                    setTimeout(() => openScheduler(), 100);
-                  }}
-                  className="w-full bg-brand-red hover:bg-brand-red/90 text-white"
+                <Link
+                  href="/contact"
+                  className="block py-3 text-base text-text-primary border-t border-gray-100"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
-                  Book Online
-                </Button>
+                  Contact Us
+                </Link>
+                <div className="pt-4 space-y-3 border-t border-gray-100">
+                  <Link
+                    href="tel:512-756-9847"
+                    className="block text-center py-2 text-base text-text-primary font-medium"
+                  >
+                    (512) 756-9847
+                  </Link>
+                  <Button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileMenuOpen(false);
+                      setTimeout(() => openScheduler(), 100);
+                    }}
+                    className="w-full bg-brand-red hover:bg-brand-red/90 text-white btn-brand-red"
+                  >
+                    Book Online
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
     </>
   )
