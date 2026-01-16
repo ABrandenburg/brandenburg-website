@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { CareersForm } from '@/components/careers-form'
 import { CareersBenefits } from '@/components/careers-benefits'
 import { Breadcrumb } from '@/components/breadcrumb'
+import { PageHeader } from '@/components/page-header'
 
 export const metadata: Metadata = {
   title: 'Careers | Join Our Team | Brandenburg Plumbing',

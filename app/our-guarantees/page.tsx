@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { GuaranteesGrid } from '@/components/guarantees-grid'
+import { PageHeader } from '@/components/page-header'
 import { CTASection } from '@/components/cta-section'
 
 export const metadata: Metadata = {

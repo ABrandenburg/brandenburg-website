@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ContactForm } from '@/components/contact-form'
+import { PageHeader } from '@/components/page-header'
 import { MessageSquare, Phone, MapPin } from 'lucide-react'
 
 export const metadata: Metadata = {

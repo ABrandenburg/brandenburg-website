@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { FAQAccordionSimple } from '@/components/faq-accordion-simple'
+import { PageHeader } from '@/components/page-header'
 import { Breadcrumb } from '@/components/breadcrumb'
 import { CTASection } from '@/components/cta-section'
 import { getGeneralCompanyFAQs } from '@/lib/faqs-data'

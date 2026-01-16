@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Check, Shield, Clock, Percent, Wrench, Calendar, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PageHeader } from '@/components/page-header'
 import { openScheduler } from '@/lib/scheduler'
 
 const membershipFeatures = [
