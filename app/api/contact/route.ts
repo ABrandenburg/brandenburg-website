@@ -77,6 +77,57 @@ This message was sent from the contact form on brandenburgplumbing.com
       `,
     })
 
+    // Send auto-reply to the user
+    await resend.emails.send({
+      from: 'Brandenburg Plumbing <no-reply@brandenburgplumbing.com>',
+      to: [email],
+      subject: 'We received your message - Brandenburg Plumbing',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #324759; border-bottom: 2px solid #C41E3A; padding-bottom: 10px;">
+            Thank You for Contacting Us
+          </h2>
+          
+          <div style="margin: 20px 0;">
+            <p>Dear ${fullName},</p>
+            <p>We have received your message and will get back to you as soon as possible.</p>
+            <p>Here is a copy of your submission:</p>
+          </div>
+          
+          <div style="margin: 20px 0; padding: 15px; background-color: #f5f5f5; border-radius: 8px;">
+            <p style="margin: 0 0 10px 0;"><strong>Phone:</strong> ${phone}</p>
+            <p style="margin: 0 0 10px 0; font-weight: bold;">Message:</p>
+            <p style="margin: 0; white-space: pre-wrap;">${message}</p>
+          </div>
+          
+          <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
+          
+          <p style="color: #666; font-size: 12px;">
+            Brandenburg Plumbing<br/>
+            (512) 756-9847
+          </p>
+        </div>
+      `,
+      text: `
+Thank You for Contacting Us
+
+Dear ${fullName},
+
+We have received your message and will get back to you as soon as possible.
+
+Here is a copy of your submission:
+
+Phone: ${phone}
+
+Message:
+${message}
+
+---
+Brandenburg Plumbing
+(512) 756-9847
+      `,
+    })
+
     if (error) {
       console.error('Resend error:', error)
       return NextResponse.json(
