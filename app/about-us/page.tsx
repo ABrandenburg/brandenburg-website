@@ -29,7 +29,7 @@ export default function AboutPage() {
         <PageHeader
           title="Our Family History"
           breadcrumb={[{ label: 'Our History' }]}
-          imageSrc="/images/team-photo.jpg"
+          imageSrc="/images/home-hero-team.jpg"
           imageAlt="The Brandenburg Plumbing Team"
         />
 
