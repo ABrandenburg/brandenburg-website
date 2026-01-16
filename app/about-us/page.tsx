@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { HistorySection } from '@/components/history-section'
 import { Breadcrumb } from '@/components/breadcrumb'
 import { CTASection } from '@/components/cta-section'
+import { PageHeader } from '@/components/page-header'
 import { getHistorySections } from '@/lib/history-data'
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ export default function AboutPage() {
         <PageHeader
           title="Our Family History"
           breadcrumb={[{ label: 'Our History' }]}
-          imageSrc="/images/full_team.jpg"
+          imageSrc="/images/team-photo.jpg"
           imageAlt="The Brandenburg Plumbing Team"
         />
 

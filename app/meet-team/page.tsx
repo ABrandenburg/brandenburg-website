@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { TeamGrid } from '@/components/team-grid'
 import { CTASection } from '@/components/cta-section'
+import { PageHeader } from '@/components/page-header'
 
 export const metadata: Metadata = {
   title: 'Meet Our Team | Brandenburg Plumbing',
