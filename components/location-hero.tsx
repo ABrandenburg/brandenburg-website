@@ -139,8 +139,8 @@ export function LocationHero({ location }: LocationHeroProps) {
           >
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-soft-xl">
               <Image
-                src={location.locationImage || "/images/service-trucks.jpg"}
-                alt={`Brandenburg Plumbing service in ${location.name}`}
+                src="/images/team-hero.jpg"
+                alt={`The Brandenburg Plumbing team serving ${location.name}`}
                 fill
                 className="object-cover"
                 priority
