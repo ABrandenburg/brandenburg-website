@@ -410,6 +410,20 @@ export function Header() {
                   </Link>
                 ))}
               </div>
+              <div className="py-2 border-t border-gray-100">
+                <p className="font-medium text-text-primary mb-2">Resources</p>
+                {utilityLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="flex items-center gap-2 py-2 pl-4 text-sm text-text-muted"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <link.icon className="w-4 h-4" />
+                    <span>{link.name}</span>
+                  </Link>
+                ))}
+              </div>
               <Link
                 href="/blog"
                 className="block py-3 text-base text-text-primary border-t border-gray-100"

@@ -32,8 +32,8 @@ export default function AboutPage() {
         <PageHeader
           title="Our Family History"
           breadcrumb={[{ label: 'Our History' }]}
-          imageSrc="/images/grandpa_raymond.jpeg"
-          imageAlt="Grandpa Raymond Wiesbrook"
+          imageSrc="/images/full_team.jpg"
+          imageAlt="The Brandenburg Plumbing Team"
         />
 
         {/* History Sections */}
