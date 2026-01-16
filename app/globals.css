@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-red: #C41E3A;
+    --brand-blue: #324759;
+    --text-primary: #1A1A1A;
+    --text-muted: #6B7280;
+    --bg-primary: #FFFFFF;
+    --bg-footer: #F9FAFB;
+    --btn-primary: #324759;
+    
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 0% 21.6%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 10%;
+    --radius: 0.5rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  * {
+    border-color: theme('colors.gray.200');
+  }
+
+  body {
+    @apply bg-white text-text-primary antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+
+  /* Focus visible styles for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-blue ring-offset-2;
+  }
+
+  /* Improved button base */
+  button, [role="button"] {
+    @apply transition-all duration-300 ease-smooth;
+  }
+}
+
+@layer components {
+  /* Book button styling to match Webflow embed */
+  .book-button {
+    background-color: #D92818;
+  }
+  
+  .book-button:hover {
+    background-color: #C41E3A;
+  }
+
+  /* Primary button with enhanced styling */
+  .btn-primary {
+    @apply bg-btn-primary text-white font-medium px-6 py-3 rounded-lg;
+    @apply shadow-button hover:shadow-button-hover;
+    @apply hover:-translate-y-0.5 active:translate-y-0;
+    @apply transition-all duration-300 ease-smooth;
+  }
+
+  /* Card component base */
+  .card-elevated {
+    @apply bg-white rounded-xl shadow-card;
+    @apply hover:shadow-card-hover;
+    @apply transition-all duration-300 ease-smooth;
+  }
+
+  /* Image container with hover effect */
+  .image-hover {
+    @apply overflow-hidden rounded-lg;
+  }
+  
+  .image-hover img {
+    @apply transition-transform duration-500 ease-smooth;
+  }
+  
+  .image-hover:hover img {
+    @apply scale-105;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Smooth transitions utility */
+  .transition-smooth {
+    @apply transition-all duration-300 ease-smooth;
+  }
+
+  /* Lift effect on hover */
+  .hover-lift {
+    @apply transition-all duration-300 ease-smooth;
+  }
+  
+  .hover-lift:hover {
+    @apply -translate-y-1 shadow-soft-lg;
+  }
+
+  /* Animation delay utilities */
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom keyframe animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Animation utility classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
