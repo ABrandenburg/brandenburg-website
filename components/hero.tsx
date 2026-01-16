@@ -57,7 +57,7 @@ export function Hero() {
               animate="animate"
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Three Generations of Plumbing Expertise At Your Service
+              Three Generations of Plumbing Expertise
             </motion.h1>
 
             {/* Value Props */}
@@ -106,8 +106,8 @@ export function Hero() {
                 size="lg"
                 className="w-full sm:w-auto px-8 py-6 text-base border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:scale-[1.02] transition-all duration-300"
               >
-                <Link href="tel:512-756-7654">
-                  (512) 756-7654
+                <Link href="tel:512-756-9847">
+                  (512) 756-9847
                 </Link>
               </Button>
             </motion.div>

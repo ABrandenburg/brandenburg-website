@@ -48,9 +48,12 @@ const ServiceIcon = ({ type }: { type: string }) => {
   switch (type) {
     case 'drain':
       return (
-        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
           <circle cx="12" cy="12" r="3" />
-          <path d="M12 2v4m0 12v4M2 12h4m12 0h4" />
+          <circle cx="12" cy="5" r="1.5" />
+          <circle cx="12" cy="19" r="1.5" />
+          <circle cx="5" cy="12" r="1.5" />
+          <circle cx="19" cy="12" r="1.5" />
         </svg>
       )
     case 'toilet':
@@ -331,10 +334,10 @@ export function Header() {
             <div className="hidden lg:flex items-center gap-4">
               {/* Phone Number */}
               <Link
-                href="tel:512-756-7654"
+                href="tel:512-756-9847"
                 className="text-[15px] font-normal text-text-primary hover:text-text-muted transition-colors"
               >
-                (512) 756-7654
+                (512) 756-9847
               </Link>
 
               {/* Book Online Button */}
@@ -423,10 +426,10 @@ export function Header() {
               </Link>
               <div className="pt-4 space-y-3 border-t border-gray-100">
                 <Link
-                  href="tel:512-756-7654"
+                  href="tel:512-756-9847"
                   className="block text-center py-2 text-base text-text-primary font-medium"
                 >
-                  (512) 756-7654
+                  (512) 756-9847
                 </Link>
                 <Button
                   type="button"

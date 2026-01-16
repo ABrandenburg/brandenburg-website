@@ -90,7 +90,7 @@ export default function PromotionsPage() {
                   asChild
                   className="bg-brand-red hover:bg-brand-red/90 text-white"
                 >
-                  <Link href="tel:512-756-7654" className="inline-flex items-center gap-2">
+                  <Link href="tel:512-756-9847" className="inline-flex items-center gap-2">
                     <Phone className="w-5 h-5" />
                     Call for Estimate
                   </Link>

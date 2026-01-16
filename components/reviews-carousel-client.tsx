@@ -175,7 +175,7 @@ export function ReviewsCarouselClient({ locationName }: ReviewsCarouselClientPro
                     className="text-center mt-10"
                 >
                     <a
-                        href="https://www.google.com/search?q=brandenburg+plumbing+reviews"
+                        href="https://www.google.com/maps/place/Brandenburg+Plumbing/@30.6364174,-98.2637329,17z/data=!4m8!3m7!1s0x865ae6951006c25b:0x7849318679044709!8m2!3d30.6364174!4d-98.2637329!9m1!1b1!16s%2Fg%2F1x5fbsfc"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 text-brand-blue font-semibold hover:underline"

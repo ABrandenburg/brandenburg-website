@@ -70,11 +70,11 @@ export default function LocationsPage() {
                 Don&apos;t see your city? We may still serve your area.
               </p>
               <a
-                href="tel:512-756-7654"
+                href="tel:512-756-9847"
                 className="inline-flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors"
               >
                 <Phone className="w-5 h-5" />
-                Call (512) 756-7654
+                Call (512) 756-9847
               </a>
             </div>
           </div>

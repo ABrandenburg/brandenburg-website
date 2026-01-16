@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
                 Brandenburg Plumbing<br />
                 320 North Ridge Rd., Bldg. 2 Unit B<br />
                 Marble Falls, TX 78654<br />
-                Phone: (512) 756-7654<br />
+                Phone: (512) 756-9847<br />
                 Email: service@brandenburgplumbing.com
               </p>
             </div>

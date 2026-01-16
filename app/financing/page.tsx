@@ -28,7 +28,7 @@ export default function FinancingPage() {
           imageSrc="/images/plumber-customer.jpg"
           imageAlt="Friendly consultation for financing options"
           ctaText="Call to Apply"
-          ctaLink="tel:512-756-7654"
+          ctaLink="tel:512-756-9847"
         />
       </main>
       <Footer />

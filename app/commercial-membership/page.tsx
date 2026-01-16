@@ -223,7 +223,7 @@ export default function MembershipPage() {
                   variant="outline"
                   className="px-8 py-3 text-lg h-auto"
                 >
-                  <a href="tel:512-756-7654">(512) 756-7654</a>
+                  <a href="tel:512-756-9847">(512) 756-9847</a>
                 </Button>
               </div>
             </motion.div>

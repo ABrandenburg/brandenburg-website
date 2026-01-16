@@ -61,7 +61,7 @@ export default function ServiceAgreementThanksPage() {
                 asChild
                 variant="outline"
               >
-                <Link href="tel:512-756-7654" className="inline-flex items-center gap-2">
+                <Link href="tel:512-756-9847" className="inline-flex items-center gap-2">
                   <Phone className="w-5 h-5" />
                   Call Us
                 </Link>

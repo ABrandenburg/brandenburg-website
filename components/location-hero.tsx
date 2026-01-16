@@ -97,9 +97,9 @@ export function LocationHero({ location }: LocationHeroProps) {
                 size="lg"
                 className="bg-brand-red hover:bg-brand-red/90 text-white shadow-button hover:shadow-button-hover"
               >
-                <Link href="tel:512-756-7654" className="flex items-center gap-2">
+                <Link href="tel:512-756-9847" className="flex items-center gap-2">
                   <Phone className="w-5 h-5" />
-                  <span>(512) 756-7654</span>
+                  <span>(512) 756-9847</span>
                 </Link>
               </Button>
               <Button

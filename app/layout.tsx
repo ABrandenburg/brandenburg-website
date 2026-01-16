@@ -71,7 +71,7 @@ const organizationJsonLd = {
   logo: 'https://www.brandenburgplumbing.com/images/logo.png',
   image: 'https://www.brandenburgplumbing.com/images/team-photo.jpg',
   description: 'Expert Highland Lakes & Austin plumbers you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
-  telephone: '+1-512-756-7654',
+  telephone: '+1-512-756-9847',
   email: 'service@brandenburgplumbing.com',
   foundingDate: '1997',
   address: {

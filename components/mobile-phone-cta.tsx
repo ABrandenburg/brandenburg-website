@@ -49,11 +49,11 @@ export function MobilePhoneCTA() {
           className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t border-gray-200 shadow-lg md:hidden"
         >
           <Link
-            href="tel:512-756-7654"
+            href="tel:512-756-9847"
             className="flex items-center justify-center gap-2 w-full bg-brand-red text-white py-3 px-6 rounded-lg font-semibold hover:bg-brand-red/90 transition-colors"
           >
             <Phone className="w-5 h-5" />
-            <span>Call (512) 756-7654</span>
+            <span>Call (512) 756-9847</span>
           </Link>
         </motion.div>
       )}

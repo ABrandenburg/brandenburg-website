@@ -99,7 +99,7 @@ export function FAQAccordion({ faqs, header }: FAQAccordionProps) {
         >
           <p className="text-gray-600">
             Have a question that&apos;s not listed here?{' '}
-            <a href="tel:512-756-7654" className="text-brand-blue font-semibold hover:underline">
+            <a href="tel:512-756-9847" className="text-brand-blue font-semibold hover:underline">
               Give us a call
             </a>{' '}
             and we&apos;ll be happy to help.
