@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { HistorySection } from '@/components/history-section'
 import { getHistorySections } from '@/lib/history-data'
 import { Button } from '@/components/ui/button'
@@ -15,7 +13,6 @@ export default function AboutPage() {
 
   return (
     <>
-      <Header />
       <main className="bg-white">
         {/* Page Title */}
         <section className="pt-16 md:pt-24 pb-8">
@@ -45,7 +42,6 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

@@ -1,13 +1,10 @@
 import Link from 'next/link'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { Button } from '@/components/ui/button'
 import { Home, Phone, ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
   return (
     <>
-      <Header />
       <main className="min-h-[60vh] flex items-center justify-center bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           {/* 404 Graphic */}
@@ -64,7 +61,6 @@ export default function NotFound() {
           </div>
         </div>
       </main>
-      <Footer />
     </>
   )
 }

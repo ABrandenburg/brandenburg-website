@@ -1,8 +1,5 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
-import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { ContactForm } from '@/components/contact-form'
 import { MessageSquare, Phone, MapPin } from 'lucide-react'
@@ -25,7 +22,6 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <Header />
       <main className="bg-white">
         <PageHeader
           title="Contact Us"
@@ -92,7 +88,6 @@ export default function ContactPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { FAQAccordionSimple } from '@/components/faq-accordion-simple'
 import { getGeneralCompanyFAQs } from '@/lib/faqs-data'
 
@@ -14,7 +12,6 @@ export default function FAQPage() {
 
   return (
     <>
-      <Header />
       <main className="bg-white">
         <section className="py-16 md:py-24 lg:py-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -39,7 +36,6 @@ export default function FAQPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

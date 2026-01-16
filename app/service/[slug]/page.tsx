@@ -6,8 +6,6 @@ import { ServiceHero } from '@/components/service-hero'
 import { ServiceDescription } from '@/components/service-description'
 import { FAQAccordion } from '@/components/faq-accordion'
 import { CTASection } from '@/components/cta-section'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 
 interface ServicePageProps {
   params: Promise<{ slug: string }>
@@ -73,7 +71,6 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   return (
     <>
-      <Header />
       <main>
         <ServiceHero service={service} />
         <ServiceDescription service={service} />
@@ -85,7 +82,6 @@ export default async function ServicePage({ params }: ServicePageProps) {
         )}
         <CTASection serviceName={service.name} />
       </main>
-      <Footer />
     </>
   )
 }

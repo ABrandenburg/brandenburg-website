@@ -1,8 +1,5 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { TeamGrid } from '@/components/team-grid'
-import { PageHeader } from '@/components/page-header'
 import { CTASection } from '@/components/cta-section'
 
 export const metadata: Metadata = {
@@ -23,7 +20,6 @@ export const metadata: Metadata = {
 export default function TeamPage() {
   return (
     <>
-      <Header />
       <main>
         <PageHeader
           title="Meet Our Team"
@@ -37,7 +33,6 @@ export default function TeamPage() {
         {/* CTA Section */}
         <CTASection headline="Let Us Help You Today" />
       </main>
-      <Footer />
     </>
   )
 }

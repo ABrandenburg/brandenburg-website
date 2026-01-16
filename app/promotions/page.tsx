@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { Breadcrumb } from '@/components/breadcrumb'
 import { Button } from '@/components/ui/button'
 import { Phone, Tag, Calendar } from 'lucide-react'
@@ -25,7 +23,6 @@ export const metadata: Metadata = {
 export default function PromotionsPage() {
   return (
     <>
-      <Header />
       <main className="bg-white">
         {/* Hero Section */}
         <section className="pt-8 pb-16 md:pt-12 md:pb-24 bg-gradient-to-br from-gray-50 to-white">
@@ -132,7 +129,6 @@ export default function PromotionsPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

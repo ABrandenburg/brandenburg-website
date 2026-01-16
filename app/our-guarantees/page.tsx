@@ -1,8 +1,5 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { GuaranteesGrid } from '@/components/guarantees-grid'
-import { PageHeader } from '@/components/page-header'
 import { CTASection } from '@/components/cta-section'
 
 export const metadata: Metadata = {
@@ -23,7 +20,6 @@ export const metadata: Metadata = {
 export default function GuaranteesPage() {
   return (
     <>
-      <Header />
       <main>
         <PageHeader
           title="Our Guarantees"
@@ -37,7 +33,6 @@ export default function GuaranteesPage() {
         {/* CTA Section */}
         <CTASection headline="Experience Our Guarantee" />
       </main>
-      <Footer />
     </>
   )
 }

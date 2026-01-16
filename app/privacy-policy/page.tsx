@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Brandenburg Plumbing',
@@ -19,7 +17,6 @@ export const metadata: Metadata = {
 export default function PrivacyPolicyPage() {
   return (
     <>
-      <Header />
       <main className="bg-white">
         <section className="py-16 md:py-24">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -78,7 +75,6 @@ export default function PrivacyPolicyPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

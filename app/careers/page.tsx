@@ -1,7 +1,4 @@
 import { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
-import { PageHeader } from '@/components/page-header'
 import { CareersForm } from '@/components/careers-form'
 import { CareersBenefits } from '@/components/careers-benefits'
 import { Breadcrumb } from '@/components/breadcrumb'
@@ -24,7 +21,6 @@ export const metadata: Metadata = {
 export default function CareersPage() {
   return (
     <>
-      <Header />
       <main className="bg-white">
         <PageHeader
           title="Join Our Team"
@@ -56,7 +52,6 @@ export default function CareersPage() {
         {/* Benefits Section */}
         <CareersBenefits />
       </main>
-      <Footer />
     </>
   )
 }

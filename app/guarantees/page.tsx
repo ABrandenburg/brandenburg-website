@@ -1,6 +1,4 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { GuaranteesHero } from '@/components/guarantees-hero'
 import { GuaranteesGrid } from '@/components/guarantees-grid'
 import { Button } from '@/components/ui/button'
@@ -13,7 +11,6 @@ export const metadata: Metadata = {
 export default function GuaranteesPage() {
   return (
     <>
-      <Header />
       <main>
         <GuaranteesHero />
         <GuaranteesGrid />
@@ -32,7 +29,6 @@ export default function GuaranteesPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

@@ -2,9 +2,6 @@
 
 import Link from 'next/link'
 import { Phone } from 'lucide-react'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
-import { PageHeader } from '@/components/page-header'
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -19,7 +16,6 @@ const scaleIn = {
 export default function FinancingPage() {
   return (
     <>
-      <Header />
       <main>
         <PageHeader
           title="Simple, no-fuss financing"
@@ -31,7 +27,6 @@ export default function FinancingPage() {
           ctaLink="tel:512-756-9847"
         />
       </main>
-      <Footer />
     </>
   )
 }

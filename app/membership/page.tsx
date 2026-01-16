@@ -3,9 +3,6 @@
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Check, Shield, Clock, Percent, Wrench, Calendar, Home } from 'lucide-react'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
-import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
 import { openScheduler } from '@/lib/scheduler'
 
@@ -32,7 +29,6 @@ const scaleIn = {
 export default function MembershipPage() {
   return (
     <>
-      <Header />
       <main>
         <PageHeader
           title="Save 15% on Every Service, Forever"
@@ -230,7 +226,6 @@ export default function MembershipPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

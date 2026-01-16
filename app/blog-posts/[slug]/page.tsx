@@ -1,8 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { BlogCard } from '@/components/blog-card'
 import { BlogCTA } from '@/components/blog-cta'
 import { BlogFeaturedImage } from '@/components/blog-featured-image'
@@ -81,7 +79,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <>
-      <Header />
       <main>
         <article className="bg-white">
           {/* Hero Section */}
@@ -167,7 +164,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {/* CTA Section */}
         <BlogCTA />
       </main>
-      <Footer />
     </>
   )
 }

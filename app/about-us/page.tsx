@@ -1,9 +1,6 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { HistorySection } from '@/components/history-section'
 import { Breadcrumb } from '@/components/breadcrumb'
-import { PageHeader } from '@/components/page-header'
 import { CTASection } from '@/components/cta-section'
 import { getHistorySections } from '@/lib/history-data'
 
@@ -27,7 +24,6 @@ export default function AboutPage() {
 
   return (
     <>
-      <Header />
       <main className="bg-white">
         <PageHeader
           title="Our Family History"
@@ -44,7 +40,6 @@ export default function AboutPage() {
         {/* CTA Section */}
         <CTASection headline="Continue the Legacy With Us" />
       </main>
-      <Footer />
     </>
   )
 }

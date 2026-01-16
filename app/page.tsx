@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
 import { Hero } from '@/components/hero'
 import { ServicesSection } from '@/components/services-section'
 import { HomeTrustSection } from '@/components/home-trust-section'
 import { ReviewsCarouselClient } from '@/components/reviews-carousel-client'
 import { BrandLogos } from '@/components/brand-logos'
 import { HomeCTASection } from '@/components/home-cta-section'
-import { Footer } from '@/components/footer'
 
 export const metadata: Metadata = {
   title: 'Plumbing Repair, Replace, and Install Service | Brandenburg Plumbing',
@@ -33,7 +31,6 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <Header />
       <main>
         <Hero />
         <HomeTrustSection />
@@ -42,7 +39,6 @@ export default function Home() {
         <BrandLogos />
         <HomeCTASection />
       </main>
-      <Footer />
     </>
   )
 }

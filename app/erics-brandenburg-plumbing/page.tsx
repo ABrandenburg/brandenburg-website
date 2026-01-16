@@ -2,8 +2,6 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronUp } from 'lucide-react'
@@ -89,7 +87,6 @@ export default function EricsBrandenburgPlumbingPage() {
 
   return (
     <>
-      <Header />
       <main>
         {/* Hero Section */}
         <section className="py-16 lg:py-24 bg-white">
@@ -196,7 +193,6 @@ export default function EricsBrandenburgPlumbingPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

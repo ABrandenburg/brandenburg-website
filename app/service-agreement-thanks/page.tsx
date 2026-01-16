@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, Phone, Calendar } from 'lucide-react'
 
@@ -13,7 +11,6 @@ export const metadata: Metadata = {
 export default function ServiceAgreementThanksPage() {
   return (
     <>
-      <Header />
       <main className="bg-white">
         <section className="py-24 md:py-32">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -70,7 +67,6 @@ export default function ServiceAgreementThanksPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   )
 }

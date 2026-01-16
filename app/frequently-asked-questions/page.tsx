@@ -1,8 +1,5 @@
 import type { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { FAQAccordionSimple } from '@/components/faq-accordion-simple'
-import { PageHeader } from '@/components/page-header'
 import { Breadcrumb } from '@/components/breadcrumb'
 import { CTASection } from '@/components/cta-section'
 import { getGeneralCompanyFAQs } from '@/lib/faqs-data'
@@ -45,7 +42,6 @@ export default function FAQPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <Header />
       <main className="bg-white">
         <PageHeader
           title="Frequently Asked Questions"
@@ -63,7 +59,6 @@ export default function FAQPage() {
         {/* CTA Section */}
         <CTASection headline="Still Have Questions?" />
       </main>
-      <Footer />
     </>
   )
 }

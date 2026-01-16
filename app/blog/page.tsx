@@ -1,6 +1,4 @@
 import { Metadata } from 'next'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import { BlogListing } from '@/components/blog-listing'
 import { BlogCTA } from '@/components/blog-cta'
 import { Breadcrumb } from '@/components/breadcrumb'
@@ -27,7 +25,6 @@ export default function BlogPage() {
 
   return (
     <>
-      <Header />
       <main>
         {/* Hero Section */}
         <section className="bg-gradient-to-br from-gray-50 to-white pt-8 pb-16 lg:pt-12 lg:pb-24">
@@ -51,7 +48,6 @@ export default function BlogPage() {
         {/* CTA Section */}
         <BlogCTA />
       </main>
-      <Footer />
     </>
   )
 }

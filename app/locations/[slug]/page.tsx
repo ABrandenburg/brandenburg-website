@@ -8,8 +8,6 @@ import { TrustSection } from '@/components/trust-section'
 import { ReviewsCarouselClient } from '@/components/reviews-carousel-client'
 import { FAQAccordion } from '@/components/faq-accordion'
 import { CTASection } from '@/components/cta-section'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 
 interface LocationPageProps {
   params: Promise<{ slug: string }>
@@ -56,7 +54,6 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
   return (
     <>
-      <Header />
       <main>
         <LocationHero location={location} />
         <LocationServices
@@ -74,7 +71,6 @@ export default async function LocationPage({ params }: LocationPageProps) {
         />
         <CTASection locationName={location.name} />
       </main>
-      <Footer />
     </>
   )
 }
