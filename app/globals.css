@@ -11,7 +11,7 @@
     --bg-primary: #FFFFFF;
     --bg-footer: #F9FAFB;
     --btn-primary: #324759;
-    
+
     --background: 0 0% 100%;
     --foreground: 0 0% 10%;
     --card: 0 0% 100%;
@@ -48,7 +48,12 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif;
   }
 
@@ -58,17 +63,19 @@
   }
 
   /* Improved button base */
-  button, [role="button"] {
+  button,
+  [role="button"] {
     @apply transition-all duration-300 ease-smooth;
   }
 }
 
 @layer components {
+
   /* Book button styling to match Webflow embed */
   .book-button {
     background-color: #D92818;
   }
-  
+
   .book-button:hover {
     background-color: #C41E3A;
   }
@@ -92,11 +99,11 @@
   .image-hover {
     @apply overflow-hidden rounded-lg;
   }
-  
+
   .image-hover img {
     @apply transition-transform duration-500 ease-smooth;
   }
-  
+
   .image-hover:hover img {
     @apply scale-105;
   }
@@ -116,7 +123,7 @@
   .hover-lift {
     @apply transition-all duration-300 ease-smooth;
   }
-  
+
   .hover-lift:hover {
     @apply -translate-y-1 shadow-soft-lg;
   }
@@ -125,15 +132,19 @@
   .animation-delay-100 {
     animation-delay: 100ms;
   }
+
   .animation-delay-200 {
     animation-delay: 200ms;
   }
+
   .animation-delay-300 {
     animation-delay: 300ms;
   }
+
   .animation-delay-400 {
     animation-delay: 400ms;
   }
+
   .animation-delay-500 {
     animation-delay: 500ms;
   }
@@ -141,6 +152,7 @@
 
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -157,6 +169,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -167,6 +180,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -177,6 +191,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -188,6 +203,7 @@
     opacity: 0;
     transform: translateX(30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -195,9 +211,12 @@
 }
 
 @keyframes pulse-subtle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -229,26 +248,14 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0) 100%);
   background-size: 200% 100%;
   animation: shimmer 3s infinite;
-}
-
-/* Enhanced Red Button (Brand) */
-.btn-brand-red {
-  background-color: #C41E3A;
-  color: white;
-  box-shadow: 0 4px 14px 0 rgba(196, 30, 58, 0.39);
-}
-
-.btn-brand-red:hover {
-  background-color: #A91931;
-  box-shadow: 0 6px 20px rgba(196, 30, 58, 0.23);
-  transform: translateY(-2px);
 }

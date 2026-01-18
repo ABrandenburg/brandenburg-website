@@ -70,7 +70,7 @@ export function ReviewsCarouselClient({ locationName }: ReviewsCarouselClientPro
                     }
                 }
             } catch (error) {
-                console.log('Using fallback reviews')
+                // Silently fail to fallback
             } finally {
                 setIsLoading(false)
             }

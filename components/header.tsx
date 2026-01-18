@@ -243,7 +243,7 @@ export function Header() {
                               href={`/service/${service.slug}`}
                               className="group flex items-center gap-3 px-2 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:translate-x-1 rounded-md transition-all duration-200"
                             >
-                              <div className="w-10 h-10 bg-text-primary rounded-full flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-brand-blue transition-all duration-300">
+                              <div className="w-10 h-10 shrink-0 bg-text-primary rounded-full flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-brand-blue transition-all duration-300">
                                 <ServiceIcon type={service.icon} />
                               </div>
                               <span className="group-hover:text-brand-blue transition-colors">{service.name}</span>
@@ -258,7 +258,7 @@ export function Header() {
                               href={`/service/${service.slug}`}
                               className="group flex items-center gap-3 px-2 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:translate-x-1 rounded-md transition-all duration-200"
                             >
-                              <div className="w-10 h-10 bg-text-primary rounded-full flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-brand-blue transition-all duration-300">
+                              <div className="w-10 h-10 shrink-0 bg-text-primary rounded-full flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-brand-blue transition-all duration-300">
                                 <ServiceIcon type={service.icon} />
                               </div>
                               <span className="group-hover:text-brand-blue transition-colors">{service.name}</span>

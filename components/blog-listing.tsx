@@ -104,11 +104,10 @@ export function BlogListing({ posts, categories }: BlogListingProps) {
           <button
             key={category}
             onClick={() => handleCategoryChange(category)}
-            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-              activeCategory === category
-                ? 'bg-brand-blue text-white shadow-md'
-                : 'bg-gray-100 text-text-primary hover:bg-gray-200'
-            }`}
+            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${activeCategory === category
+              ? 'bg-brand-blue text-white shadow-md'
+              : 'bg-gray-100 text-text-primary hover:bg-gray-200'
+              }`}
           >
             {category}
           </button>
@@ -181,17 +180,16 @@ export function BlogListing({ posts, categories }: BlogListingProps) {
             <ChevronLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Previous</span>
           </button>
-          
+
           <div className="flex items-center gap-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`w-10 h-10 rounded-lg font-medium transition-colors ${
-                  currentPage === page
-                    ? 'bg-brand-blue text-white'
-                    : 'text-text-primary hover:bg-gray-100'
-                }`}
+                className={`w-10 h-10 rounded-lg font-medium transition-colors ${currentPage === page
+                  ? 'bg-brand-blue text-white'
+                  : 'text-text-primary hover:bg-gray-100'
+                  }`}
                 aria-label={`Go to page ${page}`}
                 aria-current={currentPage === page ? 'page' : undefined}
               >
@@ -199,7 +197,7 @@ export function BlogListing({ posts, categories }: BlogListingProps) {
               </button>
             ))}
           </div>
-          
+
           <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
