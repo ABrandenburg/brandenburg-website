@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { updateSubmissionStatus } from '@/app/actions/update-status'
 import { Loader2, ChevronDown } from 'lucide-react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
 const STATUS_CONFIG: Record<string, { label: string, color: string }> = {
     'new': { label: 'New', color: 'bg-slate-100 text-slate-800 border-slate-200' }, // Default/Legacy
@@ -24,18 +25,6 @@ export function StatusSelector({ id, initialStatus }: StatusSelectorProps) {
     const [status, setStatus] = useState(initialStatus || 'Applied')
     const [isOpen, setIsOpen] = useState(false)
     const [isUpdating, setIsUpdating] = useState(false)
-    const menuRef = useRef<HTMLDivElement>(null)
-
-    // Close on click outside
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setIsOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
 
     const handleSelect = async (newStatus: string) => {
         setIsOpen(false)
@@ -62,39 +51,39 @@ export function StatusSelector({ id, initialStatus }: StatusSelectorProps) {
     const currentConfig = STATUS_CONFIG[status] || { label: status, color: 'bg-slate-100 text-slate-800 border-slate-200' }
 
     return (
-        <div className="relative inline-block" ref={menuRef} onClick={(e) => e.stopPropagation()}>
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                disabled={isUpdating}
-                className={`
-                    inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors hover:opacity-80
-                    ${currentConfig.color}
-                `}
-            >
-                {isUpdating ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
-                {currentConfig.label}
-                <ChevronDown className="w-3 h-3 opacity-50" />
-            </button>
-
-            {isOpen && (
-                <div className="absolute z-50 mt-1 w-56 overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg animate-in fade-in zoom-in-95 duration-100">
-                    <div className="p-1">
-                        {Object.entries(STATUS_CONFIG).filter(([key]) => key !== 'new').map(([key, config]) => (
-                            <button
-                                key={key}
-                                onClick={() => handleSelect(key)}
-                                className={`
-                                    w-full text-left px-2 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-2
-                                    ${status === key ? 'bg-slate-50 font-medium' : 'hover:bg-slate-50'}
-                                `}
-                            >
-                                <span className={`w-2 h-2 rounded-full ${config.color.split(' ')[0].replace('bg-', 'bg-')}`}></span>
-                                {config.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-        </div>
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+                <button
+                    disabled={isUpdating}
+                    className={`
+                        inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors hover:opacity-80 outline-none
+                        ${currentConfig.color}
+                    `}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {isUpdating ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+                    {currentConfig.label}
+                    <ChevronDown className="w-3 h-3 opacity-50" />
+                </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-1" align="start">
+                {Object.entries(STATUS_CONFIG).filter(([key]) => key !== 'new').map(([key, config]) => (
+                    <button
+                        key={key}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            handleSelect(key)
+                        }}
+                        className={`
+                            w-full text-left px-2 py-1.5 text-xs rounded-sm transition-colors flex items-center gap-2
+                            ${status === key ? 'bg-slate-50 font-medium' : 'hover:bg-slate-50'}
+                        `}
+                    >
+                        <span className={`w-2 h-2 rounded-full ${config.color.split(' ')[0].replace('bg-', 'bg-')}`}></span>
+                        {config.label}
+                    </button>
+                ))}
+            </PopoverContent>
+        </Popover>
     )
 }

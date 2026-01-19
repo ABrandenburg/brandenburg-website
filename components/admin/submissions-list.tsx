@@ -55,8 +55,14 @@ export function SubmissionsList({ data }: { data: Submission[] }) {
                             <tr className="border-b bg-slate-50 hover:bg-slate-50/75">
                                 <th className="h-12 px-4 align-middle font-medium text-slate-500">Date</th>
                                 <th className="h-12 px-4 align-middle font-medium text-slate-500">Name</th>
+                                {activeTab === 'career' && (
+                                    <>
+                                        <th className="h-12 px-4 align-middle font-medium text-slate-500">Role</th>
+                                        <th className="h-12 px-4 align-middle font-medium text-slate-500">License</th>
+                                    </>
+                                )}
                                 <th className="h-12 px-4 align-middle font-medium text-slate-500">Email</th>
-                                <th className="h-12 px-4 align-middle font-medium text-slate-500">Message</th>
+                                <th className="h-12 px-4 align-middle font-medium text-slate-500">{activeTab === 'career' ? 'Notes' : 'Message'}</th>
                                 <th className="h-12 px-4 align-middle font-medium text-slate-500">Status</th>
                             </tr>
                         </thead>
@@ -78,6 +84,12 @@ export function SubmissionsList({ data }: { data: Submission[] }) {
                                             {submission.createdAt ? format(new Date(submission.createdAt), 'MMM d, yyyy h:mm a') : 'N/A'}
                                         </td>
                                         <td className="p-4 align-middle text-slate-900">{name}</td>
+                                        {activeTab === 'career' && (
+                                            <>
+                                                <td className="p-4 align-middle text-slate-700">{payload?.role || '-'}</td>
+                                                <td className="p-4 align-middle text-slate-700">{payload?.licenseType || '-'}</td>
+                                            </>
+                                        )}
                                         <td className="p-4 align-middle text-slate-600">{email}</td>
                                         <td className="p-4 align-middle text-slate-600 truncate max-w-xs">{displayMessage}</td>
                                         <td className="p-4 align-middle" onClick={(e) => e.stopPropagation()}>
