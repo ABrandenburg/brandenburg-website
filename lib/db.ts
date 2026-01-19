@@ -3,10 +3,10 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import * as schema from './schema'
 
-const connectionString = process.env.DATABASE_URL!
+// Support both Vercel-Supabase integration (POSTGRES_URL) and manual (DATABASE_URL)
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL!
 
 // Disable prefetch as it is not supported for "Transaction" pool mode
-// Add ssl: 'require' for Supabase connections
 const client = postgres(connectionString, {
     prepare: false,
     ssl: 'require'
