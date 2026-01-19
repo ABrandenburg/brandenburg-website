@@ -45,6 +45,9 @@ export default async function AdminDashboard() {
                             <div className="mt-4 p-3 bg-red-100 rounded text-xs font-mono text-red-800 break-all">
                                 {error}
                             </div>
+                            <div className="mt-2 p-3 bg-yellow-100 rounded text-xs font-mono text-yellow-800 break-all">
+                                DB URL: {process.env.DATABASE_URL?.replace(/:[^@]+@/, ':***@') || 'NOT SET'}
+                            </div>
                         </div>
                     </div>
                 </div>
