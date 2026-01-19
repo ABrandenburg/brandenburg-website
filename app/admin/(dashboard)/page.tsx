@@ -15,7 +15,7 @@ export default async function AdminDashboard() {
         <div className="space-y-8">
             <div>
                 <h2 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h2>
-                <p className="text-slate-500">Overview of your system status and recent activity.</p>
+                <p className="text-slate-500">Overview of your system status and recent activity. (v1.1)</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
