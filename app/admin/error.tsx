@@ -40,9 +40,14 @@ export default function AdminError({
                     </Button>
                 </div>
 
-                <p className="mt-8 text-xs text-slate-400">
-                    Error Digest: {error.digest}
+                <p className="mt-8 text-xs text-slate-400 font-mono break-all">
+                    Error: {error.message}
                 </p>
+                {error.digest && (
+                    <p className="mt-2 text-xs text-slate-400">
+                        Digest: {error.digest}
+                    </p>
+                )}
             </div>
         </div>
     )
