@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { db } from '@/lib/db'
+import { submissions } from '@/lib/schema'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -30,6 +32,18 @@ export async function POST(request: NextRequest) {
         { error: 'Invalid email format' },
         { status: 400 }
       )
+    }
+
+    // Save to database
+    try {
+      await db.insert(submissions).values({
+        type: 'contact',
+        payload: body,
+        status: 'new'
+      })
+    } catch (error) {
+      console.error('Database Error:', error)
+      // Continue to send email even if DB fails
     }
 
     // Send email using Resend

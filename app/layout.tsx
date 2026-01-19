@@ -1,11 +1,5 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import { SkipLink } from '@/components/skip-link'
-import { BackToTop } from '@/components/back-to-top'
-import { MobilePhoneCTA } from '@/components/mobile-phone-cta'
-import { DNILoader } from '@/components/dni-loader'
-import { Header } from '@/components/header'
-import { Footer } from '@/components/footer'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -231,7 +225,6 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="font-sans">
-        <SkipLink />
 
         {/* Organization JSON-LD */}
         <script
@@ -249,15 +242,8 @@ export default function RootLayout({
           />
         </noscript>
 
-        <Header />
-        <div id="main-content">
-          {children}
-        </div>
-        <Footer />
+        {children}
 
-        <BackToTop />
-        <MobilePhoneCTA />
-        <DNILoader />
       </body>
     </html>
   )

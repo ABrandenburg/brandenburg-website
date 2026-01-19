@@ -80,6 +80,11 @@ export function ContactForm() {
       }
 
       setIsSubmitted(true)
+
+      // Track valid submission as a Lead
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        ; (window as any).fbq('track', 'Lead')
+      }
     } catch {
       setSubmitError('There was an error sending your message. Please try again or call us directly.')
     } finally {
@@ -91,7 +96,7 @@ export function ContactForm() {
   const formatPhoneNumber = (value: string): string => {
     // Remove all non-digits
     const phoneNumber = value.replace(/\D/g, '')
-    
+
     // Format based on length
     if (phoneNumber.length < 4) {
       return phoneNumber
@@ -106,10 +111,10 @@ export function ContactForm() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target
-    
+
     // Apply phone formatting for phone field
     const newValue = name === 'phone' ? formatPhoneNumber(value) : value
-    
+
     setFormData(prev => ({ ...prev, [name]: newValue }))
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -163,9 +168,8 @@ export function ContactForm() {
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
-            className={`w-full px-4 py-3 rounded-lg border ${
-              errors.fullName ? 'border-red-500' : 'border-gray-200'
-            } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all`}
+            className={`w-full px-4 py-3 rounded-lg border ${errors.fullName ? 'border-red-500' : 'border-gray-200'
+              } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all`}
             placeholder="John Smith"
           />
           {errors.fullName && (
@@ -184,9 +188,8 @@ export function ContactForm() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full px-4 py-3 rounded-lg border ${
-              errors.email ? 'border-red-500' : 'border-gray-200'
-            } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all`}
+            className={`w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-200'
+              } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all`}
             placeholder="john@example.com"
           />
           {errors.email && (
@@ -205,9 +208,8 @@ export function ContactForm() {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className={`w-full px-4 py-3 rounded-lg border ${
-              errors.phone ? 'border-red-500' : 'border-gray-200'
-            } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all`}
+            className={`w-full px-4 py-3 rounded-lg border ${errors.phone ? 'border-red-500' : 'border-gray-200'
+              } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all`}
             placeholder="(512) 555-1234"
           />
           {errors.phone && (
@@ -226,9 +228,8 @@ export function ContactForm() {
             value={formData.message}
             onChange={handleChange}
             rows={5}
-            className={`w-full px-4 py-3 rounded-lg border ${
-              errors.message ? 'border-red-500' : 'border-gray-200'
-            } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all resize-none`}
+            className={`w-full px-4 py-3 rounded-lg border ${errors.message ? 'border-red-500' : 'border-gray-200'
+              } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all resize-none`}
             placeholder="Tell us about your plumbing needs..."
           />
           {errors.message && (

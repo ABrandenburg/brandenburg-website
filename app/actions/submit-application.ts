@@ -2,6 +2,8 @@
 
 import { Resend } from "resend"
 import { jobApplicationSchema, JobApplicationValues } from "@/lib/schemas/job-application-schema"
+import { db } from "@/lib/db"
+import { submissions } from "@/lib/schema"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -13,6 +15,21 @@ export async function submitApplication(data: JobApplicationValues) {
   }
 
   const { role, ...rest } = result.data
+
+  // Save to database
+  try {
+    await db.insert(submissions).values({
+      type: 'career',
+      payload: result.data,
+      status: 'new'
+    })
+  } catch (error) {
+    console.error("Database Error:", error)
+    // We continue to send email even if DB fails, or should we? 
+    // Usually better to fail safe, but for now let's log and proceed or fail?
+    // Let's log and proceed so we at least get the email. 
+    // NOTE: In a robust system we might want transaction or guarantee both.
+  }
 
   // Format data for email
   const subject = `New Job Application: ${role.toUpperCase()} - ${rest.fullName}`

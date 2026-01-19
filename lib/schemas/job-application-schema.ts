@@ -1,11 +1,22 @@
 import { z } from "zod"
 
+const ALLOWED_ZIPS = [
+    "76550", "78605", "78607", "78609", "78611",
+    "78636", "78639", "78642", "78643", "78645",
+    "78657", "78663", "78669", "78672"
+]
+
 // Shared fields for all roles
 const baseSchema = z.object({
     fullName: z.string().min(2, "Full name is required"),
     email: z.string().email("Invalid email address"),
     phone: z.string().min(10, "Phone number is required"),
-    zipCode: z.string().min(5, "Zip code is required"),
+    zipCode: z.string().min(5, "Zip code is required").refine((val) => {
+        if (val.length < 5) return true // Let min(5) handle incomplete input
+        return ALLOWED_ZIPS.includes(val)
+    }, {
+        message: "We are not currently hiring in that zip code. Please check back later for opportunities in your area."
+    }),
     source: z.enum(["Indeed", "Facebook", "Instagram", "Referral", "Truck Wrap", "Other"]),
 })
 
