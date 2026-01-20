@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion, AnimatePresence } from "framer-motion"
@@ -76,9 +76,18 @@ export function CareersForm() {
     }
   }
 
+  const successRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (isSubmitted && successRef.current) {
+      successRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [isSubmitted])
+
   if (isSubmitted) {
     return (
       <motion.div
+        ref={successRef}
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="bg-gray-50 rounded-2xl p-8 lg:p-12 text-center"

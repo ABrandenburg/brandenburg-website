@@ -15,7 +15,7 @@ interface Submission {
 
 export function SubmissionsList({ data }: { data: Submission[] }) {
     const router = useRouter()
-    const [activeTab, setActiveTab] = useState<'contact' | 'career'>('contact')
+    const [activeTab, setActiveTab] = useState<'contact' | 'career'>('career')
 
     const filteredData = data.filter(item => item.type === activeTab)
 
@@ -24,15 +24,6 @@ export function SubmissionsList({ data }: { data: Submission[] }) {
             {/* Tabs */}
             <div className="flex border-b border-slate-200">
                 <button
-                    onClick={() => setActiveTab('contact')}
-                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'contact'
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
-                        }`}
-                >
-                    Contact Forms
-                </button>
-                <button
                     onClick={() => setActiveTab('career')}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'career'
                         ? 'border-blue-500 text-blue-600'
@@ -40,6 +31,15 @@ export function SubmissionsList({ data }: { data: Submission[] }) {
                         }`}
                 >
                     Job Applications
+                </button>
+                <button
+                    onClick={() => setActiveTab('contact')}
+                    className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'contact'
+                        ? 'border-blue-500 text-blue-600'
+                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                        }`}
+                >
+                    Contact Forms
                 </button>
             </div>
 
