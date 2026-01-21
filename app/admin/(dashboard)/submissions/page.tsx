@@ -29,7 +29,15 @@ export default async function SubmissionsPage() {
         redirect('/admin?error=unauthorized')
     }
 
-    let data
+    type Submission = {
+        id: number
+        type: string
+        payload: any
+        status: string | null
+        createdAt: Date | null
+    }
+    
+    let data: Submission[] = []
     let dbError: string | null = null
     try {
         data = await db.select().from(submissions).orderBy(desc(submissions.createdAt))
@@ -54,7 +62,7 @@ export default async function SubmissionsPage() {
                     <p className="text-red-600 text-xs mt-2">
                         Check that <code className="bg-red-100 px-1 rounded">POSTGRES_URL</code> (Vercel Supabase integration) or <code className="bg-red-100 px-1 rounded">DATABASE_URL</code> is set correctly.
                     </p>
-                    {dbError.includes('permission') || dbError.includes('policy') && (
+                    {(dbError.includes('permission') || dbError.includes('policy')) && (
                         <p className="text-red-600 text-xs mt-2">
                             If using RLS, ensure the connection has proper permissions or use a service role connection.
                         </p>
