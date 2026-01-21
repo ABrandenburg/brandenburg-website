@@ -16,6 +16,14 @@ export function DiscountCalculator() {
   const [isCalculating, setIsCalculating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDemoMode, setIsDemoMode] = useState(false)
+  const [demoModeMessage, setDemoModeMessage] = useState<string | null>(null)
+  const [configStatus, setConfigStatus] = useState<{
+    hasClientId: boolean
+    hasClientSecret: boolean
+    hasTenantId: boolean
+    hasAppKey: boolean
+    environment: string
+  } | null>(null)
 
   // Fetch capacity status on mount
   useEffect(() => {
@@ -36,6 +44,8 @@ export function DiscountCalculator() {
       
       setCapacityData(data.data)
       setIsDemoMode(data.isDemoMode || false)
+      setDemoModeMessage(data.message || null)
+      setConfigStatus(data.configStatus || null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch capacity status')
     } finally {
@@ -94,11 +104,33 @@ export function DiscountCalculator() {
     <div className="space-y-6">
       {/* Demo Mode Banner */}
       {isDemoMode && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0" />
-          <div className="text-sm text-amber-700">
-            <span className="font-semibold">Demo Mode:</span> ServiceTitan API is not configured. 
-            Using simulated capacity data for demonstration.
+        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 space-y-2">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <div className="text-sm text-amber-700">
+                <span className="font-semibold">Demo Mode:</span> {demoModeMessage || 'ServiceTitan API is not configured. Using simulated capacity data for demonstration.'}
+              </div>
+              {configStatus && (
+                <div className="mt-3 text-xs text-amber-600 space-y-1">
+                  <div className="font-medium">Configuration Status:</div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 ml-4">
+                    <div>SERVICETITAN_CLIENT_ID: {configStatus.hasClientId ? '✓ Set' : '✗ Missing'}</div>
+                    <div>SERVICETITAN_CLIENT_SECRET: {configStatus.hasClientSecret ? '✓ Set' : '✗ Missing'}</div>
+                    <div>SERVICETITAN_TENANT_ID: {configStatus.hasTenantId ? '✓ Set' : '✗ Missing'}</div>
+                    <div>SERVICETITAN_APP_KEY: {configStatus.hasAppKey ? '✓ Set' : '✗ Missing'}</div>
+                  </div>
+                  <div className="mt-2 text-amber-700">
+                    Environment: {configStatus.environment}
+                  </div>
+                  {(!configStatus.hasClientId || !configStatus.hasClientSecret || !configStatus.hasTenantId || !configStatus.hasAppKey) && (
+                    <div className="mt-2 pt-2 border-t border-amber-300 text-amber-800">
+                      <strong>Note:</strong> After adding environment variables in Vercel, you must trigger a new deployment for them to take effect.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
