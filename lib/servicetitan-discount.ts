@@ -1,6 +1,6 @@
 // ServiceTitan API Client for Discount Calculator
 // Uses serviceTitanFetch from client.ts for authentication and API requests
-// Version: 2026-01-21-v4 (args wrapper + skillBasedAvailability)
+// Version: 2026-01-21-v5 (simple body format)
 
 import { CapacityData, getStatusFromAvailability } from './discount-calculator'
 import { serviceTitanFetch, clearTokenCache } from './servicetitan/client'
@@ -119,14 +119,11 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
   })
   
   try {
-    // Capacity endpoint uses POST method with request body
-    // Parameters must be wrapped in "args" object and skillBasedAvailability is required
+    // Capacity endpoint - try simple format first
     const requestBody = {
-      args: {
-        startsOnOrAfter,
-        endsOnOrBefore,
-        skillBasedAvailability: false,
-      }
+      startsOnOrAfter,
+      endsOnOrBefore,
+      skillBasedAvailability: false,
     }
     
     console.log('Capacity request body:', JSON.stringify(requestBody))
