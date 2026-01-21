@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { LogOut, LayoutDashboard, FileText, Settings, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { LogOut, LayoutDashboard, FileText, Settings, BookOpen, ChevronLeft, ChevronRight, ChevronDown, BarChart3, PieChart, Calculator } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SidebarProps {
@@ -13,6 +14,10 @@ interface SidebarProps {
 
 export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
     const [isCollapsed, setIsCollapsed] = useState(false)
+    const [isToolsOpen, setIsToolsOpen] = useState(true)
+    const pathname = usePathname()
+
+    const isToolsActive = pathname.startsWith('/admin/tools')
 
     return (
         <aside
@@ -59,11 +64,60 @@ export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
                 )}
             </div>
 
-            <nav className="flex-1 p-4 space-y-1 overflow-hidden">
-                <NavItem href="/admin" icon={LayoutDashboard} label="Dashboard" isCollapsed={isCollapsed} />
-                <NavItem href="/admin/submissions" icon={FileText} label="Submissions" isCollapsed={isCollapsed} />
-                <NavItem href="/admin/tools" icon={Settings} label="Tools & Automations" isCollapsed={isCollapsed} />
-                <NavItem href="/admin/training" icon={BookOpen} label="Training" isCollapsed={isCollapsed} />
+            <nav className="flex-1 p-4 space-y-1 overflow-hidden overflow-y-auto">
+                <NavItem href="/admin" icon={LayoutDashboard} label="Dashboard" isCollapsed={isCollapsed} isActive={pathname === '/admin'} />
+                <NavItem href="/admin/submissions" icon={FileText} label="Submissions" isCollapsed={isCollapsed} isActive={pathname.startsWith('/admin/submissions')} />
+
+                {/* Tools with sub-navigation */}
+                <div>
+                    <button
+                        onClick={() => !isCollapsed && setIsToolsOpen(!isToolsOpen)}
+                        className={cn(
+                            "flex items-center gap-3 px-3 py-2 w-full text-left rounded-md transition-colors",
+                            isToolsActive
+                                ? "text-white bg-slate-800"
+                                : "text-slate-300 hover:text-white hover:bg-slate-800",
+                            isCollapsed && "justify-center px-2"
+                        )}
+                        title={isCollapsed ? "Tools & Automations" : undefined}
+                    >
+                        <Settings className="w-5 h-5 flex-shrink-0" />
+                        {!isCollapsed && (
+                            <>
+                                <span className="flex-1 whitespace-nowrap">Tools & Automations</span>
+                                <ChevronDown className={cn(
+                                    "w-4 h-4 transition-transform",
+                                    isToolsOpen && "rotate-180"
+                                )} />
+                            </>
+                        )}
+                    </button>
+
+                    {!isCollapsed && isToolsOpen && (
+                        <div className="ml-4 mt-1 space-y-1 border-l border-slate-700 pl-3">
+                            <SubNavItem
+                                href="/admin/tools"
+                                icon={Calculator}
+                                label="Discount Calculator"
+                                isActive={pathname === '/admin/tools'}
+                            />
+                            <SubNavItem
+                                href="/admin/tools/scorecard"
+                                icon={BarChart3}
+                                label="Scorecard"
+                                isActive={pathname === '/admin/tools/scorecard'}
+                            />
+                            <SubNavItem
+                                href="/admin/tools/scorecard/gm"
+                                icon={PieChart}
+                                label="Gross Margin"
+                                isActive={pathname === '/admin/tools/scorecard/gm'}
+                            />
+                        </div>
+                    )}
+                </div>
+
+                <NavItem href="/admin/training" icon={BookOpen} label="Training" isCollapsed={isCollapsed} isActive={pathname.startsWith('/admin/training')} />
             </nav>
 
             <div className="p-4 border-t border-slate-800 overflow-hidden">
@@ -85,12 +139,21 @@ export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
     )
 }
 
-function NavItem({ href, icon: Icon, label, isCollapsed }: { href: string, icon: any, label: string, isCollapsed: boolean }) {
+function NavItem({ href, icon: Icon, label, isCollapsed, isActive }: {
+    href: string;
+    icon: any;
+    label: string;
+    isCollapsed: boolean;
+    isActive: boolean;
+}) {
     return (
         <Link
             href={href}
             className={cn(
-                "flex items-center gap-3 px-3 py-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-md transition-colors",
+                "flex items-center gap-3 px-3 py-2 rounded-md transition-colors",
+                isActive
+                    ? "text-white bg-slate-800"
+                    : "text-slate-300 hover:text-white hover:bg-slate-800",
                 isCollapsed && "justify-center px-2"
             )}
             title={isCollapsed ? label : undefined}
@@ -100,3 +163,26 @@ function NavItem({ href, icon: Icon, label, isCollapsed }: { href: string, icon:
         </Link>
     )
 }
+
+function SubNavItem({ href, icon: Icon, label, isActive }: {
+    href: string;
+    icon: any;
+    label: string;
+    isActive: boolean;
+}) {
+    return (
+        <Link
+            href={href}
+            className={cn(
+                "flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors",
+                isActive
+                    ? "text-white bg-slate-800/50"
+                    : "text-slate-400 hover:text-white hover:bg-slate-800/30"
+            )}
+        >
+            <Icon className="w-4 h-4 flex-shrink-0" />
+            <span className="whitespace-nowrap">{label}</span>
+        </Link>
+    )
+}
+

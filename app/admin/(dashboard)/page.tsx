@@ -18,8 +18,32 @@ async function getSubmissionCount() {
     }
 }
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({ searchParams }: { searchParams: { error?: string | string[] } }) {
     const { count: submissionCount, error } = await getSubmissionCount()
+    
+    // Show unauthorized message if redirected from submissions page
+    const errorParam = Array.isArray(searchParams?.error) ? searchParams.error[0] : searchParams?.error
+    if (errorParam === 'unauthorized') {
+        return (
+            <div className="space-y-8">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight text-slate-900">Dashboard</h2>
+                    <p className="text-slate-500">Overview of your system status and recent activity. (v1.5)</p>
+                </div>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                    <div className="flex items-start gap-4">
+                        <AlertTriangle className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                            <h3 className="font-semibold text-yellow-800">Access Restricted</h3>
+                            <p className="text-yellow-700 mt-1 text-sm">
+                                You don&apos;t have permission to access the submissions page. Only authorized administrators can view submissions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 
     if (error) {
         return (

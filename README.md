@@ -43,8 +43,27 @@ This Next.js website is **ready for launch** with minor configuration needed.
 Add these to your hosting platform (Vercel/Netlify):
 
 ```bash
+# Email (Required for contact forms)
 RESEND_API_KEY=your_resend_api_key_here
+
+# Supabase (Required for admin features)
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
+
+**ServiceTitan API (Required for Discount Calculator)**:
+```bash
+# Get these from your ServiceTitan developer account
+# Documentation: https://developer.servicetitan.io/
+SERVICETITAN_CLIENT_ID=your_client_id
+SERVICETITAN_CLIENT_SECRET=your_client_secret
+SERVICETITAN_TENANT_ID=your_tenant_id
+SERVICETITAN_APP_KEY=your_app_key
+SERVICETITAN_ENV=production  # or "integration" for testing
+```
+
+The Discount Calculator will work in demo mode if ServiceTitan credentials are not configured.
 
 Optional (for live Google reviews):
 ```bash
@@ -121,10 +140,27 @@ See `migration-assets/README.md` for details.
 2. Publish directory: `.next`
 3. Add environment variables
 
+## Admin Tools
+
+### Discount Calculator (`/admin/tools`)
+
+A two-stage discount authorization tool for General Managers:
+
+- **Standard Discount**: Frontline authorization limit (50% of max sacrifice, capped at $1,000)
+- **Max Discount**: Manager approval required (100% of max sacrifice, capped at $5,000)
+
+The tool dynamically calculates discount limits based on ServiceTitan capacity data:
+- **Hungry** (>40% available): 30% of gross margin can be sacrificed
+- **Normal** (20-40% available): 15% of gross margin can be sacrificed
+- **Busy** (<20% available): No discounts allowed
+
+If ServiceTitan credentials are not configured, the tool operates in demo mode with simulated data.
+
 ## Documentation Created
 
 - **DEPLOYMENT.md** - Complete deployment guide with checklists
 - **GOOGLE_API_FIX.md** - Detailed Google API configuration solutions
+- **MIGRATION_GUIDE_DISCOUNTER.md** - Discount calculator implementation guide
 - **migration-assets/README.md** - Migration assets cleanup guide
 - **README.md** - This launch readiness summary
 

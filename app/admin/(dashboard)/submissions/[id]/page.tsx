@@ -6,11 +6,31 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 
 export const revalidate = 0
 
+// Allowed emails for submissions access
+const ALLOWED_EMAILS = [
+    'adam@brandenburgplumbing.com',
+    'lucas@brandenburgplumbing.com',
+    'michael@brandenburgplumbing.com',
+]
+
 export default async function SubmissionDetailsPage({ params }: { params: { id: string } }) {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Check if user is authenticated
+    if (!user) {
+        redirect('/admin/login')
+    }
+
+    // Check if user's email is in the allowed list
+    if (!user.email || !ALLOWED_EMAILS.includes(user.email.toLowerCase())) {
+        redirect('/admin?error=unauthorized')
+    }
     const id = parseInt(params.id)
     if (isNaN(id)) notFound()
 
