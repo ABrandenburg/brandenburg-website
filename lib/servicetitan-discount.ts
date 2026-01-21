@@ -2,6 +2,7 @@
 // Handles OAuth 2.0 authentication and capacity data fetching
 
 import { CapacityData, getStatusFromAvailability } from './discount-calculator'
+import { serviceTitanFetch } from './servicetitan/client'
 
 interface TokenCache {
   token: string
@@ -145,84 +146,73 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
     throw new Error('ServiceTitan API not configured. Please set environment variables.')
   }
 
-  const token = await getAccessToken()
-  
   // Calculate date range (today + 3 days)
   const today = new Date()
   const endDate = new Date()
   endDate.setDate(today.getDate() + 3)
 
+  const startsOnOrAfter = today.toISOString().split('T')[0]
+  const endsOnOrBefore = endDate.toISOString().split('T')[0]
+
   const params = new URLSearchParams({
-    startsOnOrAfter: today.toISOString().split('T')[0],
-    endsOnOrBefore: endDate.toISOString().split('T')[0],
+    startsOnOrAfter,
+    endsOnOrBefore,
   })
 
-  const url = `${config.baseUrl}/dispatch/v2/tenant/${config.tenantId}/capacity?${params}`
+  const endpoint = `/dispatch/v2/tenant/{tenantId}/capacity?${params}`
   
   console.log('ServiceTitan capacity API request:', {
-    url,
+    endpoint,
     method: 'GET',
-    tenantId: config.tenantId,
     dateRange: {
-      startsOnOrAfter: today.toISOString().split('T')[0],
-      endsOnOrBefore: endDate.toISOString().split('T')[0],
+      startsOnOrAfter,
+      endsOnOrBefore,
     },
   })
   
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'ST-App-Key': config.appKey!,
-      'Content-Type': 'application/json',
-    },
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    console.error('ServiceTitan capacity API error:', {
-      status: response.status,
-      statusText: response.statusText,
-      url,
-      error: errorText,
+  try {
+    const data = await serviceTitanFetch<ServiceTitanCapacityResponse>(endpoint, {
+      method: 'GET',
     })
+  
+    // Calculate totals from all slots
+    let totalCapacity = 0
+    let availableCapacity = 0
+    
+    for (const slot of data.data) {
+      totalCapacity += slot.capacity
+      availableCapacity += slot.availableCapacity
+    }
+
+    // Calculate availability percentage
+    const availabilityPercent = totalCapacity > 0
+      ? (availableCapacity / totalCapacity) * 100
+      : 0
+
+    // Determine status based on availability
+    const status = getStatusFromAvailability(availabilityPercent)
+
+    return {
+      status,
+      availabilityPercent: Math.round(availabilityPercent * 10) / 10,
+      totalCapacity,
+      availableCapacity,
+    }
+  } catch (error) {
+    console.error('ServiceTitan capacity API error:', error)
     
     // Provide more helpful error message for 404
-    if (response.status === 404) {
+    if (error instanceof Error && error.message.includes('404')) {
       throw new Error(
         `ServiceTitan capacity endpoint not found (404). ` +
-        `The endpoint '/dispatch/v2/tenant/{tenantId}/capacity' may not be available in your ServiceTitan version. ` +
-        `Please verify that the Dispatch API v2 is enabled for your tenant. ` +
-        `Error: ${errorText}`
+        `The endpoint '/dispatch/v2/tenant/{tenantId}/capacity' may not be available in your ServiceTitan version or may require different scopes. ` +
+        `You have 'Capacity' scopes enabled under 'Customer Transactions' and 'Scheduling API', but the endpoint is under 'Dispatch API'. ` +
+        `Please verify that Dispatch API scopes are enabled, or check ServiceTitan documentation for the correct endpoint path. ` +
+        `Original error: ${error.message}`
       )
     }
     
-    throw new Error(`ServiceTitan capacity API error (${response.status}): ${errorText}`)
-  }
-
-  const data: ServiceTitanCapacityResponse = await response.json()
-  
-  // Calculate totals from all slots
-  let totalCapacity = 0
-  let availableCapacity = 0
-  
-  for (const slot of data.data) {
-    totalCapacity += slot.capacity
-    availableCapacity += slot.availableCapacity
-  }
-
-  // Calculate availability percentage
-  const availabilityPercent = totalCapacity > 0
-    ? (availableCapacity / totalCapacity) * 100
-    : 0
-
-  // Determine status based on availability
-  const status = getStatusFromAvailability(availabilityPercent)
-
-  return {
-    status,
-    availabilityPercent: Math.round(availabilityPercent * 10) / 10,
-    totalCapacity,
-    availableCapacity,
+    throw error
   }
 }
 
