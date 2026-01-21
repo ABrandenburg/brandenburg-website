@@ -1,6 +1,6 @@
 // ServiceTitan API Client for Discount Calculator
 // Uses serviceTitanFetch from client.ts for authentication and API requests
-// Version: 2026-01-21-v2 (token refresh fix)
+// Version: 2026-01-21-v3 (request body fix)
 
 import { CapacityData, getStatusFromAvailability } from './discount-calculator'
 import { serviceTitanFetch, clearTokenCache } from './servicetitan/client'
@@ -119,14 +119,20 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
   })
   
   try {
-    // Capacity endpoint uses POST method
-    // Parameters should be in query string for this endpoint (not in body like reporting endpoints)
+    // Capacity endpoint uses POST method with request body
+    // Parameters go in the body (not query string)
+    const requestBody = {
+      startsOnOrAfter,
+      endsOnOrBefore,
+    }
+    
+    console.log('Capacity request body:', requestBody)
+    
     const data = await serviceTitanFetch<ServiceTitanCapacityResponse>(
-      `${endpoint}?startsOnOrAfter=${encodeURIComponent(startsOnOrAfter)}&endsOnOrBefore=${encodeURIComponent(endsOnOrBefore)}`,
+      endpoint,
       {
         method: 'POST',
-        // Note: Some ServiceTitan endpoints accept body, but capacity endpoint uses query params
-        // If this fails, we may need to try body format: body: JSON.stringify({ startsOnOrAfter, endsOnOrBefore })
+        body: JSON.stringify(requestBody),
       }
     )
   
