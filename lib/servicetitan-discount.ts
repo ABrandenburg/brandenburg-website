@@ -1,13 +1,9 @@
 // ServiceTitan API Client for Discount Calculator
-// Handles OAuth 2.0 authentication and capacity data fetching
+// Uses serviceTitanFetch from client.ts for authentication and API requests
+// Version: 2026-01-21-v2 (token refresh fix)
 
 import { CapacityData, getStatusFromAvailability } from './discount-calculator'
-import { serviceTitanFetch } from './servicetitan/client'
-
-interface TokenCache {
-  token: string
-  expiresAt: number
-}
+import { serviceTitanFetch, clearTokenCache } from './servicetitan/client'
 
 interface ServiceTitanCapacitySlot {
   date: string
@@ -24,9 +20,6 @@ interface ServiceTitanCapacityResponse {
   data: ServiceTitanCapacitySlot[]
   hasMore: boolean
 }
-
-// Token cache (module-level for persistence across requests in serverless)
-let cachedToken: TokenCache | null = null
 
 /**
  * Get ServiceTitan environment configuration
@@ -95,47 +88,6 @@ export function isServiceTitanConfigured(): boolean {
 }
 
 /**
- * Get OAuth access token from ServiceTitan
- * Implements token caching with 60-second buffer before expiry
- */
-async function getAccessToken(): Promise<string> {
-  // Return cached token if still valid (with 60s buffer)
-  if (cachedToken && Date.now() < cachedToken.expiresAt - 60000) {
-    return cachedToken.token
-  }
-
-  const config = getServiceTitanConfig()
-  
-  if (!config.clientId || !config.clientSecret) {
-    throw new Error('ServiceTitan credentials not configured')
-  }
-
-  const response = await fetch(config.authUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: config.clientId,
-      client_secret: config.clientSecret,
-    }),
-  })
-
-  if (!response.ok) {
-    const errorText = await response.text()
-    throw new Error(`ServiceTitan authentication failed: ${errorText}`)
-  }
-
-  const data = await response.json()
-  
-  cachedToken = {
-    token: data.access_token,
-    expiresAt: Date.now() + data.expires_in * 1000,
-  }
-  
-  return data.access_token
-}
-
-/**
  * Fetch capacity data from ServiceTitan for the next 3 days
  * and calculate availability status
  */
@@ -167,12 +119,14 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
   })
   
   try {
-    // Capacity endpoint uses POST with query parameters
-    // According to ServiceTitan docs, parameters can be in query string or body
+    // Capacity endpoint uses POST method
+    // Parameters should be in query string for this endpoint (not in body like reporting endpoints)
     const data = await serviceTitanFetch<ServiceTitanCapacityResponse>(
       `${endpoint}?startsOnOrAfter=${encodeURIComponent(startsOnOrAfter)}&endsOnOrBefore=${encodeURIComponent(endsOnOrBefore)}`,
       {
         method: 'POST',
+        // Note: Some ServiceTitan endpoints accept body, but capacity endpoint uses query params
+        // If this fails, we may need to try body format: body: JSON.stringify({ startsOnOrAfter, endsOnOrBefore })
       }
     )
   
@@ -202,15 +156,27 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
   } catch (error) {
     console.error('ServiceTitan capacity API error:', error)
     
-    // Provide more helpful error message for 404
-    if (error instanceof Error && error.message.includes('404')) {
-      throw new Error(
-        `ServiceTitan capacity endpoint not found (404). ` +
-        `The endpoint '/dispatch/v2/tenant/{tenantId}/capacity' may not be available in your ServiceTitan version or may require different scopes. ` +
-        `You have 'Capacity' scopes enabled under 'Customer Transactions' and 'Scheduling API', but the endpoint is under 'Dispatch API'. ` +
-        `Please verify that Dispatch API scopes are enabled, or check ServiceTitan documentation for the correct endpoint path. ` +
-        `Original error: ${error.message}`
-      )
+    // Clear token cache on any error to ensure fresh token on next attempt
+    clearTokenCache()
+    
+    // Provide more helpful error message for specific errors
+    if (error instanceof Error) {
+      if (error.message.includes('404')) {
+        throw new Error(
+          `ServiceTitan capacity endpoint not found (404). ` +
+          `The endpoint '/dispatch/v2/tenant/{tenantId}/capacity' may not be available. ` +
+          `Please verify that Dispatch API scopes are enabled. ` +
+          `Original error: ${error.message}`
+        )
+      }
+      
+      if (error.message.includes('401')) {
+        throw new Error(
+          `ServiceTitan authentication failed (401). Token may have expired. ` +
+          `The system will attempt to refresh the token on the next request. ` +
+          `Original error: ${error.message}`
+        )
+      }
     }
     
     throw error

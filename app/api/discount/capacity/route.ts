@@ -40,12 +40,14 @@ export async function GET() {
     }
 
     // Fetch real capacity data from ServiceTitan
+    console.log('Fetching capacity data from ServiceTitan (v2)')
     const capacityData = await getCapacityWithStatus()
     
     return NextResponse.json({
       success: true,
       data: capacityData,
       isDemoMode: false,
+      apiVersion: 'v2-2026-01-21',
     })
   } catch (error) {
     console.error('Error fetching capacity:', error)
@@ -57,6 +59,7 @@ export async function GET() {
       data: demoData,
       isDemoMode: true,
       message: error instanceof Error ? error.message : 'API error - using demo data',
+      apiVersion: 'v2-2026-01-21',
     })
   }
 }
