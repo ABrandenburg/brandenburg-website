@@ -4,6 +4,8 @@ import { getServiceBySlug, getAllServiceSlugs } from '@/lib/services-data'
 import { getFAQsByServiceSlug } from '@/lib/faqs-data'
 import { ServiceHero } from '@/components/service-hero'
 import { ServiceDescription } from '@/components/service-description'
+import { VideoSection } from '@/components/video-section'
+import { fetchYouTubeVideosInfo } from '@/lib/youtube-utils'
 import { FAQAccordion } from '@/components/faq-accordion'
 import { CTASection } from '@/components/cta-section'
 import { ServiceAreasList } from '@/components/service-areas-list'
@@ -71,6 +73,9 @@ export default async function ServicePage({ params }: ServicePageProps) {
   // Get FAQs for this service
   const faqs = getFAQsByServiceSlug(slug)
 
+  // Fetch video info if service has videos
+  const videos = service.videos ? await fetchYouTubeVideosInfo(service.videos) : []
+
   // JSON-LD
   const serviceSchema = generateServiceSchema(service)
   const breadcrumbSchema = generateBreadcrumbSchema([
@@ -92,6 +97,9 @@ export default async function ServicePage({ params }: ServicePageProps) {
       <main>
         <ServiceHero service={service} />
         <ServiceDescription service={service} />
+        {videos.length > 0 && (
+          <VideoSection videos={videos} serviceName={service.name} />
+        )}
         {faqs.length > 0 && (
           <FAQAccordion
             faqs={faqs}

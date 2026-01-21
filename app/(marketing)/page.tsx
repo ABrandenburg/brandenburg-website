@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import { Hero } from '@/components/hero'
 import { ServicesSection } from '@/components/services-section'
 import { HomeTrustSection } from '@/components/home-trust-section'
+import { HomeVideoSection } from '@/components/home-video-section'
 import { ReviewsCarouselClient } from '@/components/reviews-carousel-client'
 import { BrandLogos } from '@/components/brand-logos'
 import { HomeCTASection } from '@/components/home-cta-section'
+import { fetchYouTubeVideoInfo } from '@/lib/youtube-utils'
 
 export const metadata: Metadata = {
   title: 'Plumbing Repair, Replace, and Install Service | Brandenburg Plumbing',
@@ -28,12 +30,16 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Home() {
+export default async function Home() {
+  // Fetch video info for the home page video
+  const homeVideo = await fetchYouTubeVideoInfo('https://youtu.be/X-6PhVhturI')
+
   return (
     <>
       <main>
         <Hero />
         <HomeTrustSection />
+        {homeVideo && <HomeVideoSection video={homeVideo} />}
         <ServicesSection />
         <ReviewsCarouselClient locationName="the Highland Lakes & North Austin" />
         <BrandLogos />

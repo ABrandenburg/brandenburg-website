@@ -13,6 +13,7 @@ export interface Service {
   faqIds: string[]
   image: string
   icon: string
+  videos?: string[] // Array of YouTube video URLs
 }
 
 // Map slugs to images in public/images
@@ -155,6 +156,10 @@ export const services: Service[] = [
     faqIds: ["whq1", "whq10", "whq2", "whq3", "whq4", "whq5", "whq6", "whq7", "whq8", "whq9"],
     image: serviceImages['water-heaters'],
     icon: serviceIcons['water-heaters'],
+    videos: [
+      "https://youtu.be/8zDHDAnU6lA",
+      "https://youtu.be/JyEJghBbHWE"
+    ],
   },
   {
     name: "Water Softeners",
