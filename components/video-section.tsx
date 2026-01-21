@@ -39,23 +39,24 @@ export function VideoSection({ videos, serviceName = "Service" }: VideoSectionPr
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white rounded-2xl overflow-hidden shadow-soft"
+              className="bg-white rounded-2xl overflow-hidden shadow-soft flex flex-col"
             >
               {/* Video Title */}
               <div className="px-6 py-4 border-b border-gray-100">
-                <h3 className="font-semibold text-lg text-text-primary line-clamp-2">
+                <h3 className="font-semibold text-lg text-text-primary line-clamp-2 min-h-[3.5rem]">
                   {video.title}
                 </h3>
               </div>
               
               {/* Video Embed */}
-              <div className="relative aspect-video">
+              <div className="relative aspect-video bg-black leading-[0] flex-1">
                 <iframe
-                  src={`https://www.youtube.com/embed/${video.id}`}
+                  src={`https://www.youtube.com/embed/${video.id}?modestbranding=1&rel=0&showinfo=0&controls=1&playsinline=1`}
                   title={video.title}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
-                  className="absolute inset-0 w-full h-full"
+                  className="absolute inset-0 w-full h-full block"
+                  style={{ border: 'none' }}
                 />
               </div>
             </motion.div>

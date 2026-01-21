@@ -45,13 +45,14 @@ export function HomeVideoSection({ video }: HomeVideoSectionProps) {
           </div>
           
           {/* Video Embed */}
-          <div className="relative aspect-video">
+          <div className="relative aspect-video bg-black leading-[0]">
             <iframe
-              src={`https://www.youtube.com/embed/${video.id}`}
+              src={`https://www.youtube.com/embed/${video.id}?modestbranding=1&rel=0&showinfo=0&controls=1&playsinline=1`}
               title={video.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
-              className="absolute inset-0 w-full h-full"
+              className="absolute inset-0 w-full h-full block"
+              style={{ border: 'none' }}
             />
           </div>
         </motion.div>
