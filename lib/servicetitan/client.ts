@@ -14,9 +14,19 @@ let tokenCache: TokenCache | null = null;
  * Get a valid access token, fetching a new one if expired
  */
 export async function getAccessToken(): Promise<string> {
-    // Check if we have a valid cached token
-    if (tokenCache && tokenCache.expiresAt > Date.now() + 60000) {
+    // Check if we have a valid cached token (with 60 second buffer for safety)
+    const now = Date.now();
+    if (tokenCache && tokenCache.expiresAt > now + 60000) {
         return tokenCache.accessToken;
+    }
+
+    // If token exists but is expired or about to expire, clear it to force refresh
+    if (tokenCache && tokenCache.expiresAt <= now) {
+        console.warn('ServiceTitan token expired, fetching new token', {
+            expiredAt: new Date(tokenCache.expiresAt).toISOString(),
+            currentTime: new Date(now).toISOString(),
+        });
+        tokenCache = null;
     }
 
     const clientId = process.env.SERVICETITAN_CLIENT_ID?.trim();
@@ -43,11 +53,16 @@ export async function getAccessToken(): Promise<string> {
 
     const data = await response.json();
 
-    // Cache the token with expiration (subtract 5 minutes for safety)
+    // Cache the token with expiration (subtract 5 minutes for safety buffer)
     tokenCache = {
         accessToken: data.access_token,
         expiresAt: Date.now() + (data.expires_in - 300) * 1000,
     };
+
+    console.log('ServiceTitan token refreshed', {
+        expiresAt: new Date(tokenCache.expiresAt).toISOString(),
+        expiresIn: data.expires_in,
+    });
 
     return data.access_token;
 }
@@ -96,6 +111,22 @@ export async function serviceTitanFetch<T>(
                 console.warn(`Rate limited, waiting ${backoffDelay}ms before retry ${attempt + 1}/${maxRetries}`);
                 await delay(backoffDelay);
                 continue;
+            }
+
+            // Handle expired token (401) - clear cache and retry with fresh token
+            if (response.status === 401) {
+                const errorText = await response.text();
+                console.warn('ServiceTitan API returned 401 (Unauthorized), clearing token cache and retrying...', errorText);
+                
+                // Clear the expired token cache
+                tokenCache = null;
+                
+                // Retry the request with a fresh token
+                if (attempt < maxRetries - 1) {
+                    continue;
+                } else {
+                    throw new Error(`ServiceTitan API authentication failed: ${response.status} - ${errorText}`);
+                }
             }
 
             if (!response.ok) {
