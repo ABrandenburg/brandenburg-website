@@ -159,6 +159,16 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
 
   const url = `${config.baseUrl}/dispatch/v2/tenant/${config.tenantId}/capacity?${params}`
   
+  console.log('ServiceTitan capacity API request:', {
+    url,
+    method: 'GET',
+    tenantId: config.tenantId,
+    dateRange: {
+      startsOnOrAfter: today.toISOString().split('T')[0],
+      endsOnOrBefore: endDate.toISOString().split('T')[0],
+    },
+  })
+  
   const response = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -169,7 +179,24 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
 
   if (!response.ok) {
     const errorText = await response.text()
-    throw new Error(`ServiceTitan capacity API error: ${errorText}`)
+    console.error('ServiceTitan capacity API error:', {
+      status: response.status,
+      statusText: response.statusText,
+      url,
+      error: errorText,
+    })
+    
+    // Provide more helpful error message for 404
+    if (response.status === 404) {
+      throw new Error(
+        `ServiceTitan capacity endpoint not found (404). ` +
+        `The endpoint '/dispatch/v2/tenant/{tenantId}/capacity' may not be available in your ServiceTitan version. ` +
+        `Please verify that the Dispatch API v2 is enabled for your tenant. ` +
+        `Error: ${errorText}`
+      )
+    }
+    
+    throw new Error(`ServiceTitan capacity API error (${response.status}): ${errorText}`)
   }
 
   const data: ServiceTitanCapacityResponse = await response.json()
