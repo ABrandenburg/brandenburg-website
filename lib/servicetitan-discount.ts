@@ -1,6 +1,6 @@
 // ServiceTitan API Client for Discount Calculator
 // Uses serviceTitanFetch from client.ts for authentication and API requests
-// Version: 2026-01-21-v6 (handle response format)
+// Version: 2026-01-21-v7 (exclude weekends from capacity)
 
 import { CapacityData, getStatusFromAvailability } from './discount-calculator'
 import { serviceTitanFetch, clearTokenCache } from './servicetitan/client'
@@ -146,15 +146,36 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
     // Handle different response structures
     const slots = response.data || response.items || response.results || response
     
+    // Helper to check if a date is a weekend (Saturday = 6, Sunday = 0)
+    const isWeekend = (dateStr: string): boolean => {
+      const date = new Date(dateStr)
+      const day = date.getDay()
+      return day === 0 || day === 6 // Sunday or Saturday
+    }
+    
     if (Array.isArray(slots)) {
       for (const slot of slots) {
+        // Skip weekends - check the slot's date field
+        const slotDate = slot.date || slot.start || slot.startsOnOrAfter
+        if (slotDate && isWeekend(slotDate)) {
+          console.log('Skipping weekend slot:', slotDate)
+          continue
+        }
+        
         totalCapacity += slot.capacity || 0
         availableCapacity += slot.availableCapacity || 0
       }
+      console.log('Processed slots (excluding weekends):', { totalCapacity, availableCapacity })
     } else if (typeof slots === 'object' && slots !== null) {
-      // Maybe it's a single object with totals already calculated
-      totalCapacity = slots.totalCapacity || slots.capacity || 100
-      availableCapacity = slots.availableCapacity || slots.available || 45
+      // Single object - check if it has a date and skip if weekend
+      const slotDate = slots.date || slots.start || slots.startsOnOrAfter
+      if (slotDate && isWeekend(slotDate)) {
+        console.log('Skipping weekend (single object):', slotDate)
+        // Leave totals at 0 for weekends
+      } else {
+        totalCapacity = slots.totalCapacity || slots.capacity || 0
+        availableCapacity = slots.availableCapacity || slots.available || 0
+      }
       console.log('Response is object, not array:', slots)
     } else {
       console.warn('Unexpected response format:', typeof slots, slots)
