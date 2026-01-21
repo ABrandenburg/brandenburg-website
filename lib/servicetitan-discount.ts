@@ -151,19 +151,15 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
   const endDate = new Date()
   endDate.setDate(today.getDate() + 3)
 
-  const startsOnOrAfter = today.toISOString().split('T')[0]
-  const endsOnOrBefore = endDate.toISOString().split('T')[0]
+  // Use ISO 8601 datetime format for capacity endpoint
+  const startsOnOrAfter = today.toISOString()
+  const endsOnOrBefore = endDate.toISOString()
 
-  const params = new URLSearchParams({
-    startsOnOrAfter,
-    endsOnOrBefore,
-  })
-
-  const endpoint = `/dispatch/v2/tenant/{tenantId}/capacity?${params}`
+  const endpoint = `/dispatch/v2/tenant/{tenantId}/capacity`
   
   console.log('ServiceTitan capacity API request:', {
     endpoint,
-    method: 'GET',
+    method: 'POST',
     dateRange: {
       startsOnOrAfter,
       endsOnOrBefore,
@@ -171,9 +167,14 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
   })
   
   try {
-    const data = await serviceTitanFetch<ServiceTitanCapacityResponse>(endpoint, {
-      method: 'GET',
-    })
+    // Capacity endpoint uses POST with query parameters
+    // According to ServiceTitan docs, parameters can be in query string or body
+    const data = await serviceTitanFetch<ServiceTitanCapacityResponse>(
+      `${endpoint}?startsOnOrAfter=${encodeURIComponent(startsOnOrAfter)}&endsOnOrBefore=${encodeURIComponent(endsOnOrBefore)}`,
+      {
+        method: 'POST',
+      }
+    )
   
     // Calculate totals from all slots
     let totalCapacity = 0
