@@ -11,18 +11,34 @@ interface TokenCache {
 let tokenCache: TokenCache | null = null;
 
 /**
- * Get a valid access token, fetching a new one if expired
+ * Clear the token cache - call this when receiving 401 errors
  */
-export async function getAccessToken(): Promise<string> {
-    // Check if we have a valid cached token (with 60 second buffer for safety)
+export function clearTokenCache(): void {
+    console.log('Clearing ServiceTitan token cache');
+    tokenCache = null;
+}
+
+/**
+ * Get a valid access token, fetching a new one if expired
+ * @param forceRefresh - If true, always fetch a new token (ignore cache)
+ */
+export async function getAccessToken(forceRefresh: boolean = false): Promise<string> {
     const now = Date.now();
+    
+    // Force refresh if requested (e.g., after a 401 error)
+    if (forceRefresh) {
+        console.log('Force refreshing ServiceTitan token');
+        tokenCache = null;
+    }
+    
+    // Check if we have a valid cached token (with 60 second buffer for safety)
     if (tokenCache && tokenCache.expiresAt > now + 60000) {
         return tokenCache.accessToken;
     }
 
-    // If token exists but is expired or about to expire, clear it to force refresh
-    if (tokenCache && tokenCache.expiresAt <= now) {
-        console.warn('ServiceTitan token expired, fetching new token', {
+    // If token exists but is expired or about to expire, clear it
+    if (tokenCache) {
+        console.warn('ServiceTitan token expired or expiring soon, fetching new token', {
             expiredAt: new Date(tokenCache.expiresAt).toISOString(),
             currentTime: new Date(now).toISOString(),
         });
@@ -36,6 +52,8 @@ export async function getAccessToken(): Promise<string> {
         throw new Error('ServiceTitan credentials not configured');
     }
 
+    console.log('Fetching new ServiceTitan access token...');
+    
     const response = await fetch(SERVICETITAN_AUTH_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -59,7 +77,7 @@ export async function getAccessToken(): Promise<string> {
         expiresAt: Date.now() + (data.expires_in - 300) * 1000,
     };
 
-    console.log('ServiceTitan token refreshed', {
+    console.log('ServiceTitan token obtained successfully', {
         expiresAt: new Date(tokenCache.expiresAt).toISOString(),
         expiresIn: data.expires_in,
     });
@@ -88,12 +106,20 @@ export async function serviceTitanFetch<T>(
         throw new Error('ServiceTitan tenant ID or app key not configured');
     }
 
+    let forceTokenRefresh = false;
+    
     for (let attempt = 0; attempt < maxRetries; attempt++) {
         try {
-            const token = await getAccessToken();
+            // Force refresh on retry after 401
+            const token = await getAccessToken(forceTokenRefresh);
 
             // Replace {tenantId} placeholder in endpoint
             const resolvedEndpoint = endpoint.replace('{tenantId}', tenantId);
+
+            console.log(`ServiceTitan API request (attempt ${attempt + 1}/${maxRetries}):`, {
+                endpoint: resolvedEndpoint,
+                method: fetchOptions.method || 'GET',
+            });
 
             const response = await fetch(`${SERVICETITAN_API_BASE}${resolvedEndpoint}`, {
                 ...fetchOptions,
@@ -113,13 +139,14 @@ export async function serviceTitanFetch<T>(
                 continue;
             }
 
-            // Handle expired token (401) - clear cache and retry with fresh token
+            // Handle expired token (401) - force fresh token on next attempt
             if (response.status === 401) {
                 const errorText = await response.text();
-                console.warn('ServiceTitan API returned 401 (Unauthorized), clearing token cache and retrying...', errorText);
+                console.warn('ServiceTitan API returned 401 (Unauthorized), will force token refresh on retry...', errorText);
                 
-                // Clear the expired token cache
-                tokenCache = null;
+                // Clear cache and force refresh on next attempt
+                clearTokenCache();
+                forceTokenRefresh = true;
                 
                 // Retry the request with a fresh token
                 if (attempt < maxRetries - 1) {
