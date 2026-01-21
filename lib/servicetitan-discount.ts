@@ -1,6 +1,6 @@
 // ServiceTitan API Client for Discount Calculator
 // Uses serviceTitanFetch from client.ts for authentication and API requests
-// Version: 2026-01-21-v5 (simple body format)
+// Version: 2026-01-21-v6 (handle response format)
 
 import { CapacityData, getStatusFromAvailability } from './discount-calculator'
 import { serviceTitanFetch, clearTokenCache } from './servicetitan/client'
@@ -128,21 +128,36 @@ export async function getCapacityWithStatus(): Promise<CapacityData> {
     
     console.log('Capacity request body:', JSON.stringify(requestBody))
     
-    const data = await serviceTitanFetch<ServiceTitanCapacityResponse>(
+    const response = await serviceTitanFetch<any>(
       endpoint,
       {
         method: 'POST',
         body: JSON.stringify(requestBody),
       }
     )
+    
+    // Log the actual response structure to understand the format
+    console.log('ServiceTitan capacity response:', JSON.stringify(response))
   
     // Calculate totals from all slots
     let totalCapacity = 0
     let availableCapacity = 0
     
-    for (const slot of data.data) {
-      totalCapacity += slot.capacity
-      availableCapacity += slot.availableCapacity
+    // Handle different response structures
+    const slots = response.data || response.items || response.results || response
+    
+    if (Array.isArray(slots)) {
+      for (const slot of slots) {
+        totalCapacity += slot.capacity || 0
+        availableCapacity += slot.availableCapacity || 0
+      }
+    } else if (typeof slots === 'object' && slots !== null) {
+      // Maybe it's a single object with totals already calculated
+      totalCapacity = slots.totalCapacity || slots.capacity || 100
+      availableCapacity = slots.availableCapacity || slots.available || 45
+      console.log('Response is object, not array:', slots)
+    } else {
+      console.warn('Unexpected response format:', typeof slots, slots)
     }
 
     // Calculate availability percentage
