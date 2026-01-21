@@ -52,34 +52,54 @@ export async function getAccessToken(forceRefresh: boolean = false): Promise<str
         throw new Error('ServiceTitan credentials not configured');
     }
 
-    console.log('Fetching new ServiceTitan access token...');
+    console.log('Fetching new ServiceTitan access token...', {
+        timestamp: new Date().toISOString(),
+        clientIdPrefix: clientId.substring(0, 8),
+    });
     
     const response = await fetch(SERVICETITAN_AUTH_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: { 
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+        },
         body: new URLSearchParams({
             grant_type: 'client_credentials',
             client_id: clientId,
             client_secret: clientSecret,
         }),
+        cache: 'no-store', // Disable fetch caching
     });
 
     if (!response.ok) {
         const errorText = await response.text();
+        console.error('Failed to get ServiceTitan access token:', {
+            status: response.status,
+            error: errorText,
+        });
         throw new Error(`Failed to get access token: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
+    
+    // Log token details (first/last 4 chars only for security)
+    const tokenPreview = data.access_token 
+        ? `${data.access_token.substring(0, 4)}...${data.access_token.substring(data.access_token.length - 4)}`
+        : 'none';
 
     // Cache the token with expiration (subtract 5 minutes for safety buffer)
+    const expiresAt = Date.now() + (data.expires_in - 300) * 1000;
     tokenCache = {
         accessToken: data.access_token,
-        expiresAt: Date.now() + (data.expires_in - 300) * 1000,
+        expiresAt: expiresAt,
     };
 
     console.log('ServiceTitan token obtained successfully', {
-        expiresAt: new Date(tokenCache.expiresAt).toISOString(),
+        tokenPreview,
+        expiresAt: new Date(expiresAt).toISOString(),
         expiresIn: data.expires_in,
+        issuedAt: new Date().toISOString(),
     });
 
     return data.access_token;
@@ -110,13 +130,22 @@ export async function serviceTitanFetch<T>(
     
     for (let attempt = 0; attempt < maxRetries; attempt++) {
         try {
+            console.log(`ServiceTitan API attempt ${attempt + 1}/${maxRetries}`, {
+                forceTokenRefresh,
+                timestamp: new Date().toISOString(),
+            });
+            
             // Force refresh on retry after 401
             const token = await getAccessToken(forceTokenRefresh);
+            
+            // Log token being used (first/last 4 chars for security)
+            const tokenPreview = `${token.substring(0, 4)}...${token.substring(token.length - 4)}`;
+            console.log(`Using token: ${tokenPreview}`);
 
             // Replace {tenantId} placeholder in endpoint
             const resolvedEndpoint = endpoint.replace('{tenantId}', tenantId);
 
-            console.log(`ServiceTitan API request (attempt ${attempt + 1}/${maxRetries}):`, {
+            console.log(`ServiceTitan API request:`, {
                 endpoint: resolvedEndpoint,
                 method: fetchOptions.method || 'GET',
             });
