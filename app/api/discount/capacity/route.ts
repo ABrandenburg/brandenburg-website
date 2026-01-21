@@ -47,7 +47,7 @@ export async function GET() {
       success: true,
       data: capacityData,
       isDemoMode: false,
-      apiVersion: 'v3-2026-01-21',
+      apiVersion: 'v4-2026-01-21',
     })
   } catch (error) {
     console.error('Error fetching capacity:', error)
@@ -59,7 +59,7 @@ export async function GET() {
       data: demoData,
       isDemoMode: true,
       message: error instanceof Error ? error.message : 'API error - using demo data',
-      apiVersion: 'v3-2026-01-21',
+      apiVersion: 'v4-2026-01-21',
     })
   }
 }
