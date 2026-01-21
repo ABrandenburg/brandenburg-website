@@ -19,8 +19,8 @@ export async function getAccessToken(): Promise<string> {
         return tokenCache.accessToken;
     }
 
-    const clientId = process.env.SERVICETITAN_CLIENT_ID;
-    const clientSecret = process.env.SERVICETITAN_CLIENT_SECRET;
+    const clientId = process.env.SERVICETITAN_CLIENT_ID?.trim();
+    const clientSecret = process.env.SERVICETITAN_CLIENT_SECRET?.trim();
 
     if (!clientId || !clientSecret) {
         throw new Error('ServiceTitan credentials not configured');
@@ -66,8 +66,8 @@ export async function serviceTitanFetch<T>(
 ): Promise<T> {
     const { maxRetries = 3, retryDelayMs = 15000, ...fetchOptions } = options;
 
-    const tenantId = process.env.SERVICETITAN_TENANT_ID;
-    const appKey = process.env.SERVICETITAN_APP_KEY;
+    const tenantId = process.env.SERVICETITAN_TENANT_ID?.trim();
+    const appKey = process.env.SERVICETITAN_APP_KEY?.trim();
 
     if (!tenantId || !appKey) {
         throw new Error('ServiceTitan tenant ID or app key not configured');
@@ -242,12 +242,25 @@ export function delay(ms: number): Promise<void> {
 
 /**
  * Check if ServiceTitan is configured
+ * Validates that all required environment variables are present and non-empty
  */
 export function isServiceTitanConfigured(): boolean {
-    return !!(
-        process.env.SERVICETITAN_CLIENT_ID &&
-        process.env.SERVICETITAN_CLIENT_SECRET &&
-        process.env.SERVICETITAN_TENANT_ID &&
-        process.env.SERVICETITAN_APP_KEY
-    );
+    const hasClientId = !!process.env.SERVICETITAN_CLIENT_ID?.trim();
+    const hasClientSecret = !!process.env.SERVICETITAN_CLIENT_SECRET?.trim();
+    const hasTenantId = !!process.env.SERVICETITAN_TENANT_ID?.trim();
+    const hasAppKey = !!process.env.SERVICETITAN_APP_KEY?.trim();
+    
+    const isConfigured = hasClientId && hasClientSecret && hasTenantId && hasAppKey;
+    
+    if (!isConfigured) {
+        console.warn('ServiceTitan configuration check failed:', {
+            hasClientId,
+            hasClientSecret,
+            hasTenantId,
+            hasAppKey,
+            env: process.env.SERVICETITAN_ENV || 'production',
+        });
+    }
+    
+    return isConfigured;
 }
