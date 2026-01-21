@@ -49,11 +49,48 @@ function getServiceTitanConfig() {
 }
 
 /**
+ * Get detailed configuration status for debugging
+ */
+export function getServiceTitanConfigStatus() {
+  const config = getServiceTitanConfig()
+  
+  return {
+    hasClientId: !!config.clientId?.trim(),
+    hasClientSecret: !!config.clientSecret?.trim(),
+    hasTenantId: !!config.tenantId?.trim(),
+    hasAppKey: !!config.appKey?.trim(),
+    environment: process.env.SERVICETITAN_ENV || 'production',
+    // Show partial values for debugging (first 4 chars only)
+    clientIdPreview: config.clientId?.trim()?.substring(0, 4) || null,
+    tenantIdPreview: config.tenantId?.trim()?.substring(0, 4) || null,
+    appKeyPreview: config.appKey?.trim()?.substring(0, 4) || null,
+  }
+}
+
+/**
  * Check if ServiceTitan is configured
+ * Validates that all required environment variables are present and non-empty
  */
 export function isServiceTitanConfigured(): boolean {
   const config = getServiceTitanConfig()
-  return !!(config.clientId && config.clientSecret && config.tenantId && config.appKey)
+  const hasClientId = !!config.clientId?.trim()
+  const hasClientSecret = !!config.clientSecret?.trim()
+  const hasTenantId = !!config.tenantId?.trim()
+  const hasAppKey = !!config.appKey?.trim()
+  
+  const isConfigured = hasClientId && hasClientSecret && hasTenantId && hasAppKey
+  
+  if (!isConfigured) {
+    console.warn('ServiceTitan configuration check failed:', {
+      hasClientId,
+      hasClientSecret,
+      hasTenantId,
+      hasAppKey,
+      env: process.env.SERVICETITAN_ENV || 'production',
+    })
+  }
+  
+  return isConfigured
 }
 
 /**

@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 import { 
   getCapacityWithStatus, 
   getDemoCapacityData, 
-  isServiceTitanConfigured 
+  isServiceTitanConfigured,
+  getServiceTitanConfigStatus
 } from '@/lib/servicetitan-discount'
 
 export const dynamic = 'force-dynamic'
@@ -11,13 +12,30 @@ export async function GET() {
   try {
     // Check if ServiceTitan is configured
     if (!isServiceTitanConfigured()) {
-      // Return demo data if not configured
+      // Log detailed configuration status for debugging
+      const configStatus = getServiceTitanConfigStatus()
+      console.warn('ServiceTitan not configured. Status:', configStatus)
+      
+      // Build helpful message about missing variables
+      const missing: string[] = []
+      if (!configStatus.hasClientId) missing.push('SERVICETITAN_CLIENT_ID')
+      if (!configStatus.hasClientSecret) missing.push('SERVICETITAN_CLIENT_SECRET')
+      if (!configStatus.hasTenantId) missing.push('SERVICETITAN_TENANT_ID')
+      if (!configStatus.hasAppKey) missing.push('SERVICETITAN_APP_KEY')
+      
       const demoData = getDemoCapacityData()
       return NextResponse.json({
         success: true,
         data: demoData,
         isDemoMode: true,
-        message: 'ServiceTitan API not configured. Using demo data.',
+        message: `ServiceTitan API not configured. Missing: ${missing.join(', ')}. Using demo data.`,
+        configStatus: {
+          hasClientId: configStatus.hasClientId,
+          hasClientSecret: configStatus.hasClientSecret,
+          hasTenantId: configStatus.hasTenantId,
+          hasAppKey: configStatus.hasAppKey,
+          environment: configStatus.environment,
+        },
       })
     }
 
