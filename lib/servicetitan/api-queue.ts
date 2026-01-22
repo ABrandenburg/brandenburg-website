@@ -33,9 +33,9 @@ function getSupabaseAdmin(): SupabaseClient | null {
 /**
  * Utility to race a promise against a timeout
  */
-function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+function withTimeout<T>(promise: PromiseLike<T>, timeoutMs: number): Promise<T> {
     return Promise.race([
-        promise,
+        Promise.resolve(promise),
         new Promise<T>((_, reject) =>
             setTimeout(() => reject(new Error('Operation timed out')), timeoutMs)
         ),
