@@ -79,7 +79,8 @@ export async function acquireLock(
                 supabase
                     .from('api_locks')
                     .delete()
-                    .lt('expires_at', new Date().toISOString()),
+                    .lt('expires_at', new Date().toISOString())
+                    .then(),
                 SUPABASE_TIMEOUT_MS
             );
 
@@ -91,7 +92,8 @@ export async function acquireLock(
                         lock_key: lockKey,
                         lock_id: lockId,
                         expires_at: expiresAt.toISOString(),
-                    }),
+                    })
+                    .then(),
                 SUPABASE_TIMEOUT_MS
             );
 
@@ -137,7 +139,8 @@ export async function releaseLock(
                 .from('api_locks')
                 .delete()
                 .eq('lock_key', lockKey)
-                .eq('lock_id', lockId),
+                .eq('lock_id', lockId)
+                .then(),
             SUPABASE_TIMEOUT_MS
         );
     } catch (error) {
@@ -168,7 +171,8 @@ export async function trackApiRequest(reportId: string): Promise<void> {
                     expires_at: expiresAt.toISOString(),
                 }, {
                     onConflict: 'report_id,window_start',
-                }),
+                })
+                .then(),
             SUPABASE_TIMEOUT_MS
         );
     } catch (error) {
@@ -193,7 +197,8 @@ export async function getRequestCount(reportId: string): Promise<number> {
                 .select('request_count')
                 .eq('report_id', reportId)
                 .eq('window_start', windowStart.toISOString())
-                .single(),
+                .single()
+                .then(),
             SUPABASE_TIMEOUT_MS
         );
 
