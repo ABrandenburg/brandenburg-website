@@ -145,11 +145,6 @@ export const services: Service[] = [
     faqIds: ["wtq1", "wtq3", "wtq2", "wtq9", "wtq8", "wtq7", "wtq6", "wtq5", "wtq4"],
     image: serviceImages['water-filtration'],
     icon: serviceIcons['water-filtration'],
-    videos: [
-      "https://youtu.be/DxPBq2Un1jU",
-      "https://youtu.be/j8e67MojkHA",
-      "https://youtu.be/ONVhCJENxTY"
-    ],
   },
   {
     name: "Water Heaters",
@@ -182,6 +177,11 @@ export const services: Service[] = [
     faqIds: ["wtq1", "wtq2", "wtq3", "wtq4", "wtq5", "wtq6", "wtq7", "wtq8", "wtq9"],
     image: serviceImages['water-softeners'],
     icon: serviceIcons['water-softeners'],
+    videos: [
+      "https://youtu.be/DxPBq2Un1jU",
+      "https://youtu.be/j8e67MojkHA",
+      "https://youtu.be/ONVhCJENxTY"
+    ],
   },
   {
     name: "Water and Sewer Lines",
