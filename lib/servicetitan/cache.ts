@@ -30,9 +30,9 @@ function getSupabaseAdmin(): SupabaseClient | null {
 /**
  * Utility to race a promise against a timeout
  */
-function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+function withTimeout<T>(promise: PromiseLike<T>, timeoutMs: number): Promise<T> {
     return Promise.race([
-        promise,
+        Promise.resolve(promise),
         new Promise<T>((_, reject) =>
             setTimeout(() => reject(new Error('Cache operation timed out')), timeoutMs)
         ),
@@ -61,7 +61,8 @@ export async function getCached<T>(
                 .select('data')
                 .eq('cache_key', cacheKey)
                 .gt('expires_at', new Date().toISOString())
-                .single(),
+                .single()
+                .then(),
             CACHE_TIMEOUT_MS
         );
 
@@ -106,7 +107,8 @@ export async function setCached<T>(
                     ...metadata,
                 }, {
                     onConflict: 'cache_key',
-                }),
+                })
+                .then(),
             CACHE_TIMEOUT_MS
         );
     } catch (error) {
@@ -133,7 +135,8 @@ export async function deleteCached(
             supabase
                 .from(table)
                 .delete()
-                .eq('cache_key', cacheKey),
+                .eq('cache_key', cacheKey)
+                .then(),
             CACHE_TIMEOUT_MS
         );
     } catch (error) {
@@ -160,7 +163,7 @@ export async function clearExpiredCache(): Promise<void> {
         await Promise.all(
             tables.map(table =>
                 withTimeout(
-                    supabase.from(table).delete().lt('expires_at', now),
+                    supabase.from(table).delete().lt('expires_at', now).then(),
                     CACHE_TIMEOUT_MS
                 ).catch(() => {}) // Ignore individual table errors
             )
