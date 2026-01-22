@@ -17,6 +17,7 @@ import {
     getCachedTechnicianPeriod,
     setCachedTechnicianPeriod,
     getCachedRankings,
+    getCachedRankingsWithStale,
     setCachedRankings,
 } from './cache';
 import { getFullDateRange } from './date-utils';
@@ -348,25 +349,90 @@ function calculateLeadsSummary(
     };
 }
 
+// In-flight request deduplication to prevent thundering herd
+const inFlightRequests = new Map<string, Promise<RankedKPIs>>();
+
 /**
- * Fetch and calculate all rankings
+ * Fetch and calculate all rankings with stale-while-revalidate support
  */
 export async function calculateRankings(days: ValidPeriod): Promise<RankedKPIs> {
-    // Try cached rankings first
-    const cached = await getCachedRankings(days);
-    if (cached) {
-        return cached;
+    // Check for stale-while-revalidate
+    const { data: cachedData, isStale } = await getCachedRankingsWithStale(days);
+
+    if (cachedData && !isStale) {
+        // Fresh cache hit - return immediately
+        return cachedData;
     }
 
-    // Try to build from cached period data
+    // Check for in-flight request to deduplicate
+    const requestKey = `rankings:${days}`;
+    const existingRequest = inFlightRequests.get(requestKey);
+
+    if (existingRequest) {
+        // Another request is already fetching this data
+        if (cachedData && isStale) {
+            // Return stale data while another request refreshes
+            return cachedData;
+        }
+        // Wait for the existing request
+        return existingRequest;
+    }
+
+    // If we have stale data, return it immediately and refresh in background
+    if (cachedData && isStale) {
+        // Trigger background refresh (don't await)
+        refreshRankingsInBackground(days);
+        return cachedData;
+    }
+
+    // No cached data - need to fetch synchronously
+    return fetchRankingsWithDeduplication(days);
+}
+
+/**
+ * Refresh rankings in background (fire and forget)
+ */
+function refreshRankingsInBackground(days: ValidPeriod): void {
+    const requestKey = `rankings:${days}`;
+
+    // Check if already refreshing
+    if (inFlightRequests.has(requestKey)) return;
+
+    // Start background refresh
+    const refreshPromise = fetchAndCalculateRankings(days)
+        .finally(() => {
+            inFlightRequests.delete(requestKey);
+        });
+
+    inFlightRequests.set(requestKey, refreshPromise);
+
+    // Fire and forget - don't await
+    refreshPromise.catch(err => {
+        console.error(`Background refresh failed for ${days}-day rankings:`, err);
+    });
+}
+
+/**
+ * Fetch rankings with request deduplication
+ */
+async function fetchRankingsWithDeduplication(days: ValidPeriod): Promise<RankedKPIs> {
+    const requestKey = `rankings:${days}`;
+
+    // Try to build from cached period data first
     const rankings = await calculateRankingsFromCache(days);
     if (rankings) {
         await setCachedRankings(days, rankings);
         return rankings;
     }
 
-    // Fetch fresh data
-    return fetchAndCalculateRankings(days);
+    // Create new fetch request
+    const fetchPromise = fetchAndCalculateRankings(days)
+        .finally(() => {
+            inFlightRequests.delete(requestKey);
+        });
+
+    inFlightRequests.set(requestKey, fetchPromise);
+    return fetchPromise;
 }
 
 /**

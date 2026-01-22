@@ -1,7 +1,7 @@
 // Supabase-based caching layer for ServiceTitan data
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { CACHE_TTL, ValidPeriod } from './types';
+import { CACHE_TTL, ValidPeriod, getCacheTTL } from './types';
 
 // Cache timeout in milliseconds
 const CACHE_TIMEOUT_MS = 5000;
@@ -195,7 +195,8 @@ export async function setCachedTechnicianPeriod(
     isPrevious: boolean = false
 ): Promise<void> {
     const cacheKey = `${isPrevious ? 'previous' : 'current'}-period:v2:${days}`;
-    const ttl = isPrevious ? CACHE_TTL.PREVIOUS_PERIOD : CACHE_TTL.CURRENT_PERIOD;
+    const periodTTL = getCacheTTL(days);
+    const ttl = isPrevious ? periodTTL.previous : periodTTL.current;
 
     await setCached('technician_period_cache', cacheKey, data, ttl, {
         days,
@@ -212,11 +213,63 @@ export async function getCachedRankings(days: ValidPeriod): Promise<any | null> 
 }
 
 /**
+ * Get cached rankings including stale data (for stale-while-revalidate pattern)
+ * Returns { data, isStale } where isStale indicates if the cache has expired
+ */
+export async function getCachedRankingsWithStale(
+    days: ValidPeriod
+): Promise<{ data: any | null; isStale: boolean }> {
+    try {
+        const supabase = getSupabaseAdmin();
+        if (!supabase) return { data: null, isStale: false };
+
+        const cacheKey = `rankings:v2:${days}`;
+        const now = new Date().toISOString();
+
+        // First try to get non-expired data
+        const { data: fresh, error: freshError } = await withTimeout(
+            supabase
+                .from('rankings_cache')
+                .select('data, expires_at')
+                .eq('cache_key', cacheKey)
+                .gt('expires_at', now)
+                .single()
+                .then(),
+            CACHE_TIMEOUT_MS
+        );
+
+        if (!freshError && fresh) {
+            return { data: fresh.data, isStale: false };
+        }
+
+        // Try to get stale data (any data, even expired)
+        const { data: stale, error: staleError } = await withTimeout(
+            supabase
+                .from('rankings_cache')
+                .select('data, expires_at')
+                .eq('cache_key', cacheKey)
+                .single()
+                .then(),
+            CACHE_TIMEOUT_MS
+        );
+
+        if (!staleError && stale) {
+            return { data: stale.data, isStale: true };
+        }
+
+        return { data: null, isStale: false };
+    } catch (error) {
+        return { data: null, isStale: false };
+    }
+}
+
+/**
  * Set cached rankings
  */
 export async function setCachedRankings(days: ValidPeriod, data: any): Promise<void> {
     const cacheKey = `rankings:v2:${days}`;
-    await setCached('rankings_cache', cacheKey, data, CACHE_TTL.RANKINGS, { days });
+    const periodTTL = getCacheTTL(days);
+    await setCached('rankings_cache', cacheKey, data, periodTTL.rankings, { days });
 }
 
 /**
@@ -239,7 +292,8 @@ export async function setCachedLeads(
     isPrevious: boolean = false
 ): Promise<void> {
     const cacheKey = `leads:${days}-${isPrevious ? 'previous' : 'current'}`;
-    const ttl = isPrevious ? CACHE_TTL.PREVIOUS_PERIOD : CACHE_TTL.CURRENT_PERIOD;
+    const periodTTL = getCacheTTL(days);
+    const ttl = isPrevious ? periodTTL.previous : periodTTL.current;
 
     await setCached('leads_cache', cacheKey, data, ttl, {
         days,

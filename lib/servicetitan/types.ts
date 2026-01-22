@@ -90,13 +90,31 @@ export interface GoalConfig {
   label?: string;
 }
 
-// Cache TTL constants (in seconds)
+// Cache TTL constants (in seconds) - default values
 export const CACHE_TTL = {
   CURRENT_PERIOD: 120 * 60,      // 2 hours
   PREVIOUS_PERIOD: 24 * 60 * 60, // 24 hours
   RANKINGS: 120 * 60,            // 2 hours
   TECHNICIAN: 120 * 60,          // 2 hours
 } as const;
+
+// Period-specific cache TTLs (in seconds)
+// Longer periods have longer TTLs since data changes less frequently
+export const CACHE_TTL_BY_PERIOD: Record<number, { current: number; previous: number; rankings: number }> = {
+  7:   { current: 60 * 60,   previous: 12 * 60 * 60, rankings: 60 * 60 },    // 1h/12h/1h
+  30:  { current: 120 * 60,  previous: 24 * 60 * 60, rankings: 120 * 60 },   // 2h/24h/2h
+  90:  { current: 240 * 60,  previous: 48 * 60 * 60, rankings: 240 * 60 },   // 4h/48h/4h
+  365: { current: 360 * 60,  previous: 72 * 60 * 60, rankings: 360 * 60 },   // 6h/72h/6h
+};
+
+// Helper to get TTL for a period, falls back to defaults
+export function getCacheTTL(days: number): { current: number; previous: number; rankings: number } {
+  return CACHE_TTL_BY_PERIOD[days] || {
+    current: CACHE_TTL.CURRENT_PERIOD,
+    previous: CACHE_TTL.PREVIOUS_PERIOD,
+    rankings: CACHE_TTL.RANKINGS,
+  };
+}
 
 // Valid time periods (in days)
 export const VALID_PERIODS = [7, 30, 90, 365] as const;

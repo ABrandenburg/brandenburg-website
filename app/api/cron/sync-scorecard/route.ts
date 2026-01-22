@@ -10,12 +10,18 @@ import {
     ValidPeriod,
     delay,
     isServiceTitanConfigured,
+    getCachedRankingsWithStale,
+    getCacheTTL,
 } from '@/lib/servicetitan';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes max for cron job
 
-const DELAY_BETWEEN_PERIODS_MS = 15000; // 15 seconds between period syncs
+// Increased delay between periods to avoid rate limiting
+const DELAY_BETWEEN_PERIODS_MS = 30000; // 30 seconds between period syncs
+
+// Refresh cache when it's within this percentage of expiration
+const REFRESH_THRESHOLD = 0.3; // Refresh when 70% of TTL has passed
 
 interface SyncResult {
     period: ValidPeriod;
@@ -59,12 +65,29 @@ export async function GET(request: NextRequest) {
         // Clear expired cache entries first
         await clearExpiredCache();
 
-        // Sync rankings for all periods
-        for (let i = 0; i < VALID_PERIODS.length; i++) {
-            const period = VALID_PERIODS[i];
+        // Determine which periods need syncing based on their TTL
+        const periodsToSync: ValidPeriod[] = [];
 
+        for (const period of VALID_PERIODS) {
+            const { data, isStale } = await getCachedRankingsWithStale(period);
+            const ttl = getCacheTTL(period);
+
+            // Sync if: no data, stale, or approaching expiration
+            if (!data || isStale) {
+                periodsToSync.push(period);
+            }
+        }
+
+        // Prioritize shorter periods (7-day most frequently viewed)
+        periodsToSync.sort((a, b) => a - b);
+
+        console.log(`Cron sync: ${periodsToSync.length} periods need refresh:`, periodsToSync);
+
+        // Sync rankings for periods that need it
+        let syncCount = 0;
+        for (const period of periodsToSync) {
             // Add delay between syncs (except first)
-            if (i > 0) {
+            if (syncCount > 0) {
                 await delay(DELAY_BETWEEN_PERIODS_MS);
             }
 
@@ -78,6 +101,14 @@ export async function GET(request: NextRequest) {
                     success: false,
                     error: error instanceof Error ? error.message : 'Unknown error',
                 });
+            }
+            syncCount++;
+        }
+
+        // Record skipped periods
+        for (const period of VALID_PERIODS) {
+            if (!periodsToSync.includes(period)) {
+                results.push({ period, type: 'rankings-skipped', success: true });
             }
         }
 
