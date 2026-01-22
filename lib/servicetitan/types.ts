@@ -131,8 +131,22 @@ export const REPORT_IDS = {
 export const EXCLUDED_TECHNICIANS = [
   'Lucas Brandenburg',
   'Rebekah Sage',
-  // Add more as needed
+  'Michael Hamilton',
+  'Terry Brandenburg',
 ];
+
+// Technicians whose archived profiles should be merged with their current profile
+// Key is the canonical name, values are alternate names to merge into it
+export const MERGED_TECHNICIANS: Record<string, string[]> = {
+  'Nick McBride': [
+    // Add archived profile names here, e.g.:
+    // 'Nick McBride (Archived)',
+    // 'Nick McBride - OLD',
+  ],
+  'Brendan Whitney': [
+    // Add archived profile names here
+  ],
+};
 
 // API endpoints
 export const SERVICETITAN_AUTH_URL = 'https://auth.servicetitan.io/connect/token';

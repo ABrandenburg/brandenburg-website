@@ -162,6 +162,20 @@ export async function GET(request: NextRequest) {
                     }
                     result.rawData.sampleRow = sanitizedSample;
 
+                    // Add all rows for analysis (limited to first 20)
+                    const allRows = rawData.slice(0, 20).map((row: Record<string, any>) => {
+                        const sanitized: Record<string, any> = {};
+                        for (const [key, value] of Object.entries(row)) {
+                            if (typeof value === 'string' && value.length > 100) {
+                                sanitized[key] = `[string, ${value.length} chars]`;
+                            } else {
+                                sanitized[key] = value;
+                            }
+                        }
+                        return sanitized;
+                    });
+                    (result.rawData as any).allRows = allRows;
+
                     // Check for technician field variants
                     const technicianVariants = ['Technician', 'technician', 'TechnicianName', 'tech_name', 'Tech', 'tech'];
                     result.rawData.technicianFieldVariants = technicianVariants.filter(

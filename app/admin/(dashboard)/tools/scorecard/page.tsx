@@ -253,16 +253,6 @@ function ScorecardContent() {
                     title="Billable Hours"
                     technicians={data.hoursSold}
                 />
-                <RankingCard
-                    title="Leads"
-                    technicians={data.leads}
-                    trendSuffix=""
-                />
-                <RankingCard
-                    title="Leads Booked"
-                    technicians={data.leadsBooked}
-                    trendSuffix=""
-                />
             </div>
 
             {/* Date Range Info - Only show when not fullscreen */}

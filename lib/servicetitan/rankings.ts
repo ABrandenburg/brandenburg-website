@@ -8,6 +8,7 @@ import {
     OverallStats,
     ValidPeriod,
     EXCLUDED_TECHNICIANS,
+    MERGED_TECHNICIANS,
 } from './types';
 import {
     fetchTechnicianPerformance,
@@ -240,7 +241,100 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
     if (processed.length > 0) {
         console.log('processTechnicianData: Sample processed tech:', JSON.stringify(processed[0]));
     }
-    return processed;
+
+    // Merge archived technician profiles into their canonical profiles
+    const merged = mergeTechnicianProfiles(processed);
+    console.log(`processTechnicianData: After merging: ${merged.length} technicians`);
+
+    return merged;
+}
+
+/**
+ * Merge archived technician profiles into their canonical profiles
+ * Combines KPIs by summing numeric values
+ */
+function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[] {
+    // Build a map of alternate names to canonical names
+    const aliasToCanonical = new Map<string, string>();
+    for (const [canonical, aliases] of Object.entries(MERGED_TECHNICIANS)) {
+        for (const alias of aliases) {
+            aliasToCanonical.set(alias.toLowerCase(), canonical);
+        }
+    }
+
+    // Group technicians by canonical name
+    const grouped = new Map<string, TechnicianKPIs[]>();
+
+    for (const tech of technicians) {
+        const lowerName = tech.name.toLowerCase();
+        const canonicalName = aliasToCanonical.get(lowerName) || tech.name;
+
+        if (!grouped.has(canonicalName)) {
+            grouped.set(canonicalName, []);
+        }
+        grouped.get(canonicalName)!.push(tech);
+    }
+
+    // Merge grouped technicians
+    const result: TechnicianKPIs[] = [];
+
+    grouped.forEach((techs, canonicalName) => {
+        if (techs.length === 1) {
+            // No merging needed, but use canonical name if this was an alias
+            const tech = techs[0];
+            if (tech.name !== canonicalName) {
+                result.push({
+                    ...tech,
+                    id: slugify(canonicalName),
+                    name: canonicalName,
+                });
+            } else {
+                result.push(tech);
+            }
+        } else {
+            // Merge multiple profiles by summing their KPIs
+            console.log(`Merging ${techs.length} profiles for ${canonicalName}:`, techs.map(t => t.name));
+
+            const merged: TechnicianKPIs = {
+                id: slugify(canonicalName),
+                name: canonicalName,
+                opportunityJobAverage: 0,
+                totalRevenueCompleted: 0,
+                optionsPerOpportunity: 0,
+                closeRate: 0,
+                membershipsSold: 0,
+                membershipConversionRate: 0,
+                leads: 0,
+                leadsBooked: 0,
+                hoursSold: 0,
+            };
+
+            // Sum all values
+            for (const tech of techs) {
+                merged.totalRevenueCompleted += tech.totalRevenueCompleted;
+                merged.membershipsSold += tech.membershipsSold;
+                merged.leads += tech.leads;
+                merged.leadsBooked += tech.leadsBooked;
+                merged.hoursSold += tech.hoursSold;
+            }
+
+            // For rates and averages, use weighted average based on revenue
+            const totalRevenue = techs.reduce((sum, t) => sum + t.totalRevenueCompleted, 0);
+            if (totalRevenue > 0) {
+                for (const tech of techs) {
+                    const weight = tech.totalRevenueCompleted / totalRevenue;
+                    merged.opportunityJobAverage += tech.opportunityJobAverage * weight;
+                    merged.optionsPerOpportunity += tech.optionsPerOpportunity * weight;
+                    merged.closeRate += tech.closeRate * weight;
+                    merged.membershipConversionRate += tech.membershipConversionRate * weight;
+                }
+            }
+
+            result.push(merged);
+        }
+    });
+
+    return result;
 }
 
 /**
