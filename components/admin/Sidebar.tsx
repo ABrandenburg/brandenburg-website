@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LogOut, LayoutDashboard, FileText, Settings, BookOpen, ChevronLeft, ChevronRight, ChevronDown, BarChart3, Calculator } from 'lucide-react'
+import { LogOut, LayoutDashboard, FileText, Settings, ChevronLeft, ChevronRight, ChevronDown, BarChart3, Calculator } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SidebarProps {
@@ -70,48 +70,58 @@ export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
 
                 {/* Tools with sub-navigation */}
                 <div>
-                    <button
-                        onClick={() => !isCollapsed && setIsToolsOpen(!isToolsOpen)}
-                        className={cn(
-                            "flex items-center gap-3 px-3 py-2 w-full text-left rounded-md transition-colors",
-                            isToolsActive
-                                ? "text-white bg-slate-800"
-                                : "text-slate-300 hover:text-white hover:bg-slate-800",
-                            isCollapsed && "justify-center px-2"
-                        )}
-                        title={isCollapsed ? "Tools & Automations" : undefined}
-                    >
-                        <Settings className="w-5 h-5 flex-shrink-0" />
-                        {!isCollapsed && (
-                            <>
+                    {isCollapsed ? (
+                        <Link
+                            href="/admin/tools"
+                            className={cn(
+                                "flex items-center gap-3 px-3 py-2 w-full text-left rounded-md transition-colors justify-center px-2",
+                                isToolsActive
+                                    ? "text-white bg-slate-800"
+                                    : "text-slate-300 hover:text-white hover:bg-slate-800"
+                            )}
+                            title="Tools & Automations"
+                        >
+                            <Settings className="w-5 h-5 flex-shrink-0" />
+                        </Link>
+                    ) : (
+                        <>
+                            <button
+                                onClick={() => setIsToolsOpen(!isToolsOpen)}
+                                className={cn(
+                                    "flex items-center gap-3 px-3 py-2 w-full text-left rounded-md transition-colors",
+                                    isToolsActive
+                                        ? "text-white bg-slate-800"
+                                        : "text-slate-300 hover:text-white hover:bg-slate-800"
+                                )}
+                            >
+                                <Settings className="w-5 h-5 flex-shrink-0" />
                                 <span className="flex-1 whitespace-nowrap">Tools & Automations</span>
                                 <ChevronDown className={cn(
                                     "w-4 h-4 transition-transform",
                                     isToolsOpen && "rotate-180"
                                 )} />
-                            </>
-                        )}
-                    </button>
+                            </button>
 
-                    {!isCollapsed && isToolsOpen && (
-                        <div className="ml-4 mt-1 space-y-1 border-l border-slate-700 pl-3">
-                            <SubNavItem
-                                href="/admin/tools"
-                                icon={Calculator}
-                                label="Discount Calculator"
-                                isActive={pathname === '/admin/tools'}
-                            />
-                            <SubNavItem
-                                href="/admin/tools/scorecard"
-                                icon={BarChart3}
-                                label="Scorecard"
-                                isActive={pathname === '/admin/tools/scorecard'}
-                            />
-                        </div>
+                            {isToolsOpen && (
+                                <div className="ml-4 mt-1 space-y-1 border-l border-slate-700 pl-3">
+                                    <SubNavItem
+                                        href="/admin/tools"
+                                        icon={Calculator}
+                                        label="Discount Calculator"
+                                        isActive={pathname === '/admin/tools'}
+                                    />
+                                    <SubNavItem
+                                        href="/admin/tools/scorecard"
+                                        icon={BarChart3}
+                                        label="Scorecard"
+                                        isActive={pathname === '/admin/tools/scorecard'}
+                                    />
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
 
-                <NavItem href="/admin/training" icon={BookOpen} label="Training" isCollapsed={isCollapsed} isActive={pathname.startsWith('/admin/training')} />
             </nav>
 
             <div className="p-4 border-t border-slate-800 overflow-hidden">

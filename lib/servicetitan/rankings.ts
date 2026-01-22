@@ -56,10 +56,10 @@ export function formatCurrency(value: number): string {
 }
 
 /**
- * Format percentage value
+ * Format percentage value (rounded to whole number)
  */
 export function formatPercentage(value: number): string {
-    return `${value.toFixed(1)}%`;
+    return `${Math.round(value)}%`;
 }
 
 /**
@@ -114,13 +114,14 @@ const NUMERIC_INDEX_MAP: Record<string, number> = {
     totalRevenueCompleted: 3,
     opportunityJobAverage: 4,
     closeRate: 5,
+    sales: 6, // Number of completed sales/opportunities
     optionsPerOpportunity: 8,
     leads: 13,
     leadsBooked: 14,
     membershipsSold: 15,
     // These may need adjustment based on actual report columns
     membershipConversionRate: 7,
-    hoursSold: 6,
+    hoursSold: 12, // Moved from 6 since 6 is now sales
 };
 
 /**
@@ -234,6 +235,7 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 leads: parseInt(getValueFromRow(row, 'leads', ['Leads', 'TotalLeads', 'Total Leads'])) || 0,
                 leadsBooked: parseInt(getValueFromRow(row, 'leadsBooked', ['LeadsBooked', 'Leads Booked'])) || 0,
                 hoursSold: parseFloat(getValueFromRow(row, 'hoursSold', ['SoldHours', 'Sold Hours', 'HoursSold', 'Hours Sold', 'BillableHours'])) || 0,
+                sales: parseInt(getValueFromRow(row, 'sales', ['Sales', 'Opportunities', 'Jobs', 'JobsCompleted'])) || 0,
             };
         });
 
@@ -252,33 +254,40 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
 /**
  * Merge archived technician profiles into their canonical profiles
  * Combines KPIs by summing numeric values
+ * Also merges duplicate entries with the same name (case-insensitive)
  */
 function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[] {
-    // Build a map of alternate names to canonical names
+    // Build a map of alternate names to canonical names (lowercase -> canonical)
     const aliasToCanonical = new Map<string, string>();
     for (const [canonical, aliases] of Object.entries(MERGED_TECHNICIANS)) {
+        // Add the canonical name itself (lowercase) -> canonical
+        aliasToCanonical.set(canonical.toLowerCase(), canonical);
+        // Add all aliases
         for (const alias of aliases) {
             aliasToCanonical.set(alias.toLowerCase(), canonical);
         }
     }
 
-    // Group technicians by canonical name
-    const grouped = new Map<string, TechnicianKPIs[]>();
+    // Group technicians by canonical name (case-insensitive)
+    // Key is lowercase name, value is { canonicalName, techs }
+    const grouped = new Map<string, { canonicalName: string; techs: TechnicianKPIs[] }>();
 
     for (const tech of technicians) {
         const lowerName = tech.name.toLowerCase();
+        // Check if this name maps to a canonical name, otherwise use original
         const canonicalName = aliasToCanonical.get(lowerName) || tech.name;
+        const groupKey = canonicalName.toLowerCase();
 
-        if (!grouped.has(canonicalName)) {
-            grouped.set(canonicalName, []);
+        if (!grouped.has(groupKey)) {
+            grouped.set(groupKey, { canonicalName, techs: [] });
         }
-        grouped.get(canonicalName)!.push(tech);
+        grouped.get(groupKey)!.techs.push(tech);
     }
 
     // Merge grouped technicians
     const result: TechnicianKPIs[] = [];
 
-    grouped.forEach((techs, canonicalName) => {
+    grouped.forEach(({ canonicalName, techs }) => {
         if (techs.length === 1) {
             // No merging needed, but use canonical name if this was an alias
             const tech = techs[0];
@@ -307,6 +316,7 @@ function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[
                 leads: 0,
                 leadsBooked: 0,
                 hoursSold: 0,
+                sales: 0,
             };
 
             // Sum all values
@@ -316,6 +326,7 @@ function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[
                 merged.leads += tech.leads;
                 merged.leadsBooked += tech.leadsBooked;
                 merged.hoursSold += tech.hoursSold;
+                merged.sales += tech.sales;
             }
 
             // For rates and averages, use weighted average based on revenue
@@ -600,6 +611,7 @@ function buildRankings(
         hoursSold: rankBy(technicians, previousTechnicians, 'hoursSold', formatDecimal),
         leads: rankBy(technicians, previousTechnicians, 'leads', formatNumber),
         leadsBooked: rankBy(technicians, previousTechnicians, 'leadsBooked', formatNumber),
+        sales: rankBy(technicians, previousTechnicians, 'sales', formatNumber),
         leadsSummary: calculateLeadsSummary(technicians, previousTechnicians),
         overallStats: calculateOverallStats(technicians, previousTechnicians),
         dateRange: {
@@ -652,6 +664,7 @@ function getMockRankings(days: ValidPeriod): RankedKPIs {
         hoursSold: generateRankings(formatDecimal, 120, 20),
         leads: generateRankings(formatNumber, 50, 10),
         leadsBooked: generateRankings(formatNumber, 40, 8),
+        sales: generateRankings(formatNumber, 15, 3),
         leadsSummary: {
             totalLeads: 180,
             bookedLeads: 145,

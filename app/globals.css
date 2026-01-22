@@ -67,6 +67,13 @@
   [role="button"] {
     @apply transition-all duration-300 ease-smooth;
   }
+
+  /* Hide admin sidebar in fullscreen mode */
+  :fullscreen aside,
+  :-webkit-full-screen aside,
+  :-moz-full-screen aside {
+    display: none !important;
+  }
 }
 
 @layer components {

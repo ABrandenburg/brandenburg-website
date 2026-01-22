@@ -211,6 +211,11 @@ function ScorecardContent() {
                     }}
                 />
                 <RankingCard
+                    title="Sales"
+                    technicians={data.sales}
+                    showTotal={true}
+                />
+                <RankingCard
                     title="Close Rate"
                     technicians={data.closeRate}
                     trendSuffix=" pts"

@@ -20,6 +20,7 @@ export interface TechnicianKPIs {
   leads: number;
   leadsBooked: number;
   hoursSold: number;
+  sales: number; // number of completed sales/opportunities
 }
 
 // Ranked technician (with trends and formatted values)
@@ -72,6 +73,7 @@ export interface RankedKPIs {
   hoursSold: RankedTechnician[];
   leads: RankedTechnician[];
   leadsBooked: RankedTechnician[];
+  sales: RankedTechnician[];
   leadsSummary?: LeadsSummary;
   overallStats?: OverallStats;
   dateRange: {
@@ -133,6 +135,7 @@ export const EXCLUDED_TECHNICIANS = [
   'Rebekah Sage',
   'Michael Hamilton',
   'Terry Brandenburg',
+  'Landon Christian',
 ];
 
 // Technicians whose archived profiles should be merged with their current profile

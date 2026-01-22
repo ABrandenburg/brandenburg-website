@@ -3,13 +3,23 @@ import { db } from '@/lib/db'
 import { submissions } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { format } from 'date-fns'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 export const revalidate = 0
+
+function formatPhoneNumber(phone: string): string {
+    const digits = phone.replace(/\D/g, '')
+    if (digits.length === 10) {
+        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
+    }
+    if (digits.length === 11 && digits[0] === '1') {
+        return `(${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`
+    }
+    return phone
+}
 
 // Allowed emails for submissions access
 const ALLOWED_EMAILS = [
@@ -103,9 +113,17 @@ export default async function SubmissionDetailsPage({ params }: { params: { id: 
                             </span>
                         </div>
                         <div>
-                            <h3 className="text-sm font-medium text-slate-500 mb-1">Date</h3>
+                            <h3 className="text-sm font-medium text-slate-500 mb-1">Date (CST)</h3>
                             <div className="text-slate-900">
-                                {submission.createdAt ? format(submission.createdAt, 'MMM d, yyyy h:mm a') : 'N/A'}
+                                {submission.createdAt ? new Date(submission.createdAt).toLocaleString('en-US', {
+                                    timeZone: 'America/Chicago',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                    hour12: true
+                                }) : 'N/A'}
                             </div>
                         </div>
                         <div>
@@ -119,7 +137,7 @@ export default async function SubmissionDetailsPage({ params }: { params: { id: 
                             <div className="space-y-1 text-sm">
                                 <div className="font-medium text-slate-900">{payload.fullName}</div>
                                 <div className="text-slate-600"><a href={`mailto:${payload.email}`} className="hover:underline">{payload.email}</a></div>
-                                <div className="text-slate-600"><a href={`tel:${payload.phone}`} className="hover:underline">{payload.phone}</a></div>
+                                <div className="text-slate-600"><a href={`tel:${payload.phone}`} className="hover:underline">{formatPhoneNumber(payload.phone)}</a></div>
                             </div>
                         </div>
                     </CardContent>
