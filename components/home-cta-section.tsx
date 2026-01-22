@@ -31,7 +31,7 @@ export function HomeCTASection() {
 
           {/* Headline */}
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
-            Don&apos;t Let A Small Leak Become A Big Problem.
+            Family-Owned Service You Can Count On - Day or Night
           </h2>
 
           {/* Subheadline */}

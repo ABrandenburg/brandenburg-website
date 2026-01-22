@@ -434,8 +434,8 @@ function calculateLeadsSummary(
     technicians: TechnicianKPIs[],
     previousTechnicians: TechnicianKPIs[] | null
 ): LeadsSummary {
-    const totalLeads = technicians.reduce((sum, t) => sum + t.leads, 0);
-    const bookedLeads = technicians.reduce((sum, t) => sum + t.leadsBooked, 0);
+    const totalLeads = technicians?.reduce((sum, t) => sum + t.leads, 0) ?? 0;
+    const bookedLeads = technicians?.reduce((sum, t) => sum + t.leadsBooked, 0) ?? 0;
     const bookingRate = totalLeads > 0 ? (bookedLeads / totalLeads) * 100 : 0;
 
     const previousTotalLeads = previousTechnicians?.reduce((sum, t) => sum + t.leads, 0);
@@ -583,7 +583,7 @@ async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs>
     await setCachedTechnicianPeriod(days, previousData, true);
 
     const technicians = processTechnicianData(currentData);
-    const previousTechnicians = processTechnicianData(previousData);
+    const previousTechnicians = previousData ? processTechnicianData(previousData) : null;
 
     const rankings = buildRankings(technicians, previousTechnicians, days);
     await setCachedRankings(days, rankings);

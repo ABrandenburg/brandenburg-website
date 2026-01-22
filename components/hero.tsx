@@ -46,7 +46,7 @@ export function Hero() {
               animate="animate"
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              Three Generations of Reliability & Trust
+              Three Generations of Brandenburg Family Expertise
             </motion.p>
 
             {/* Main Headline */}
@@ -57,7 +57,7 @@ export function Hero() {
               animate="animate"
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Expert Plumbers in the Highland Lakes & Austin
+              Highland Lakes Plumbing Problems? We've Been Solving Them for 27 Years.
             </motion.h1>
 
             {/* Value Props */}

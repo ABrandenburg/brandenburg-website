@@ -17,7 +17,7 @@ export const locations: Location[] = [
   {
     name: "Burnet",
     slug: "burnet",
-    mainHeaderText: "Expert Burnet Plumbers You Can Trust",
+    mainHeaderText: "Burnet's Hometown Plumbers - Headquartered Here Since 1997",
     locationBlurb: "As our hometown and headquarters since 1997, we know Burnet inside and out. From historic downtown homes to new construction, we handle it all with the care your neighbors deserve.",
     servicesHeader: "What We Do in Burnet, TX",
     faqHeader: "What Our Burnet Customers Are Asking",
@@ -28,7 +28,7 @@ export const locations: Location[] = [
   {
     name: "Cedar Park",
     slug: "cedar-park",
-    mainHeaderText: "Expert Cedar Park Plumbers You Can Trust",
+    mainHeaderText: "Cedar Park Plumbing - Hard Water Solutions for Growing Neighborhoods",
     locationBlurb: "Serving Cedar Park's growing community with reliable plumbing solutions. Whether you're in Buttercup Creek, Twin Creeks, or anywhere in between, we provide fast, professional service.",
     servicesHeader: "What We Do in Cedar Park, TX",
     faqHeader: "What Our Cedar Park Customers Are Asking",
@@ -39,7 +39,7 @@ export const locations: Location[] = [
   {
     name: "Georgetown",
     slug: "georgetown",
-    mainHeaderText: "Expert Georgetown Plumbers You Can Trust",
+    mainHeaderText: "Georgetown & Sun City Plumbing Experts - Hard Water Solutions",
     locationBlurb: "From the historic downtown square to Sun City and beyond, we understand Georgetown's unique plumbing needs. Specializing in hard water solutions for Williamson County homes.",
     servicesHeader: "What We Do in Georgetown, TX",
     faqHeader: "What Our Georgetown Customers Are Asking",
@@ -50,7 +50,7 @@ export const locations: Location[] = [
   {
     name: "Granite Shoals",
     slug: "granite-shoals",
-    mainHeaderText: "Expert Granite Shoals Plumbers You Can Trust",
+    mainHeaderText: "Granite Shoals Lakeside Plumbing - Water Treatment & Hard Water Experts",
     locationBlurb: "Your lakeside living deserves expert plumbing care. We serve Granite Shoals homeowners with water treatment, emergency repairs, and everything in between for your Highland Lakes home.",
     servicesHeader: "What We Do in Granite Shoals, TX",
     faqHeader: "What Our Granite Shoals Customers Are Asking",
@@ -61,7 +61,7 @@ export const locations: Location[] = [
   {
     name: "Horseshoe Bay",
     slug: "horseshoe-bay",
-    mainHeaderText: "Expert Horseshoe Bay Plumbers You Can Trust",
+    mainHeaderText: "Horseshoe Bay Luxury Home Plumbing - PRV & Hard Water Specialists",
     locationBlurb: "Premium plumbing service for Horseshoe Bay's luxury homes and resorts. We understand the high standards of lakefront living and deliver service to match.",
     servicesHeader: "What We Do in Horseshoe Bay, TX",
     faqHeader: "What Our Horseshoe Bay Customers Are Asking",
@@ -72,7 +72,7 @@ export const locations: Location[] = [
   {
     name: "Kingsland",
     slug: "kingsland",
-    mainHeaderText: "Upfront Pricing from the Most Trustworthy Plumbers in Kingsland",
+    mainHeaderText: "Lake LBJ Plumbing - Hard Water Solutions for Vacation & Year-Round Homes",
     locationImage: "https://cdn.prod.website-files.com/68a62de002dc64b9a3eb5ec8/695d327a22f92724372b58d0_kingsland.jpeg",
     locationBlurb: "Serving Kingsland and the Lake LBJ community with expert plumbing since 1997. From vacation homes to year-round residents, we keep your water flowing.",
     servicesHeader: "What We Do in Kingsland, TX",
@@ -84,7 +84,7 @@ export const locations: Location[] = [
   {
     name: "Leander",
     slug: "leander",
-    mainHeaderText: "Expert Leander Plumbers You Can Trust",
+    mainHeaderText: "Leander Plumbing for New & Established Homes - Hard Water Solutions",
     locationBlurb: "As Leander continues to grow, we're here to serve both established neighborhoods and new developments. Fast response times and reliable service for one of Texas's fastest-growing cities.",
     servicesHeader: "What We Do in Leander, TX",
     faqHeader: "What Our Leander Customers Are Asking",
@@ -95,7 +95,7 @@ export const locations: Location[] = [
   {
     name: "Liberty Hill",
     slug: "liberty-hill",
-    mainHeaderText: "Expert Liberty Hill Plumbers You Can Trust",
+    mainHeaderText: "Liberty Hill Plumbing - Well Water & Hard Water Specialists",
     locationBlurb: "From ranches to new subdivisions, we serve Liberty Hill's diverse community with dependable plumbing. Well water expertise and hard water solutions for rural and suburban homes alike.",
     servicesHeader: "What We Do in Liberty Hill, TX",
     faqHeader: "What Our Liberty Hill Customers Are Asking",
@@ -106,7 +106,7 @@ export const locations: Location[] = [
   {
     name: "Marble Falls",
     slug: "marble-falls",
-    mainHeaderText: "Expert Marble Falls Plumbers You Can Trust",
+    mainHeaderText: "Marble Falls' Local Plumber - Your Neighbors Since 1997",
     locationBlurb: "Headquartered right here in Marble Falls, we're your neighbors. From Main Street businesses to lakeside homes, we provide the responsive, quality service our community deserves.",
     servicesHeader: "What We Do in Marble Falls, TX",
     faqHeader: "What Our Marble Falls Customers Are Asking",
@@ -117,7 +117,7 @@ export const locations: Location[] = [
   {
     name: "Round Rock",
     slug: "round-rock",
-    mainHeaderText: "Expert Round Rock Plumbers You Can Trust",
+    mainHeaderText: "Round Rock Plumbing from Old Settlers to Teravista - Hard Water Experts",
     locationBlurb: "Serving Round Rock from Old Settlers to Teravista and everywhere in between. We bring Highland Lakes reliability and expertise to Williamson County's largest city.",
     servicesHeader: "What We Do in Round Rock, TX",
     faqHeader: "What Our Round Rock Customers Are Asking",
@@ -128,7 +128,7 @@ export const locations: Location[] = [
   {
     name: "Spicewood",
     slug: "spicewood",
-    mainHeaderText: "Expert Spicewood Plumbers You Can Trust",
+    mainHeaderText: "Hill Country Plumbing Experts - Well Water & Septic Specialists",
     locationBlurb: "Nestled in the Hill Country, Spicewood homes face unique challenges from well water to septic systems. We bring decades of local expertise to every job.",
     servicesHeader: "What We Do in Spicewood, TX",
     faqHeader: "What Our Spicewood Customers Are Asking",

@@ -43,10 +43,10 @@ export function HomeTrustSection() {
           className="text-center mb-12"
         >
           <p className="text-brand-blue text-sm lg:text-base font-semibold uppercase tracking-wider mb-4">
-            Why Choose Us
+            Picayune&apos;s Locals Love Us Winner • 2024 & 2025
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-4">
-            The Highland Lakes & North Austin&apos;s Most Trusted Plumbers
+            Three Generations of Highland Lakes & North Austin Plumbing Excellence
           </h2>
           <p className="text-lg text-text-muted max-w-2xl mx-auto">
             When you choose Brandenburg Plumbing, you&apos;re choosing a team that treats your home like our own.

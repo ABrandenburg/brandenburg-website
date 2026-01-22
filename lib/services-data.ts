@@ -48,7 +48,7 @@ export const services: Service[] = [
   {
     name: "Bathroom Plumbing",
     slug: "bathroom",
-    servicesHeader: "Expert Bathroom Plumbing Service You Can Trust",
+    servicesHeader: "Complete Bathroom Plumbing Solutions - From Leaky Faucets to Full Remodels",
     metaTitle: "Bathroom Plumbing | Brandenburg Plumbing",
     metaDesc: "Expert bathroom plumbing services — from faucet repairs to full remodels. Serving your home with reliable care.",
     trustHeader: "Why Homeowners Trust Us for Bathroom Plumbing",
@@ -62,7 +62,7 @@ export const services: Service[] = [
   {
     name: "Clogged Pipes and Drain Cleaning",
     slug: "clogged-pipes",
-    servicesHeader: "Expert Clogged Pipes and Drain Cleaning Service You Can Trust",
+    servicesHeader: "Fast Drain Clearing with Hydro Jetting & Video Camera Inspection",
     metaTitle: "Drain Cleaning & Clogged Pipes | Brandenburg Plumbing",
     metaDesc: "Fast, effective drain cleaning and clogged pipe repairs. We clear blockages and keep your plumbing flowing.",
     trustHeader: "Why Homeowners Trust Us for Clogged Pipes and Drain Cleaning",
@@ -76,7 +76,7 @@ export const services: Service[] = [
   {
     name: "Commercial Services",
     slug: "commercial",
-    servicesHeader: "Expert Commercial Plumbing Service You Can Trust",
+    servicesHeader: "Licensed Commercial Plumbing with Custom Service Agreements",
     metaTitle: "Commercial Plumbing | Brandenburg Plumbing",
     metaDesc: "Licensed commercial plumbers for offices, restaurants, and facilities. Trusted solutions that keep your business running.",
     trustHeader: "Why Companies Trust Us for Commercial Plumbing",
@@ -90,7 +90,7 @@ export const services: Service[] = [
   {
     name: "Emergency Services",
     slug: "emergency",
-    servicesHeader: "Expert Emergency Service You Can Trust",
+    servicesHeader: "24/7 Emergency Plumbing - Because Pipe Bursts Don't Wait",
     metaTitle: "Emergency Plumbing | Brandenburg Plumbing",
     metaDesc: "24/7 emergency plumbing services for leaks, clogs, and more. Rapid response to protect your home from damage.",
     trustHeader: "Why Homeowners Trust Us for Emergency Plumbing",
@@ -104,7 +104,7 @@ export const services: Service[] = [
   {
     name: "Kitchen Plumbing",
     slug: "kitchen",
-    servicesHeader: "Expert Kitchen Plumbing Service You Can Trust",
+    servicesHeader: "Keep Your Kitchen Flowing - Faucets, Disposals & Dishwasher Lines",
     metaTitle: "Kitchen Plumbing | Brandenburg Plumbing",
     metaDesc: "Full-service kitchen plumbing — sink, faucet, dishwasher, and pipe repairs from trusted local pros.",
     trustHeader: "Why Homeowners Trust Us for Kitchen Plumbing",
@@ -118,7 +118,7 @@ export const services: Service[] = [
   {
     name: "Toilets",
     slug: "toilets",
-    servicesHeader: "Expert Toilets Service You Can Trust",
+    servicesHeader: "Same-Day Toilet Repair & High-Efficiency Replacements",
     metaTitle: "Toilet Repair & Installation | Brandenburg Plumbing",
     metaDesc: "Fast toilet repairs, replacements, and installations in Burnet County. Fix clogs, leaks, and running toilets. Same-day service available.",
     trustHeader: "Why Homeowners Trust Us for Toilets",
@@ -135,7 +135,7 @@ export const services: Service[] = [
   {
     name: "Water Filtration",
     slug: "water-filtration",
-    servicesHeader: "Expert Water Filtration Service You Can Trust",
+    servicesHeader: "Cleaner, Better-Tasting Water Throughout Your Home",
     metaTitle: "Water Filtration Systems | Brandenburg Plumbing",
     metaDesc: "Enjoy cleaner, better-tasting water with whole-house filtration, reverse osmosis, and under-sink filters. Expert installation in Highland Lakes area.",
     trustHeader: "Why Homeowners Trust Us for Water Filtration",
@@ -149,7 +149,7 @@ export const services: Service[] = [
   {
     name: "Water Heaters",
     slug: "water-heaters",
-    servicesHeader: "Expert Water Heater Installation, Repairs and Servicing",
+    servicesHeader: "Tank & Tankless Water Heaters - Never Run Out of Hot Water Again",
     metaTitle: "Water Heater Repair & Installation | Brandenburg Plumbing",
     metaDesc: "Tank and tankless water heater repair, installation, and replacement. Emergency service available 24/7. Serving Burnet County since 1997.",
     trustHeader: "Why Homeowners Trust Us for Water Heaters",
@@ -167,7 +167,7 @@ export const services: Service[] = [
   {
     name: "Water Softeners",
     slug: "water-softeners",
-    servicesHeader: "Expert Water Softener Installation, Repairs and Servicing",
+    servicesHeader: "Protect Your Pipes & Appliances from Highland Lakes Hard Water",
     metaTitle: "Water Softener Installation & Repair | Brandenburg Plumbing",
     metaDesc: "Combat hard water damage with professional water softener installation. Protect your pipes and appliances from mineral buildup. Free water testing available.",
     trustHeader: "Why Homeowners Trust Us for Water Softeners",
@@ -186,7 +186,7 @@ export const services: Service[] = [
   {
     name: "Water and Sewer Lines",
     slug: "water-drain-lines",
-    servicesHeader: "Expert Water and Sewer Lines Service You Can Trust",
+    servicesHeader: "Trenchless Main Line Repair - Fix Underground Pipes Without Destroying Your Yard",
     metaTitle: "Water & Sewer Line Repair | Brandenburg Plumbing",
     metaDesc: "Main water and sewer line repair and replacement using video inspection and trenchless technology. Minimal yard disruption. Licensed and insured.",
     trustHeader: "Why Homeowners Trust Us for Water and Sewer Lines",
