@@ -128,6 +128,9 @@ export const services: Service[] = [
     faqIds: ["toq1", "toq2", "toq3", "toq4", "toq5"],
     image: serviceImages['toilets'],
     icon: serviceIcons['toilets'],
+    videos: [
+      "https://youtu.be/_etVq76uBfc"
+    ],
   },
   {
     name: "Water Filtration",
@@ -142,6 +145,11 @@ export const services: Service[] = [
     faqIds: ["wtq1", "wtq3", "wtq2", "wtq9", "wtq8", "wtq7", "wtq6", "wtq5", "wtq4"],
     image: serviceImages['water-filtration'],
     icon: serviceIcons['water-filtration'],
+    videos: [
+      "https://youtu.be/DxPBq2Un1jU",
+      "https://youtu.be/j8e67MojkHA",
+      "https://youtu.be/ONVhCJENxTY"
+    ],
   },
   {
     name: "Water Heaters",
