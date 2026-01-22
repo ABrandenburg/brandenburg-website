@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { HoneypotField } from '@/components/ui/honeypot-field'
+import { Turnstile } from '@/components/ui/turnstile'
 
 interface FormData {
   fullName: string
@@ -30,6 +32,8 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileError, setTurnstileError] = useState(false)
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -64,6 +68,12 @@ export function ContactForm() {
       return
     }
 
+    // Require Turnstile verification (unless in dev without keys)
+    if (!turnstileToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      setSubmitError('Please complete the security verification')
+      return
+    }
+
     setIsSubmitting(true)
 
     try {
@@ -72,7 +82,10 @@ export function ContactForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          turnstileToken,
+        }),
       })
 
       if (!response.ok) {
@@ -234,6 +247,26 @@ export function ContactForm() {
           />
           {errors.message && (
             <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+          )}
+        </div>
+
+        {/* Honeypot Field (invisible to humans) */}
+        <HoneypotField />
+
+        {/* Turnstile Widget */}
+        <div className="pt-2">
+          <Turnstile
+            onVerify={(token) => {
+              setTurnstileToken(token)
+              setTurnstileError(false)
+            }}
+            onError={() => setTurnstileError(true)}
+            onExpire={() => setTurnstileToken(null)}
+          />
+          {turnstileError && (
+            <p className="mt-2 text-sm text-red-500">
+              Security verification failed. Please refresh and try again.
+            </p>
           )}
         </div>
 

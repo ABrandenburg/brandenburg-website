@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import { db } from '@/lib/db'
 import { submissions } from '@/lib/schema'
+import { validateHoneypot, HONEYPOT_FIELD_NAME } from '@/lib/spam-prevention/honeypot'
+import { verifyTurnstileToken } from '@/lib/spam-prevention/turnstile'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -10,11 +12,43 @@ interface ContactFormData {
   email: string
   phone: string
   message: string
+  turnstileToken?: string
+  [HONEYPOT_FIELD_NAME]?: string
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: ContactFormData = await request.json()
+
+    // 1. Honeypot validation (silent fail)
+    const honeypotResult = validateHoneypot(body[HONEYPOT_FIELD_NAME])
+    if (honeypotResult.isSpam) {
+      console.log('Spam detected via honeypot:', honeypotResult.reason)
+      return NextResponse.json({ message: 'Email sent successfully' }, { status: 200 })
+    }
+
+    // 2. Turnstile verification
+    if (body.turnstileToken) {
+      const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] ||
+        request.headers.get('x-real-ip') ||
+        undefined
+
+      const turnstileResult = await verifyTurnstileToken(body.turnstileToken, clientIp)
+
+      if (!turnstileResult.success) {
+        return NextResponse.json(
+          { error: 'Security verification failed' },
+          { status: 400 }
+        )
+      }
+    } else if (process.env.TURNSTILE_SECRET_KEY) {
+      // Turnstile is configured but no token provided
+      return NextResponse.json(
+        { error: 'Security verification required' },
+        { status: 400 }
+      )
+    }
+
     const { fullName, email, phone, message } = body
 
     // Validate required fields

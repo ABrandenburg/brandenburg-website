@@ -8,11 +8,14 @@ import { Loader2, CheckCircle, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { jobApplicationSchema, type JobApplicationValues } from "@/lib/schemas/job-application-schema"
 import { submitApplication } from "@/app/actions/submit-application"
+import { HoneypotField } from "@/components/ui/honeypot-field"
+import { Turnstile } from "@/components/ui/turnstile"
 
 export function CareersForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const defaultValues: Partial<JobApplicationValues> = {
     // Shared
@@ -56,8 +59,24 @@ export function CareersForm() {
   const onSubmit = async (data: JobApplicationValues) => {
     setIsSubmitting(true)
     setError(null)
+
+    // Get honeypot value from DOM (not managed by react-hook-form)
+    const formElement = document.querySelector('form')
+    const honeypotValue = formElement?.querySelector<HTMLInputElement>('[name="website_url"]')?.value
+
+    // Validate Turnstile token
+    if (!turnstileToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      setError('Please complete the security verification')
+      setIsSubmitting(false)
+      return
+    }
+
     try {
-      const result = await submitApplication(data)
+      const result = await submitApplication({
+        ...data,
+        website_url: honeypotValue,
+        turnstileToken,
+      } as any)
       if (result.success) {
         setIsSubmitted(true)
         form.reset()
@@ -437,6 +456,18 @@ export function CareersForm() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Honeypot Field (invisible to humans) */}
+        <HoneypotField />
+
+        {/* Turnstile Widget */}
+        <div className="pt-2">
+          <Turnstile
+            onVerify={(token) => setTurnstileToken(token)}
+            onError={() => setError('Security verification failed. Please refresh and try again.')}
+            onExpire={() => setTurnstileToken(null)}
+          />
+        </div>
 
         {error && (
           <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm">
