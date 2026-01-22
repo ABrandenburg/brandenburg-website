@@ -83,6 +83,45 @@ function calculateTrend(current: number, previous: number): number {
 }
 
 /**
+ * Check if data uses numeric indices (ServiceTitan sometimes returns array-like objects)
+ */
+function hasNumericIndices(row: any): boolean {
+    const keys = Object.keys(row);
+    return keys.length > 0 && keys.every(k => /^\d+$/.test(k));
+}
+
+/**
+ * Map numeric indices to field names based on ServiceTitan report structure
+ * Index mapping for Technician Performance Report (3017):
+ *   0: Department/Team
+ *   1: Technician name
+ *   2: (unknown)
+ *   3: Total Revenue Completed
+ *   4: Opportunity Job Average
+ *   5: Close Rate (as decimal, e.g., 0.83 = 83%)
+ *   6: Opportunities count
+ *   7: (unknown rate)
+ *   8: Options per Opportunity
+ *   9-12: (various metrics)
+ *   13: Leads
+ *   14: Leads Booked
+ *   15: Memberships Sold
+ */
+const NUMERIC_INDEX_MAP: Record<string, number> = {
+    technician: 1,
+    totalRevenueCompleted: 3,
+    opportunityJobAverage: 4,
+    closeRate: 5,
+    optionsPerOpportunity: 8,
+    leads: 13,
+    leadsBooked: 14,
+    membershipsSold: 15,
+    // These may need adjustment based on actual report columns
+    membershipConversionRate: 7,
+    hoursSold: 6,
+};
+
+/**
  * Find a field in a row using case-insensitive matching
  * Returns the actual field name if found, null otherwise
  */
@@ -107,8 +146,25 @@ function getFieldValue(row: any, fieldNames: string[], defaultValue: any = 0): a
 }
 
 /**
+ * Get value from a row that might use numeric indices
+ */
+function getValueFromRow(row: any, numericKey: string, namedFields: string[], defaultValue: any = 0): any {
+    // If using numeric indices, use the mapped index
+    if (hasNumericIndices(row)) {
+        const index = NUMERIC_INDEX_MAP[numericKey];
+        if (index !== undefined && row[index.toString()] !== undefined) {
+            return row[index.toString()];
+        }
+        return defaultValue;
+    }
+    // Otherwise use named field matching
+    return getFieldValue(row, namedFields, defaultValue);
+}
+
+/**
  * Process raw ServiceTitan data into TechnicianKPIs
  * Uses flexible field matching to handle variations in ServiceTitan API response
+ * Supports both named fields and numeric index formats
  */
 function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
     if (!rawData || rawData.length === 0) {
@@ -119,13 +175,23 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
     // Log field names from first row for debugging
     const sampleRow = rawData[0];
     const fieldNames = Object.keys(sampleRow);
+    const isNumericFormat = hasNumericIndices(sampleRow);
+
     console.log('processTechnicianData: Available fields:', fieldNames);
+    console.log('processTechnicianData: Using numeric index format:', isNumericFormat);
 
-    // Find the technician name field
-    const technicianField = findField(sampleRow, ['Technician', 'TechnicianName', 'technician', 'Tech']);
+    // Determine technician field
+    let technicianField: string | null = null;
+    if (isNumericFormat) {
+        technicianField = NUMERIC_INDEX_MAP.technician.toString();
+        console.log(`processTechnicianData: Using numeric index ${technicianField} for technician name`);
+    } else {
+        technicianField = findField(sampleRow, ['Technician', 'TechnicianName', 'technician', 'Tech']);
+    }
 
-    if (!technicianField) {
+    if (!technicianField || sampleRow[technicianField] === undefined) {
         console.error('processTechnicianData: No technician field found. Available fields:', fieldNames);
+        console.error('processTechnicianData: Sample row:', JSON.stringify(sampleRow));
         return [];
     }
 
@@ -133,29 +199,46 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
 
     const processed = rawData
         .filter(row => {
-            const techName = row[technicianField];
-            if (!techName) return false;
+            const techName = row[technicianField!];
+            if (!techName || typeof techName !== 'string') return false;
             if (shouldExclude(techName)) return false;
             return true;
         })
         .map(row => {
-            const techName = row[technicianField];
+            const techName = row[technicianField!];
+
+            // Get close rate and convert from decimal to percentage if needed
+            let closeRate = parseFloat(getValueFromRow(row, 'closeRate', ['CloseRate', 'Close Rate', 'OpportunityCloseRate', 'Opportunity Close Rate'])) || 0;
+            // If close rate is less than 1, it's likely a decimal (0.83 = 83%)
+            if (closeRate > 0 && closeRate <= 1) {
+                closeRate = closeRate * 100;
+            }
+
+            // Get membership conversion rate and convert from decimal if needed
+            let membershipConversionRate = parseFloat(getValueFromRow(row, 'membershipConversionRate', ['MembershipConversionRate', 'Membership Conversion Rate'])) || 0;
+            if (membershipConversionRate > 0 && membershipConversionRate <= 1) {
+                membershipConversionRate = membershipConversionRate * 100;
+            }
+
             return {
                 id: slugify(techName),
                 name: techName,
-                opportunityJobAverage: parseFloat(getFieldValue(row, ['OpportunityJobAverage', 'Opportunity Job Average']) || 0),
-                totalRevenueCompleted: parseFloat(getFieldValue(row, ['TotalRevenueCompleted', 'Total Revenue Completed', 'Revenue', 'TotalRevenue']) || 0),
-                optionsPerOpportunity: parseFloat(getFieldValue(row, ['OptionsPerOpportunity', 'Options Per Opportunity']) || 0),
-                closeRate: parseFloat(getFieldValue(row, ['CloseRate', 'Close Rate', 'OpportunityCloseRate', 'Opportunity Close Rate']) || 0),
-                membershipsSold: parseInt(getFieldValue(row, ['MembershipsSold', 'Memberships Sold']) || 0),
-                membershipConversionRate: parseFloat(getFieldValue(row, ['MembershipConversionRate', 'Membership Conversion Rate']) || 0),
-                leads: parseInt(getFieldValue(row, ['Leads', 'TotalLeads', 'Total Leads']) || 0),
-                leadsBooked: parseInt(getFieldValue(row, ['LeadsBooked', 'Leads Booked']) || 0),
-                hoursSold: parseFloat(getFieldValue(row, ['SoldHours', 'Sold Hours', 'HoursSold', 'Hours Sold', 'BillableHours']) || 0),
+                opportunityJobAverage: parseFloat(getValueFromRow(row, 'opportunityJobAverage', ['OpportunityJobAverage', 'Opportunity Job Average'])) || 0,
+                totalRevenueCompleted: parseFloat(getValueFromRow(row, 'totalRevenueCompleted', ['TotalRevenueCompleted', 'Total Revenue Completed', 'Revenue', 'TotalRevenue'])) || 0,
+                optionsPerOpportunity: parseFloat(getValueFromRow(row, 'optionsPerOpportunity', ['OptionsPerOpportunity', 'Options Per Opportunity'])) || 0,
+                closeRate,
+                membershipsSold: parseInt(getValueFromRow(row, 'membershipsSold', ['MembershipsSold', 'Memberships Sold'])) || 0,
+                membershipConversionRate,
+                leads: parseInt(getValueFromRow(row, 'leads', ['Leads', 'TotalLeads', 'Total Leads'])) || 0,
+                leadsBooked: parseInt(getValueFromRow(row, 'leadsBooked', ['LeadsBooked', 'Leads Booked'])) || 0,
+                hoursSold: parseFloat(getValueFromRow(row, 'hoursSold', ['SoldHours', 'Sold Hours', 'HoursSold', 'Hours Sold', 'BillableHours'])) || 0,
             };
         });
 
     console.log(`processTechnicianData: Processed ${processed.length} technicians from ${rawData.length} rows`);
+    if (processed.length > 0) {
+        console.log('processTechnicianData: Sample processed tech:', JSON.stringify(processed[0]));
+    }
     return processed;
 }
 
