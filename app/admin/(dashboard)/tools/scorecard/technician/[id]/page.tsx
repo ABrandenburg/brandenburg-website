@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Header, KPICard, KPICardSkeleton } from '@/components/scorecard';
 import { Card, CardContent } from '@/components/ui/card';
-import { AlertCircle, ArrowLeft, Trophy, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { AlertCircle, AlertTriangle, ArrowLeft, Trophy, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ValidPeriod } from '@/lib/servicetitan/types';
 
@@ -24,7 +24,7 @@ interface TechnicianData {
     metrics: TechnicianMetric[];
 }
 
-export default function TechnicianDetailPage() {
+function TechnicianDetailContent() {
     const params = useParams();
     const searchParams = useSearchParams();
     const technicianId = params.id as string;
@@ -110,11 +110,27 @@ export default function TechnicianDetailPage() {
                     ))}
                 </div>
             ) : data ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {data.metrics.map((metric) => (
-                        <MetricCard key={metric.label} metric={metric} />
-                    ))}
-                </div>
+                data.metrics.length === 0 ? (
+                    <Card className="bg-amber-50 border-amber-200">
+                        <CardContent className="p-6">
+                            <div className="flex items-start gap-4">
+                                <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0" />
+                                <div>
+                                    <h3 className="font-semibold text-amber-800">No Metrics Available</h3>
+                                    <p className="text-amber-700 mt-1">
+                                        No performance data found for this technician in the selected period.
+                                    </p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {data.metrics.map((metric) => (
+                            <MetricCard key={metric.label} metric={metric} />
+                        ))}
+                    </div>
+                )
             ) : null}
         </div>
     );
@@ -213,5 +229,29 @@ function TrendIndicator({ trend }: { trend: number }) {
             )}
             {isPositive ? '+' : ''}{trend}%
         </span>
+    );
+}
+
+function TechnicianDetailSkeleton() {
+    return (
+        <div className="space-y-6">
+            <Header
+                title="Loading..."
+                description="Performance metrics"
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(9)].map((_, i) => (
+                    <KPICardSkeleton key={i} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default function TechnicianDetailPage() {
+    return (
+        <Suspense fallback={<TechnicianDetailSkeleton />}>
+            <TechnicianDetailContent />
+        </Suspense>
     );
 }

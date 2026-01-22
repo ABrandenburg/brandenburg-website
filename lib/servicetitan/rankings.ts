@@ -6,18 +6,11 @@ import {
     RankedKPIs,
     LeadsSummary,
     OverallStats,
-    GrossMarginData,
-    CancelledJob,
-    CancelledJobsSummary,
     ValidPeriod,
     EXCLUDED_TECHNICIANS,
 } from './types';
 import {
     fetchTechnicianPerformance,
-    fetchSoldHours,
-    fetchGrossMarginReport,
-    fetchCancelledJobs,
-    fetchLeadsData,
     isServiceTitanConfigured,
 } from './client';
 import {
@@ -25,12 +18,8 @@ import {
     setCachedTechnicianPeriod,
     getCachedRankings,
     setCachedRankings,
-    getCachedGrossMargin,
-    setCachedGrossMargin,
-    getCachedCancelledJobs,
-    setCachedCancelledJobs,
 } from './cache';
-import { getDateRange, getPreviousDateRange, getFullDateRange, formatDateForAPI } from './date-utils';
+import { getFullDateRange } from './date-utils';
 import { executeWithLock } from './api-queue';
 
 /**
@@ -94,24 +83,80 @@ function calculateTrend(current: number, previous: number): number {
 }
 
 /**
+ * Find a field in a row using case-insensitive matching
+ * Returns the actual field name if found, null otherwise
+ */
+function findField(row: any, fieldNames: string[]): string | null {
+    const keys = Object.keys(row);
+    for (const fieldName of fieldNames) {
+        // Try exact match first
+        if (row[fieldName] !== undefined) return fieldName;
+        // Try case-insensitive match
+        const match = keys.find(k => k.toLowerCase() === fieldName.toLowerCase());
+        if (match) return match;
+    }
+    return null;
+}
+
+/**
+ * Get a value from a row using flexible field matching
+ */
+function getFieldValue(row: any, fieldNames: string[], defaultValue: any = 0): any {
+    const field = findField(row, fieldNames);
+    return field ? row[field] : defaultValue;
+}
+
+/**
  * Process raw ServiceTitan data into TechnicianKPIs
+ * Uses flexible field matching to handle variations in ServiceTitan API response
  */
 function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
-    return rawData
-        .filter(row => row.Technician && !shouldExclude(row.Technician))
-        .map(row => ({
-            id: slugify(row.Technician),
-            name: row.Technician,
-            opportunityJobAverage: parseFloat(row.OpportunityJobAverage || 0),
-            totalRevenueCompleted: parseFloat(row.TotalRevenueCompleted || row.Revenue || 0),
-            optionsPerOpportunity: parseFloat(row.OptionsPerOpportunity || 0),
-            closeRate: parseFloat(row.CloseRate || row.OpportunityCloseRate || 0),
-            membershipsSold: parseInt(row.MembershipsSold || 0),
-            membershipConversionRate: parseFloat(row.MembershipConversionRate || 0),
-            leads: parseInt(row.Leads || 0),
-            leadsBooked: parseInt(row.LeadsBooked || 0),
-            hoursSold: parseFloat(row.SoldHours || row.HoursSold || 0),
-        }));
+    if (!rawData || rawData.length === 0) {
+        console.log('processTechnicianData: No raw data received');
+        return [];
+    }
+
+    // Log field names from first row for debugging
+    const sampleRow = rawData[0];
+    const fieldNames = Object.keys(sampleRow);
+    console.log('processTechnicianData: Available fields:', fieldNames);
+
+    // Find the technician name field
+    const technicianField = findField(sampleRow, ['Technician', 'TechnicianName', 'technician', 'Tech']);
+
+    if (!technicianField) {
+        console.error('processTechnicianData: No technician field found. Available fields:', fieldNames);
+        return [];
+    }
+
+    console.log(`processTechnicianData: Using technician field: "${technicianField}"`);
+
+    const processed = rawData
+        .filter(row => {
+            const techName = row[technicianField];
+            if (!techName) return false;
+            if (shouldExclude(techName)) return false;
+            return true;
+        })
+        .map(row => {
+            const techName = row[technicianField];
+            return {
+                id: slugify(techName),
+                name: techName,
+                opportunityJobAverage: parseFloat(getFieldValue(row, ['OpportunityJobAverage', 'Opportunity Job Average']) || 0),
+                totalRevenueCompleted: parseFloat(getFieldValue(row, ['TotalRevenueCompleted', 'Total Revenue Completed', 'Revenue', 'TotalRevenue']) || 0),
+                optionsPerOpportunity: parseFloat(getFieldValue(row, ['OptionsPerOpportunity', 'Options Per Opportunity']) || 0),
+                closeRate: parseFloat(getFieldValue(row, ['CloseRate', 'Close Rate', 'OpportunityCloseRate', 'Opportunity Close Rate']) || 0),
+                membershipsSold: parseInt(getFieldValue(row, ['MembershipsSold', 'Memberships Sold']) || 0),
+                membershipConversionRate: parseFloat(getFieldValue(row, ['MembershipConversionRate', 'Membership Conversion Rate']) || 0),
+                leads: parseInt(getFieldValue(row, ['Leads', 'TotalLeads', 'Total Leads']) || 0),
+                leadsBooked: parseInt(getFieldValue(row, ['LeadsBooked', 'Leads Booked']) || 0),
+                hoursSold: parseFloat(getFieldValue(row, ['SoldHours', 'Sold Hours', 'HoursSold', 'Hours Sold', 'BillableHours']) || 0),
+            };
+        });
+
+    console.log(`processTechnicianData: Processed ${processed.length} technicians from ${rawData.length} rows`);
+    return processed;
 }
 
 /**
@@ -324,121 +369,6 @@ function buildRankings(
     };
 }
 
-/**
- * Fetch gross margin data
- */
-export async function fetchGrossMargin(days: ValidPeriod): Promise<GrossMarginData> {
-    const cached = await getCachedGrossMargin(days);
-    if (cached) return cached;
-
-    if (!isServiceTitanConfigured()) {
-        return getMockGrossMargin();
-    }
-
-    const dateRange = getDateRange(days);
-
-    const rawData = await executeWithLock(
-        'gross-margin',
-        '3874',
-        () => fetchGrossMarginReport(dateRange.startDate, dateRange.endDate)
-    );
-
-    const data = processGrossMarginData(rawData);
-    await setCachedGrossMargin(days, data);
-
-    return data;
-}
-
-/**
- * Process gross margin raw data
- */
-function processGrossMarginData(rawData: any[]): GrossMarginData {
-    // Aggregate data from all rows
-    let totalRevenue = 0;
-    let laborCost = 0;
-    let materialCost = 0;
-    let equipmentCost = 0;
-
-    rawData.forEach(row => {
-        totalRevenue += parseFloat(row.Revenue || row.TotalRevenue || 0);
-        laborCost += parseFloat(row.LaborCost || 0);
-        materialCost += parseFloat(row.MaterialCost || row.PartsCost || 0);
-        equipmentCost += parseFloat(row.EquipmentCost || 0);
-    });
-
-    const totalCost = laborCost + materialCost + equipmentCost;
-    const grossMargin = totalRevenue - totalCost;
-    const grossMarginPercent = totalRevenue > 0 ? (grossMargin / totalRevenue) * 100 : 0;
-
-    return {
-        totalRevenue,
-        laborCost,
-        materialCost,
-        equipmentCost,
-        totalCost,
-        grossMargin,
-        grossMarginPercent,
-        laborPercent: totalRevenue > 0 ? (laborCost / totalRevenue) * 100 : 0,
-        materialPercent: totalRevenue > 0 ? (materialCost / totalRevenue) * 100 : 0,
-        equipmentPercent: totalRevenue > 0 ? (equipmentCost / totalRevenue) * 100 : 0,
-    };
-}
-
-/**
- * Fetch cancelled jobs
- */
-export async function fetchCancelledJobsSummary(
-    days: ValidPeriod,
-    offsetDays: number = 0
-): Promise<CancelledJobsSummary> {
-    const cached = await getCachedCancelledJobs(days, offsetDays);
-    if (cached) return cached;
-
-    if (!isServiceTitanConfigured()) {
-        return getMockCancelledJobs();
-    }
-
-    const dateRange = getDateRange(days);
-    const startDate = new Date(dateRange.startDate);
-    const endDate = new Date(dateRange.endDate);
-
-    const rawData = await executeWithLock(
-        'cancelled-jobs',
-        'jobs',
-        () => fetchCancelledJobs(
-            formatDateForAPI(startDate),
-            formatDateForAPI(endDate)
-        )
-    );
-
-    const jobs: CancelledJob[] = rawData.map((job: any) => ({
-        id: job.id,
-        number: job.number || job.jobNumber || '',
-        customerName: job.customer?.name || job.customerName || 'Unknown',
-        cancelReason: job.cancelReason || job.cancellationReason || 'No reason provided',
-        cancelledOn: job.cancelledOn || job.modifiedOn || '',
-        scheduledDate: job.scheduledDate || job.start || '',
-        jobType: job.type?.name || job.jobType || '',
-    }));
-
-    // Group by reason
-    const byReason: Record<string, number> = {};
-    jobs.forEach(job => {
-        const reason = job.cancelReason || 'Unknown';
-        byReason[reason] = (byReason[reason] || 0) + 1;
-    });
-
-    const summary: CancelledJobsSummary = {
-        total: jobs.length,
-        jobs,
-        byReason,
-    };
-
-    await setCachedCancelledJobs(days, summary, offsetDays);
-
-    return summary;
-}
-
 // Mock data for development without ServiceTitan credentials
 
 function getMockRankings(days: ValidPeriod): RankedKPIs {
@@ -511,49 +441,3 @@ function getMockRankings(days: ValidPeriod): RankedKPIs {
     };
 }
 
-function getMockGrossMargin(): GrossMarginData {
-    return {
-        totalRevenue: 425000,
-        laborCost: 127500,
-        materialCost: 85000,
-        equipmentCost: 42500,
-        totalCost: 255000,
-        grossMargin: 170000,
-        grossMarginPercent: 40,
-        laborPercent: 30,
-        materialPercent: 20,
-        equipmentPercent: 10,
-    };
-}
-
-function getMockCancelledJobs(): CancelledJobsSummary {
-    return {
-        total: 12,
-        jobs: [
-            {
-                id: 1,
-                number: 'JOB-1234',
-                customerName: 'John Customer',
-                cancelReason: 'Customer Request',
-                cancelledOn: new Date().toISOString(),
-                scheduledDate: new Date().toISOString(),
-                jobType: 'Service Call',
-            },
-            {
-                id: 2,
-                number: 'JOB-1235',
-                customerName: 'Jane Customer',
-                cancelReason: 'Scheduling Conflict',
-                cancelledOn: new Date().toISOString(),
-                scheduledDate: new Date().toISOString(),
-                jobType: 'Installation',
-            },
-        ],
-        byReason: {
-            'Customer Request': 5,
-            'Scheduling Conflict': 3,
-            'No Show': 2,
-            'Other': 2,
-        },
-    };
-}

@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import {
     Header,
     RankingCard,
@@ -12,15 +11,22 @@ import {
     ScorecardSkeleton,
 } from '@/components/scorecard';
 import { Card, CardContent } from '@/components/ui/card';
-import { DollarSign, TrendingUp, Target, Users, AlertCircle, PieChart } from 'lucide-react';
+import { DollarSign, TrendingUp, Target, Users, AlertCircle, AlertTriangle } from 'lucide-react';
 import type { RankedKPIs, ValidPeriod } from '@/lib/servicetitan/types';
 import { formatCurrency, formatPercentage, formatDecimal } from '@/lib/servicetitan/rankings';
 
-export default function ScorecardPage() {
+interface ApiMeta {
+    dataSource: string;
+    technicianCount: number;
+    warnings: string[];
+}
+
+function ScorecardContent() {
     const searchParams = useSearchParams();
     const days = (parseInt(searchParams.get('days') || '7', 10) as ValidPeriod) || 7;
 
     const [data, setData] = useState<RankedKPIs | null>(null);
+    const [meta, setMeta] = useState<ApiMeta | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +34,7 @@ export default function ScorecardPage() {
         async function fetchData() {
             setLoading(true);
             setError(null);
+            setMeta(null);
 
             try {
                 const response = await fetch(`/api/scorecard/rankings?days=${days}`);
@@ -38,6 +45,7 @@ export default function ScorecardPage() {
                 }
 
                 setData(result.data);
+                setMeta(result.meta || null);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'An error occurred');
             } finally {
@@ -84,6 +92,48 @@ export default function ScorecardPage() {
         return null;
     }
 
+    // Check for empty data
+    const technicianCount = data.totalRevenueCompleted?.length || 0;
+    if (technicianCount === 0) {
+        return (
+            <div className="space-y-6">
+                <Header
+                    title="Technician Scorecard"
+                    description="Performance rankings and KPIs"
+                />
+                <Card className="bg-amber-50 border-amber-200">
+                    <CardContent className="p-6">
+                        <div className="flex items-start gap-4">
+                            <AlertTriangle className="w-6 h-6 text-amber-600 shrink-0" />
+                            <div>
+                                <h3 className="font-semibold text-amber-800">No Technician Data</h3>
+                                <p className="text-amber-700 mt-1">
+                                    The scorecard loaded successfully but contains no technician data for the last {days} days.
+                                </p>
+                                {meta?.warnings && meta.warnings.length > 0 && (
+                                    <ul className="text-amber-600 text-sm mt-2 list-disc list-inside">
+                                        {meta.warnings.map((warning, i) => (
+                                            <li key={i}>{warning}</li>
+                                        ))}
+                                    </ul>
+                                )}
+                                <p className="text-amber-600 text-sm mt-3">
+                                    Possible causes: No completed jobs in date range, ServiceTitan API issue, or data sync pending.
+                                </p>
+                                <button
+                                    onClick={() => window.location.reload()}
+                                    className="mt-4 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors text-sm"
+                                >
+                                    Retry
+                                </button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
     // Calculate trends for KPI cards
     const revenueTrend = data.overallStats?.previousTotalRevenue
         ? Math.round(((data.overallStats.totalRevenue - data.overallStats.previousTotalRevenue) / data.overallStats.previousTotalRevenue) * 100)
@@ -102,15 +152,6 @@ export default function ScorecardPage() {
             <Header
                 title="Technician Scorecard"
                 description={`Performance rankings for the last ${days} days`}
-                actions={
-                    <Link
-                        href={`/admin/tools/scorecard/gm?days=${days}`}
-                        className="flex items-center gap-2 px-4 py-2 bg-brand-blue text-white rounded-lg hover:bg-brand-blue/90 transition-colors text-sm font-medium"
-                    >
-                        <PieChart className="w-4 h-4" />
-                        Gross Margin
-                    </Link>
-                }
             />
 
             {/* Summary KPIs */}
@@ -224,5 +265,13 @@ export default function ScorecardPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function ScorecardPage() {
+    return (
+        <Suspense fallback={<ScorecardSkeleton />}>
+            <ScorecardContent />
+        </Suspense>
     );
 }

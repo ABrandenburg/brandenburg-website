@@ -2,7 +2,7 @@
 // GET /api/scorecard/rankings?days=7|30|90|365
 
 import { NextRequest, NextResponse } from 'next/server';
-import { calculateRankings, VALID_PERIODS, ValidPeriod } from '@/lib/servicetitan';
+import { calculateRankings, VALID_PERIODS, ValidPeriod, isServiceTitanConfigured } from '@/lib/servicetitan';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,10 +25,29 @@ export async function GET(request: NextRequest) {
 
         const rankings = await calculateRankings(days);
 
+        // Build warnings array
+        const warnings: string[] = [];
+        const technicianCount = rankings.totalRevenueCompleted?.length || 0;
+
+        if (technicianCount === 0) {
+            warnings.push('No technician data found for the selected period');
+            if (!isServiceTitanConfigured()) {
+                warnings.push('ServiceTitan is not configured - check environment variables');
+            }
+        }
+
+        // Determine data source
+        const dataSource = !isServiceTitanConfigured() ? 'mock' : 'servicetitan';
+
         return NextResponse.json({
             success: true,
             days,
             data: rankings,
+            meta: {
+                dataSource,
+                technicianCount,
+                warnings,
+            },
             timestamp: new Date().toISOString(),
         });
     } catch (error) {
