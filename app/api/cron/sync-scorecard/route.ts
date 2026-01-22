@@ -5,8 +5,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
     calculateRankings,
-    fetchGrossMargin,
-    fetchCancelledJobsSummary,
     clearExpiredCache,
     VALID_PERIODS,
     ValidPeriod,
@@ -77,39 +75,6 @@ export async function GET(request: NextRequest) {
                 results.push({
                     period,
                     type: 'rankings',
-                    success: false,
-                    error: error instanceof Error ? error.message : 'Unknown error',
-                });
-            }
-        }
-
-        // Sync gross margin for commonly used periods
-        const gmPeriods: ValidPeriod[] = [7, 30, 90];
-        for (const period of gmPeriods) {
-            await delay(DELAY_BETWEEN_PERIODS_MS);
-            try {
-                await fetchGrossMargin(period);
-                results.push({ period, type: 'gross-margin', success: true });
-            } catch (error) {
-                results.push({
-                    period,
-                    type: 'gross-margin',
-                    success: false,
-                    error: error instanceof Error ? error.message : 'Unknown error',
-                });
-            }
-        }
-
-        // Sync cancelled jobs for commonly used periods
-        for (const period of gmPeriods) {
-            await delay(DELAY_BETWEEN_PERIODS_MS);
-            try {
-                await fetchCancelledJobsSummary(period);
-                results.push({ period, type: 'cancelled-jobs', success: true });
-            } catch (error) {
-                results.push({
-                    period,
-                    type: 'cancelled-jobs',
                     success: false,
                     error: error instanceof Error ? error.message : 'Unknown error',
                 });

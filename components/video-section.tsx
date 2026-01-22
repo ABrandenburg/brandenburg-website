@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import type { VideoInfo } from '@/lib/youtube-utils'
+import { LiteYouTubeEmbed } from './lite-youtube-embed'
 
 interface VideoSectionProps {
   videos: VideoInfo[]
@@ -49,16 +50,7 @@ export function VideoSection({ videos, serviceName = "Service" }: VideoSectionPr
               </div>
               
               {/* Video Embed */}
-              <div className="relative aspect-video bg-black leading-[0] flex-1">
-                <iframe
-                  src={`https://www.youtube.com/embed/${video.id}?modestbranding=1&rel=0&showinfo=0&controls=1&playsinline=1`}
-                  title={video.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="absolute inset-0 w-full h-full block"
-                  style={{ border: 'none' }}
-                />
-              </div>
+              <LiteYouTubeEmbed videoId={video.id} title={video.title} />
             </motion.div>
           ))}
         </div>

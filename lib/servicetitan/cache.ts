@@ -1,28 +1,48 @@
 // Supabase-based caching layer for ServiceTitan data
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { CACHE_TTL, ValidPeriod } from './types';
 
+// Cache timeout in milliseconds
+const CACHE_TIMEOUT_MS = 5000;
+
+// Supabase client singleton
+let supabaseAdmin: SupabaseClient | null = null;
+
 // Create Supabase client with service role for server-side operations
-function getSupabaseAdmin() {
+function getSupabaseAdmin(): SupabaseClient | null {
+    if (supabaseAdmin) return supabaseAdmin;
+    
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!url || !serviceRoleKey) {
-        throw new Error('Supabase credentials not configured');
+        console.warn('Supabase credentials not configured - caching disabled');
+        return null;
     }
 
-    return createClient(url, serviceRoleKey, {
+    supabaseAdmin = createClient(url, serviceRoleKey, {
         auth: { persistSession: false },
     });
+    return supabaseAdmin;
+}
+
+/**
+ * Utility to race a promise against a timeout
+ */
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+    return Promise.race([
+        promise,
+        new Promise<T>((_, reject) =>
+            setTimeout(() => reject(new Error('Cache operation timed out')), timeoutMs)
+        ),
+    ]);
 }
 
 type CacheTable =
     | 'technician_period_cache'
     | 'rankings_cache'
-    | 'leads_cache'
-    | 'gross_margin_cache'
-    | 'cancelled_jobs_cache';
+    | 'leads_cache';
 
 /**
  * Get cached data from Supabase
@@ -33,13 +53,17 @@ export async function getCached<T>(
 ): Promise<T | null> {
     try {
         const supabase = getSupabaseAdmin();
+        if (!supabase) return null;
 
-        const { data, error } = await supabase
-            .from(table)
-            .select('data')
-            .eq('cache_key', cacheKey)
-            .gt('expires_at', new Date().toISOString())
-            .single();
+        const { data, error } = await withTimeout(
+            supabase
+                .from(table)
+                .select('data')
+                .eq('cache_key', cacheKey)
+                .gt('expires_at', new Date().toISOString())
+                .single(),
+            CACHE_TIMEOUT_MS
+        );
 
         if (error || !data) {
             return null;
@@ -47,7 +71,11 @@ export async function getCached<T>(
 
         return data.data as T;
     } catch (error) {
-        console.error(`Cache read error for ${cacheKey}:`, error);
+        // Only log if it's not a timeout or missing table
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (!errorMessage.includes('timed out') && !errorMessage.includes('does not exist')) {
+            console.error(`Cache read error for ${cacheKey}:`, error);
+        }
         return null;
     }
 }
@@ -64,20 +92,29 @@ export async function setCached<T>(
 ): Promise<void> {
     try {
         const supabase = getSupabaseAdmin();
+        if (!supabase) return;
+        
         const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
 
-        await supabase
-            .from(table)
-            .upsert({
-                cache_key: cacheKey,
-                data: data,
-                expires_at: expiresAt.toISOString(),
-                ...metadata,
-            }, {
-                onConflict: 'cache_key',
-            });
+        await withTimeout(
+            supabase
+                .from(table)
+                .upsert({
+                    cache_key: cacheKey,
+                    data: data,
+                    expires_at: expiresAt.toISOString(),
+                    ...metadata,
+                }, {
+                    onConflict: 'cache_key',
+                }),
+            CACHE_TIMEOUT_MS
+        );
     } catch (error) {
-        console.error(`Cache write error for ${cacheKey}:`, error);
+        // Silently ignore cache write errors - data will be fetched fresh
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        if (!errorMessage.includes('timed out') && !errorMessage.includes('does not exist')) {
+            console.error(`Cache write error for ${cacheKey}:`, error);
+        }
     }
 }
 
@@ -90,13 +127,17 @@ export async function deleteCached(
 ): Promise<void> {
     try {
         const supabase = getSupabaseAdmin();
+        if (!supabase) return;
 
-        await supabase
-            .from(table)
-            .delete()
-            .eq('cache_key', cacheKey);
+        await withTimeout(
+            supabase
+                .from(table)
+                .delete()
+                .eq('cache_key', cacheKey),
+            CACHE_TIMEOUT_MS
+        );
     } catch (error) {
-        console.error(`Cache delete error for ${cacheKey}:`, error);
+        // Silently ignore delete errors
     }
 }
 
@@ -106,23 +147,26 @@ export async function deleteCached(
 export async function clearExpiredCache(): Promise<void> {
     try {
         const supabase = getSupabaseAdmin();
+        if (!supabase) return;
+        
         const now = new Date().toISOString();
 
         const tables: CacheTable[] = [
             'technician_period_cache',
             'rankings_cache',
             'leads_cache',
-            'gross_margin_cache',
-            'cancelled_jobs_cache',
         ];
 
         await Promise.all(
             tables.map(table =>
-                supabase.from(table).delete().lt('expires_at', now)
+                withTimeout(
+                    supabase.from(table).delete().lt('expires_at', now),
+                    CACHE_TIMEOUT_MS
+                ).catch(() => {}) // Ignore individual table errors
             )
         );
     } catch (error) {
-        console.error('Error clearing expired cache:', error);
+        // Silently ignore errors
     }
 }
 
@@ -200,44 +244,3 @@ export async function setCachedLeads(
     });
 }
 
-/**
- * Get cached gross margin data
- */
-export async function getCachedGrossMargin(days: ValidPeriod): Promise<any | null> {
-    const cacheKey = `gross-margin:${days}`;
-    return getCached('gross_margin_cache', cacheKey);
-}
-
-/**
- * Set cached gross margin data
- */
-export async function setCachedGrossMargin(days: ValidPeriod, data: any): Promise<void> {
-    const cacheKey = `gross-margin:${days}`;
-    await setCached('gross_margin_cache', cacheKey, data, CACHE_TTL.CURRENT_PERIOD, { days });
-}
-
-/**
- * Get cached cancelled jobs
- */
-export async function getCachedCancelledJobs(
-    days: ValidPeriod,
-    offsetDays: number = 0
-): Promise<any | null> {
-    const cacheKey = `cancelled-jobs:${days}-offset${offsetDays}`;
-    return getCached('cancelled_jobs_cache', cacheKey);
-}
-
-/**
- * Set cached cancelled jobs
- */
-export async function setCachedCancelledJobs(
-    days: ValidPeriod,
-    data: any,
-    offsetDays: number = 0
-): Promise<void> {
-    const cacheKey = `cancelled-jobs:${days}-offset${offsetDays}`;
-    await setCached('cancelled_jobs_cache', cacheKey, data, CACHE_TTL.CURRENT_PERIOD, {
-        days,
-        offset_days: offsetDays,
-    });
-}

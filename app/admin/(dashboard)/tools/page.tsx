@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { DiscountCalculator } from '@/components/admin/discount-calculator'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { BarChart3, PieChart, Users, TrendingUp } from 'lucide-react'
+import { BarChart3, Users, TrendingUp } from 'lucide-react'
 
 export default function ToolsPage() {
   return (
@@ -72,27 +72,6 @@ export default function ToolsPage() {
               </Card>
             </Link>
 
-            <Link href="/admin/tools/scorecard/gm">
-              <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
-                <CardHeader className="flex flex-row items-center gap-4">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <PieChart className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-base">Gross Margin</CardTitle>
-                    <CardDescription className="text-sm">
-                      Financial analysis and cost breakdown
-                    </CardDescription>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-4 text-sm text-slate-500">
-                    <span>Revenue vs. costs</span>
-                    <span>Cancelled jobs</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
           </div>
         </div>
       </div>

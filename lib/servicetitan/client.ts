@@ -254,45 +254,6 @@ export async function fetchSoldHours(
 }
 
 /**
- * Fetch gross margin report data (Report ID: 3874)
- */
-export async function fetchGrossMarginReport(
-    startDate: string,
-    endDate: string
-): Promise<any[]> {
-    const response = await serviceTitanFetch<{ data: any[] }>(
-        `/reporting/v2/tenant/{tenantId}/report-category/operations/reports/3874/data`,
-        {
-            method: 'POST',
-            body: JSON.stringify({
-                parameters: [
-                    { name: 'DateType', value: '2' },
-                    { name: 'From', value: startDate },
-                    { name: 'To', value: endDate },
-                ],
-            }),
-        }
-    );
-
-    return response.data || [];
-}
-
-/**
- * Fetch cancelled jobs
- */
-export async function fetchCancelledJobs(
-    modifiedOnOrAfter: string,
-    modifiedBefore: string
-): Promise<any[]> {
-    const response = await serviceTitanFetch<{ data: any[] }>(
-        `/jpm/v2/tenant/{tenantId}/jobs?status=Canceled&modifiedOnOrAfter=${encodeURIComponent(modifiedOnOrAfter)}&modifiedBefore=${encodeURIComponent(modifiedBefore)}&pageSize=100`,
-        { method: 'GET' }
-    );
-
-    return response.data || [];
-}
-
-/**
  * Fetch leads data (CRM leads report)
  */
 export async function fetchLeadsData(

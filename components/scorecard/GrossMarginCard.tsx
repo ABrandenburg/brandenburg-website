@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, Users, Wrench, Package } from 'lucide-react';
+import { DollarSign, TrendingUp, Users, Wrench, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { GrossMarginData } from '@/lib/servicetitan/types';
 
@@ -10,114 +10,85 @@ interface GrossMarginCardProps {
     className?: string;
 }
 
-export function GrossMarginCard({ data, className }: GrossMarginCardProps) {
-    const formatCurrency = (value: number) =>
-        new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(value);
+function formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(value);
+}
 
-    const costBreakdown = [
-        { label: 'Labor', value: data.laborCost, percent: data.laborPercent, icon: Users, color: 'bg-blue-500' },
-        { label: 'Materials', value: data.materialCost, percent: data.materialPercent, icon: Package, color: 'bg-amber-500' },
-        { label: 'Equipment', value: data.equipmentCost, percent: data.equipmentPercent, icon: Wrench, color: 'bg-slate-500' },
-    ];
+function formatPercent(value: number): string {
+    return `${value.toFixed(1)}%`;
+}
+
+export function GrossMarginCard({ data, className }: GrossMarginCardProps) {
+    const isHealthy = data.grossMarginPercent >= 40;
+    const isWarning = data.grossMarginPercent >= 30 && data.grossMarginPercent < 40;
 
     return (
-        <Card className={cn('bg-white border-slate-200', className)}>
-            <CardHeader>
-                <CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+        <Card className={cn('bg-white', className)}>
+            <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                     <DollarSign className="w-5 h-5 text-brand-blue" />
                     Gross Margin Analysis
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-                {/* Revenue & Margin Summary */}
                 <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-100">
-                        <div className="text-xs font-medium text-green-600 uppercase tracking-wide mb-1">
-                            Total Revenue
+                    <div className="p-4 bg-slate-50 rounded-xl text-center">
+                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Revenue</p>
+                        <p className="text-xl font-bold text-slate-900 mt-1">{formatCurrency(data.totalRevenue)}</p>
+                    </div>
+                    <div className="p-4 bg-slate-50 rounded-xl text-center">
+                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Cost</p>
+                        <p className="text-xl font-bold text-slate-900 mt-1">{formatCurrency(data.totalCost)}</p>
+                    </div>
+                    <div className={cn('p-4 rounded-xl text-center', isHealthy ? 'bg-green-50' : isWarning ? 'bg-yellow-50' : 'bg-red-50')}>
+                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Gross Margin</p>
+                        <p className={cn('text-xl font-bold mt-1', isHealthy ? 'text-green-700' : isWarning ? 'text-yellow-700' : 'text-red-700')}>
+                            {formatPercent(data.grossMarginPercent)}
+                        </p>
+                    </div>
+                </div>
+                <div className="space-y-4">
+                    <h4 className="text-sm font-semibold text-slate-700">Cost Breakdown</h4>
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                            <span className="flex items-center gap-2 text-slate-600"><Users className="w-4 h-4" />Labor</span>
+                            <span className="font-medium text-slate-900">{formatCurrency(data.laborCost)} ({formatPercent(data.laborPercent)})</span>
                         </div>
-                        <div className="text-2xl font-bold text-green-700">
-                            {formatCurrency(data.totalRevenue)}
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-blue-500 rounded-full" style={{ width: `${Math.min(data.laborPercent, 100)}%` }} />
                         </div>
                     </div>
-                    <div className="text-center p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-xl border border-red-100">
-                        <div className="text-xs font-medium text-red-600 uppercase tracking-wide mb-1">
-                            Total Costs
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                            <span className="flex items-center gap-2 text-slate-600"><Package className="w-4 h-4" />Materials</span>
+                            <span className="font-medium text-slate-900">{formatCurrency(data.materialCost)} ({formatPercent(data.materialPercent)})</span>
                         </div>
-                        <div className="text-2xl font-bold text-red-700">
-                            {formatCurrency(data.totalCost)}
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-amber-500 rounded-full" style={{ width: `${Math.min(data.materialPercent, 100)}%` }} />
                         </div>
                     </div>
-                    <div className="text-center p-4 bg-gradient-to-br from-brand-blue/5 to-brand-blue/15 rounded-xl border border-brand-blue/20">
-                        <div className="text-xs font-medium text-brand-blue uppercase tracking-wide mb-1">
-                            Gross Margin
+                    <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                            <span className="flex items-center gap-2 text-slate-600"><Wrench className="w-4 h-4" />Equipment</span>
+                            <span className="font-medium text-slate-900">{formatCurrency(data.equipmentCost)} ({formatPercent(data.equipmentPercent)})</span>
                         </div>
-                        <div className="text-2xl font-bold text-brand-blue">
-                            {data.grossMarginPercent.toFixed(1)}%
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-purple-500 rounded-full" style={{ width: `${Math.min(data.equipmentPercent, 100)}%` }} />
                         </div>
                     </div>
                 </div>
-
-                {/* Cost Breakdown */}
-                <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
-                        Cost Breakdown
-                    </h4>
-                    {costBreakdown.map(({ label, value, percent, icon: Icon, color }) => (
-                        <div key={label} className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className={cn('p-1.5 rounded-lg', color.replace('bg-', 'bg-opacity-15 bg-'))}>
-                                        <Icon className="w-4 h-4 text-slate-600" />
-                                    </div>
-                                    <span className="text-sm font-medium text-slate-700">{label}</span>
-                                </div>
-                                <div className="text-right">
-                                    <span className="text-sm font-bold text-slate-900">
-                                        {formatCurrency(value)}
-                                    </span>
-                                    <span className="text-xs text-slate-500 ml-2">
-                                        ({percent.toFixed(1)}%)
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                                <div
-                                    className={cn('h-full rounded-full transition-all duration-500', color)}
-                                    style={{ width: `${Math.min(percent, 100)}%` }}
-                                />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Gross Margin Bar */}
-                <div className="pt-4 border-t border-slate-100">
-                    <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-semibold text-slate-600">Net Margin</span>
-                        <span className="text-lg font-bold text-green-600">
-                            {formatCurrency(data.grossMargin)}
-                        </span>
-                    </div>
-                    <div className="relative w-full h-4 bg-slate-100 rounded-full overflow-hidden">
-                        {/* Costs portion */}
-                        <div
-                            className="absolute left-0 top-0 h-full bg-red-400 rounded-l-full"
-                            style={{ width: `${100 - data.grossMarginPercent}%` }}
-                        />
-                        {/* Margin portion */}
-                        <div
-                            className="absolute right-0 top-0 h-full bg-green-500 rounded-r-full"
-                            style={{ width: `${data.grossMarginPercent}%` }}
-                        />
-                    </div>
-                    <div className="flex justify-between mt-1 text-xs text-slate-500">
-                        <span>Costs: {(100 - data.grossMarginPercent).toFixed(1)}%</span>
-                        <span>Margin: {data.grossMarginPercent.toFixed(1)}%</span>
+                <div className={cn('p-4 rounded-lg flex items-center gap-3', isHealthy ? 'bg-green-50' : isWarning ? 'bg-yellow-50' : 'bg-red-50')}>
+                    <TrendingUp className={cn('w-5 h-5', isHealthy ? 'text-green-600' : isWarning ? 'text-yellow-600' : 'text-red-600')} />
+                    <div>
+                        <p className={cn('text-sm font-medium', isHealthy ? 'text-green-700' : isWarning ? 'text-yellow-700' : 'text-red-700')}>
+                            {isHealthy ? 'Healthy Margins' : isWarning ? 'Margins Need Attention' : 'Low Margins'}
+                        </p>
+                        <p className="text-xs text-slate-600 mt-0.5">Net profit: {formatCurrency(data.grossMargin)}</p>
                     </div>
                 </div>
             </CardContent>

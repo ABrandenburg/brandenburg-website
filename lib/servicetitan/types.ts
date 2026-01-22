@@ -83,38 +83,6 @@ export interface RankedKPIs {
   hasPreviousPeriodData: boolean;
 }
 
-// Gross margin data
-export interface GrossMarginData {
-  totalRevenue: number;
-  laborCost: number;
-  materialCost: number;
-  equipmentCost: number;
-  totalCost: number;
-  grossMargin: number;
-  grossMarginPercent: number;
-  laborPercent: number;
-  materialPercent: number;
-  equipmentPercent: number;
-}
-
-// Cancelled job details
-export interface CancelledJob {
-  id: number;
-  number: string;
-  customerName: string;
-  cancelReason: string;
-  cancelledOn: string;
-  scheduledDate?: string;
-  jobType?: string;
-}
-
-// Cancelled jobs summary
-export interface CancelledJobsSummary {
-  total: number;
-  jobs: CancelledJob[];
-  byReason: Record<string, number>;
-}
-
 // Goal configuration for ranking cards
 export interface GoalConfig {
   value: number;
@@ -138,7 +106,6 @@ export type ValidPeriod = typeof VALID_PERIODS[number];
 export const REPORT_IDS = {
   TECHNICIAN_PERFORMANCE: '3017',
   SOLD_HOURS: '239',
-  GROSS_MARGIN: '3874',
   CRM_LEADS: '2983',
 } as const;
 

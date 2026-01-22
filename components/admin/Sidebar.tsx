@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LogOut, LayoutDashboard, FileText, Settings, BookOpen, ChevronLeft, ChevronRight, ChevronDown, BarChart3, PieChart, Calculator } from 'lucide-react'
+import { LogOut, LayoutDashboard, FileText, Settings, BookOpen, ChevronLeft, ChevronRight, ChevronDown, BarChart3, Calculator } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SidebarProps {
@@ -106,12 +106,6 @@ export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
                                 icon={BarChart3}
                                 label="Scorecard"
                                 isActive={pathname === '/admin/tools/scorecard'}
-                            />
-                            <SubNavItem
-                                href="/admin/tools/scorecard/gm"
-                                icon={PieChart}
-                                label="Gross Margin"
-                                isActive={pathname === '/admin/tools/scorecard/gm'}
                             />
                         </div>
                     )}
