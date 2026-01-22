@@ -9,7 +9,7 @@ import { verifyTurnstileToken } from "@/lib/spam-prevention/turnstile"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-interface SubmissionData extends JobApplicationValues {
+type SubmissionData = JobApplicationValues & {
   [HONEYPOT_FIELD_NAME]?: string
   turnstileToken?: string
 }
