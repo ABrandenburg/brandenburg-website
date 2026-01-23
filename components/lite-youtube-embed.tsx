@@ -23,8 +23,8 @@ export function LiteYouTubeEmbed({ videoId, title, className = '' }: LiteYouTube
     }
   }, [])
 
-  // YouTube thumbnail URLs - try maxresdefault, fallback handled by Next.js Image
-  const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`
+  // Use sddefault.jpg (640x480) - reliable and good quality for most videos
+  const thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/sddefault.jpg`
 
   if (isActivated) {
     return (
