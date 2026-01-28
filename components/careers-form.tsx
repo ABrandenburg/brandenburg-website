@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion, AnimatePresence } from "framer-motion"
@@ -16,6 +16,19 @@ export function CareersForm() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+
+  // Memoize Turnstile callbacks to prevent widget re-initialization on every render
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token)
+  }, [])
+
+  const handleTurnstileError = useCallback(() => {
+    setError('Security verification failed. Please refresh and try again.')
+  }, [])
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null)
+  }, [])
 
   const defaultValues: Partial<JobApplicationValues> = {
     // Shared
@@ -37,11 +50,17 @@ export function CareersForm() {
       email: "",
       phone: "",
       zipCode: "",
+      source: undefined, // Required dropdown
       role: undefined,
       hasLicense: false, // Default for technician
       licenseType: "",
+      motivation: "", // Default for technician
+      trade: undefined, // Default for technician
+      experienceYears: undefined, // Default for technician
+      mostRecentEmployer: "", // Default for technician/office
       knownSoftware: false, // Default for office
       callVolumeComfort: false, // Default for office
+      officeExperience: undefined, // Default for office
       canLift50lbs: false, // Default for warehouse
       hasDriversLicense: false, // Default for warehouse
     } as any, // Cast default values to avoid partial union mismatch issues
@@ -463,9 +482,9 @@ export function CareersForm() {
         {/* Turnstile Widget */}
         <div className="pt-2">
           <Turnstile
-            onVerify={(token) => setTurnstileToken(token)}
-            onError={() => setError('Security verification failed. Please refresh and try again.')}
-            onExpire={() => setTurnstileToken(null)}
+            onVerify={handleTurnstileVerify}
+            onError={handleTurnstileError}
+            onExpire={handleTurnstileExpire}
           />
         </div>
 

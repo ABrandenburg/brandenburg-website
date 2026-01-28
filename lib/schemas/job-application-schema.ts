@@ -27,7 +27,7 @@ const technicianSchema = baseSchema.extend({
     experienceYears: z.enum(["0-1 (Apprentice)", "2-4", "5-9", "10+"]),
     hasLicense: z.boolean().default(false),
     licenseType: z.string().optional(),
-    motivation: z.string().min(10, "Please tell us why you are interested"),
+    motivation: z.string().min(10, "Please enter at least 10 characters"),
     mostRecentEmployer: z.string().optional(),
 }).superRefine((data, ctx) => {
     if (data.experienceYears !== "0-1 (Apprentice)" && !data.mostRecentEmployer) {
