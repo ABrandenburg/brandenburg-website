@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, CheckCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -34,6 +34,20 @@ export function ContactForm() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [turnstileError, setTurnstileError] = useState(false)
+
+  // Memoize Turnstile callbacks to prevent widget re-initialization on every render
+  const handleTurnstileVerify = useCallback((token: string) => {
+    setTurnstileToken(token)
+    setTurnstileError(false)
+  }, [])
+
+  const handleTurnstileError = useCallback(() => {
+    setTurnstileError(true)
+  }, [])
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null)
+  }, [])
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {}
@@ -253,22 +267,18 @@ export function ContactForm() {
         {/* Honeypot Field (invisible to humans) */}
         <HoneypotField />
 
-        {/* Turnstile Widget */}
-        <div className="pt-2">
-          <Turnstile
-            onVerify={(token) => {
-              setTurnstileToken(token)
-              setTurnstileError(false)
-            }}
-            onError={() => setTurnstileError(true)}
-            onExpire={() => setTurnstileToken(null)}
-          />
-          {turnstileError && (
-            <p className="mt-2 text-sm text-red-500">
-              Security verification failed. Please refresh and try again.
-            </p>
-          )}
-        </div>
+        {/* Turnstile Widget (invisible mode) */}
+        <Turnstile
+          onVerify={handleTurnstileVerify}
+          onError={handleTurnstileError}
+          onExpire={handleTurnstileExpire}
+          size="invisible"
+        />
+        {turnstileError && (
+          <p className="mt-2 text-sm text-red-500">
+            Security verification failed. Please refresh and try again.
+          </p>
+        )}
 
         {/* Submit Button */}
         <div className="pt-2">
