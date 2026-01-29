@@ -34,6 +34,7 @@ const locationsRight = [
   { name: 'Liberty Hill', href: '/location/liberty-hill' },
   { name: 'Leander', href: '/location/leander' },
   { name: 'Spicewood', href: '/location/spicewood' },
+  { name: 'Lampasas', href: '/location/lampasas' },
 ]
 
 const utilityLinks = [
