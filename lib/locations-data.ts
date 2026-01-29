@@ -18,11 +18,11 @@ export const locations: Location[] = [
     name: "Burnet",
     slug: "burnet",
     mainHeaderText: "Burnet's Hometown Plumbers - Headquartered Here Since 1997",
-    locationBlurb: "As our hometown and headquarters since 1997, we know Burnet inside and out. From historic downtown homes to new construction, we handle it all with the care your neighbors deserve.",
+    locationBlurb: "As our hometown and headquarters since 1997, we know Burnet inside and out. From historic downtown homes to growing neighborhoods, we handle it all with the care your neighbors deserve.",
     servicesHeader: "What We Do in Burnet, TX",
     faqHeader: "What Our Burnet Customers Are Asking",
     trustHeader: "Why Burnet Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Burnet, TX | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Burnet, TX",
     metaDesc: "Burnet's trusted local plumber since 1997. 24/7 emergency service, water heaters, drain cleaning, and more. Family-owned with a lifetime labor guarantee.",
   },
   {
@@ -33,7 +33,7 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Cedar Park, TX",
     faqHeader: "What Our Cedar Park Customers Are Asking",
     trustHeader: "Why Cedar Park Homeowners Choose Us",
-    metaTitle: "The #1 Plumber in Cedar Park, Texas | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumber in Cedar Park, Texas",
     metaDesc: "Cedar Park's trusted plumbing team. Fast response times, licensed technicians, and a lifetime warranty on labor. Book online or call 24/7.",
   },
   {
@@ -44,7 +44,7 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Georgetown, TX",
     faqHeader: "What Our Georgetown Customers Are Asking",
     trustHeader: "Why Georgetown Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Georgetown, Texas | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Georgetown, Texas",
     metaDesc: "Georgetown plumbing experts with same-day service. Specializing in hard water solutions for Williamson County homes. 4.9-star Google rating.",
   },
   {
@@ -55,7 +55,7 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Granite Shoals, TX",
     faqHeader: "What Our Granite Shoals Customers Are Asking",
     trustHeader: "Why Granite Shoals Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Granite Shoals, TX | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Granite Shoals, TX",
     metaDesc: "Granite Shoals plumbing experts serving the Highland Lakes. Water treatment, emergency service, and more. Family-owned since 1997.",
   },
   {
@@ -66,7 +66,7 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Horseshoe Bay, TX",
     faqHeader: "What Our Horseshoe Bay Customers Are Asking",
     trustHeader: "Why Horseshoe Bay Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Horseshoe Bay, Texas | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Horseshoe Bay, Texas",
     metaDesc: "Horseshoe Bay's trusted plumber for luxury homes and resorts. Expert service, upfront pricing, and a lifetime labor guarantee.",
   },
   {
@@ -78,7 +78,7 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Kingsland, TX",
     faqHeader: "What Our Kingsland Customers Are Asking",
     trustHeader: "Why Kingsland Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Kingsland, TX | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Kingsland, TX",
     metaDesc: "Kingsland plumbing experts serving Lake LBJ and the Highland Lakes. Same-day service, water softeners, and emergency repairs.",
   },
   {
@@ -89,8 +89,8 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Leander, TX",
     faqHeader: "What Our Leander Customers Are Asking",
     trustHeader: "Why Leander Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Leander, TX | Brandenburg Plumbing",
-    metaDesc: "Leander's trusted plumber for new construction and established homes. 24/7 service, upfront pricing, and a lifetime labor guarantee.",
+    metaTitle: "The #1 Plumbers in Leander, TX",
+    metaDesc: "Leander's trusted plumber for growing neighborhoods and established homes. 24/7 service, upfront pricing, and a lifetime labor guarantee.",
   },
   {
     name: "Liberty Hill",
@@ -100,7 +100,7 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Liberty Hill, TX",
     faqHeader: "What Our Liberty Hill Customers Are Asking",
     trustHeader: "Why Liberty Hill Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Liberty Hill, Texas | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Liberty Hill, Texas",
     metaDesc: "Liberty Hill plumbing experts with well water and hard water expertise. Same-day service, licensed technicians, and upfront pricing.",
   },
   {
@@ -111,7 +111,7 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Marble Falls, TX",
     faqHeader: "What Our Marble Falls Customers Are Asking",
     trustHeader: "Why Marble Falls Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Marble Falls, Texas | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Marble Falls, Texas",
     metaDesc: "Marble Falls plumbing experts headquartered right here. Same-day service, upfront pricing, 4.9-star Google rating. Residential and commercial.",
   },
   {
@@ -122,7 +122,7 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Round Rock, TX",
     faqHeader: "What Our Round Rock Customers Are Asking",
     trustHeader: "Why Round Rock Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Round Rock, TX | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Round Rock, TX",
     metaDesc: "Round Rock plumbing experts with same-day service. Water heaters, drain cleaning, and emergency repairs. 4.9-star Google rating.",
   },
   {
@@ -133,8 +133,19 @@ export const locations: Location[] = [
     servicesHeader: "What We Do in Spicewood, TX",
     faqHeader: "What Our Spicewood Customers Are Asking",
     trustHeader: "Why Spicewood Homeowners Choose Us",
-    metaTitle: "The #1 Plumbers in Spicewood, Texas | Brandenburg Plumbing",
+    metaTitle: "The #1 Plumbers in Spicewood, Texas",
     metaDesc: "Spicewood plumbing experts with well water and septic expertise. Serving the Hill Country since 1997. Same-day service available.",
+  },
+  {
+    name: "Lampasas",
+    slug: "lampasas",
+    mainHeaderText: "Lampasas Plumbing - Serving the Springs of Texas",
+    locationBlurb: "Bringing reliable plumbing services to Lampasas and the surrounding Hill Country. From historic homes to growing neighborhoods, we provide expert service with the care your community deserves.",
+    servicesHeader: "What We Do in Lampasas, TX",
+    faqHeader: "What Our Lampasas Customers Are Asking",
+    trustHeader: "Why Lampasas Homeowners Choose Us",
+    metaTitle: "The #1 Plumbers in Lampasas, TX",
+    metaDesc: "Lampasas plumbing experts with same-day service. Water heaters, drain cleaning, and emergency repairs. Family-owned since 1997 with a lifetime labor guarantee.",
   },
 ]
 
