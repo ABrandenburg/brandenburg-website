@@ -4,18 +4,20 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { motion, AnimatePresence } from "framer-motion"
-import { Loader2, CheckCircle, ArrowRight } from "lucide-react"
+import { Loader2, CheckCircle, ArrowRight, Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { jobApplicationSchema, type JobApplicationValues } from "@/lib/schemas/job-application-schema"
 import { submitApplication } from "@/app/actions/submit-application"
 import { HoneypotField } from "@/components/ui/honeypot-field"
 import { Turnstile } from "@/components/ui/turnstile"
+import { getJobById, type JobListing } from "@/lib/jobs-data"
 
 export function CareersForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [selectedJob, setSelectedJob] = useState<JobListing | null>(null)
 
   // Memoize Turnstile callbacks to prevent widget re-initialization on every render
   const handleTurnstileVerify = useCallback((token: string) => {
@@ -74,6 +76,42 @@ export function CareersForm() {
   // or use getValues if rendering logic is simple enough, but watch ensures re-render
   const watchedExperience = form.watch("experienceYears" as any)
   const watchedOfficeExp = form.watch("officeExperience" as any)
+
+  // Handle job selection from URL params or custom event
+  const applyJobToForm = useCallback((jobId: string) => {
+    const job = getJobById(jobId)
+    if (job) {
+      setSelectedJob(job)
+      // Pre-populate form fields based on job
+      form.setValue("role", job.formRole)
+      if (job.formTrade) {
+        form.setValue("trade" as any, job.formTrade)
+      }
+      if (job.formExperience) {
+        form.setValue("experienceYears" as any, job.formExperience)
+      }
+    }
+  }, [form])
+
+  // Check URL params on mount and listen for custom event
+  useEffect(() => {
+    // Check URL params
+    const params = new URLSearchParams(window.location.search)
+    const jobParam = params.get('job')
+    if (jobParam) {
+      applyJobToForm(jobParam)
+    }
+
+    // Listen for job selection event from job cards
+    const handleJobSelected = (event: CustomEvent<{ jobId: string }>) => {
+      applyJobToForm(event.detail.jobId)
+    }
+
+    window.addEventListener('job-selected', handleJobSelected as EventListener)
+    return () => {
+      window.removeEventListener('job-selected', handleJobSelected as EventListener)
+    }
+  }, [applyJobToForm])
 
   const onSubmit = async (data: JobApplicationValues) => {
     setIsSubmitting(true)
@@ -152,6 +190,41 @@ export function CareersForm() {
   return (
     <div className="bg-gray-50 rounded-2xl p-8 lg:p-12">
       <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-6">
+
+        {/* Selected Job Indicator */}
+        {selectedJob && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start justify-between gap-4"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+                <Briefcase className="w-5 h-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm text-blue-600 font-medium">Applying for:</p>
+                <p className="font-semibold text-text-primary">{selectedJob.title}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedJob(null)
+                form.setValue("role", undefined as any)
+                form.setValue("trade" as any, undefined)
+                form.setValue("experienceYears" as any, undefined)
+                // Clear URL param
+                const url = new URL(window.location.href)
+                url.searchParams.delete('job')
+                window.history.replaceState({}, '', url.toString())
+              }}
+              className="text-sm text-blue-600 hover:text-blue-800 underline"
+            >
+              Change
+            </button>
+          </motion.div>
+        )}
 
         {/* Universal Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

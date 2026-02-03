@@ -11,7 +11,8 @@ import {
   UtensilsCrossed,
   GraduationCap,
   TrendingUp,
-  Scale
+  Scale,
+  Truck
 } from 'lucide-react'
 
 const benefits = [
@@ -29,6 +30,11 @@ const benefits = [
     icon: Percent,
     title: 'Commission Pay',
     description: 'We strike a careful balance between base salary and commission pay to best compensate our top technicians while not incentivizing unethical sales practices.',
+  },
+  {
+    icon: Truck,
+    title: 'Take-Home Trucks',
+    description: 'Our technicians drive fully stocked service trucks home each night. No commute to the shop—head straight to your first call and save time every day.',
   },
   {
     icon: Gift,

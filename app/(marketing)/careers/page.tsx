@@ -3,6 +3,9 @@ import { CareersForm } from '@/components/careers-form'
 import { CareersBenefits } from '@/components/careers-benefits'
 import { Breadcrumb } from '@/components/breadcrumb'
 import { PageHeader } from '@/components/page-header'
+import { JobListingCard } from '@/components/job-listing-card'
+import { getActiveJobListings } from '@/lib/jobs-data'
+import { generateJobPostingSchema } from '@/lib/json-ld'
 
 export const metadata: Metadata = {
   title: 'Careers | Join Our Team | Brandenburg Plumbing',
@@ -20,6 +23,8 @@ export const metadata: Metadata = {
 }
 
 export default function CareersPage() {
+  const jobListings = getActiveJobListings()
+
   return (
     <>
       <main className="bg-white">
@@ -29,14 +34,34 @@ export default function CareersPage() {
           description="We offer competitive pay, excellent benefits, and career growth opportunities."
           imageSrc="/images/Selects/full_team.jpg"
           imageAlt="Brandenburg Plumbing Team"
-          ctaText="See Benefits"
-          ctaLink="#benefits"
+          ctaText="View Open Positions"
+          ctaLink="#positions"
+          secondaryCtaText="See Benefits"
+          secondaryCtaLink="#benefits"
         />
 
-
+        {/* Open Positions */}
+        <section id="positions" className="py-16 lg:py-24 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-text-primary mb-4">
+                Open Positions
+              </h2>
+              <p className="text-text-muted text-lg max-w-2xl mx-auto">
+                We&apos;re always looking for talented individuals to join our growing team. 
+                Check out our current openings below.
+              </p>
+            </div>
+            <div className="space-y-6">
+              {jobListings.map((job) => (
+                <JobListingCard key={job.id} job={job} />
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* Application Form */}
-        <section className="py-16 lg:py-24 bg-white">
+        <section id="application-form" className="py-16 lg:py-24 bg-white">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-text-primary mb-4">
@@ -53,6 +78,17 @@ export default function CareersPage() {
         {/* Benefits Section */}
         <CareersBenefits />
       </main>
+
+      {/* JobPosting Schema for each position */}
+      {jobListings.map((job) => (
+        <script
+          key={job.id}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateJobPostingSchema(job)),
+          }}
+        />
+      ))}
     </>
   )
 }

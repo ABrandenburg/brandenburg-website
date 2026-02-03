@@ -10,6 +10,8 @@ interface PageHeaderProps {
     imageAlt?: string
     ctaText?: string
     ctaLink?: string
+    secondaryCtaText?: string
+    secondaryCtaLink?: string
 }
 
 export function PageHeader({
@@ -20,7 +22,9 @@ export function PageHeader({
     imageSrc,
     imageAlt = 'Header image',
     ctaText,
-    ctaLink
+    ctaLink,
+    secondaryCtaText,
+    secondaryCtaLink
 }: PageHeaderProps) {
     return (
         <div className={`relative w-full overflow-hidden ${theme === 'dark' ? 'bg-brand-blue' : 'bg-gray-50'
@@ -85,14 +89,26 @@ export function PageHeader({
                             </p>
                         )}
 
-                        {ctaText && ctaLink && (
-                            <div className="mt-8">
+                        {(ctaText && ctaLink) && (
+                            <div className="mt-8 flex flex-wrap gap-4">
                                 <a
                                     href={ctaLink}
                                     className="btn-primary inline-flex items-center"
                                 >
                                     {ctaText}
                                 </a>
+                                {secondaryCtaText && secondaryCtaLink && (
+                                    <a
+                                        href={secondaryCtaLink}
+                                        className={`inline-flex items-center px-6 py-3 rounded-lg font-semibold transition-colors ${
+                                            theme === 'dark' 
+                                                ? 'border border-white/30 text-white hover:bg-white/10' 
+                                                : 'border border-gray-300 text-text-primary hover:bg-gray-100'
+                                        }`}
+                                    >
+                                        {secondaryCtaText}
+                                    </a>
+                                )}
                             </div>
                         )}
                     </div>

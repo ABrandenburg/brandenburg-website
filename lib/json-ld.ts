@@ -1,5 +1,6 @@
 import { Service } from './services-data'
 import { Location } from './locations-data'
+import { JobListing } from './jobs-data'
 
 export function generateServiceSchema(service: Service) {
     return {
@@ -64,5 +65,52 @@ export function generateBreadcrumbSchema(items: { name: string; item: string }[]
             name: item.name,
             item: item.item.startsWith('http') ? item.item : `https://www.brandenburgplumbing.com${item.item}`,
         })),
+    }
+}
+
+export function generateJobPostingSchema(job: JobListing) {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'JobPosting',
+        title: job.title,
+        description: job.description,
+        datePosted: job.datePosted,
+        ...(job.validThrough && { validThrough: job.validThrough }),
+        employmentType: job.employmentType,
+        hiringOrganization: {
+            '@type': 'Organization',
+            name: 'Brandenburg Plumbing',
+            sameAs: 'https://www.brandenburgplumbing.com',
+            logo: 'https://www.brandenburgplumbing.com/images/Brandenburg%20Logo_Dark_Red%20Mark-01.png',
+        },
+        jobLocation: {
+            '@type': 'Place',
+            address: {
+                '@type': 'PostalAddress',
+                streetAddress: '320 North Ridge Road',
+                addressLocality: 'Marble Falls',
+                addressRegion: 'TX',
+                postalCode: '78654',
+                addressCountry: 'US',
+            },
+        },
+        baseSalary: {
+            '@type': 'MonetaryAmount',
+            currency: 'USD',
+            value: {
+                '@type': 'QuantitativeValue',
+                minValue: job.salaryRange.min,
+                maxValue: job.salaryRange.max,
+                unitText: job.salaryRange.unit,
+            },
+        },
+        responsibilities: job.responsibilities.join('. '),
+        qualifications: job.qualifications.join('. '),
+        experienceRequirements: job.experienceRequirements,
+        directApply: true,
+        applicantLocationRequirements: {
+            '@type': 'Country',
+            name: 'United States',
+        },
     }
 }
