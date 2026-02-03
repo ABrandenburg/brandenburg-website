@@ -31,7 +31,7 @@ export function Footer() {
         <div className="mb-12">
           <div className="mb-5">
             <Image
-              src="/images/logo.png"
+              src="/images/Brandenburg Logo_Dark_Red Mark-01.png"
               alt="Brandenburg Plumbing"
               width={160}
               height={38}

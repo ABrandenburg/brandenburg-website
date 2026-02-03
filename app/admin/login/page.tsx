@@ -119,7 +119,7 @@ export default function LoginPage() {
                 <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-xl shadow-sm border border-slate-200" style={{ backgroundColor: '#ffffff' }}>
                     <div className="flex flex-col items-center">
                         <Image
-                            src="/images/logo.png"
+                            src="/images/Brandenburg Logo_Dark_Red Mark-01.png"
                             alt="Brandenburg Plumbing"
                             width={200}
                             height={50}

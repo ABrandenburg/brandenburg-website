@@ -10,7 +10,7 @@ export function generateServiceSchema(service: Service) {
         provider: {
             '@type': 'PlumbingService',
             name: 'Brandenburg Plumbing',
-            image: 'https://www.brandenburgplumbing.com/images/logo.png',
+            image: 'https://www.brandenburgplumbing.com/images/Brandenburg Logo_Dark_Red Mark-01.png',
             telephone: '+1-512-756-9847',
             priceRange: '$$',
         },

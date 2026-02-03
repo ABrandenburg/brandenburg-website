@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LogOut, LayoutDashboard, FileText, Settings, ChevronLeft, ChevronRight, ChevronDown, BarChart3, Calculator } from 'lucide-react'
+import { LogOut, LayoutDashboard, FileText, Settings, ChevronLeft, ChevronRight, ChevronDown, BarChart3, Calculator, TrendingUp, MessageSquare } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface SidebarProps {
@@ -41,7 +41,7 @@ export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
                 )}>
                     {isCollapsed ? (
                         <Image
-                            src="/images/favicon.png"
+                            src="/images/Logo Mark-Red.png"
                             alt="BP"
                             width={32}
                             height={32}
@@ -50,7 +50,7 @@ export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
                         />
                     ) : (
                         <Image
-                            src="/images/logo.png"
+                            src="/images/Brandenburg Logo_Dark_Red Mark-01.png"
                             alt="Brandenburg Plumbing"
                             width={160}
                             height={40}
@@ -115,6 +115,18 @@ export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
                                         icon={BarChart3}
                                         label="Scorecard"
                                         isActive={pathname === '/admin/tools/scorecard'}
+                                    />
+                                    <SubNavItem
+                                        href="/admin/tools/marketing"
+                                        icon={TrendingUp}
+                                        label="Marketing"
+                                        isActive={pathname === '/admin/tools/marketing'}
+                                    />
+                                    <SubNavItem
+                                        href="/admin/tools/reviews"
+                                        icon={MessageSquare}
+                                        label="Reviews"
+                                        isActive={pathname === '/admin/tools/reviews'}
                                     />
                                 </div>
                             )}

@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   creator: 'Brandenburg Plumbing',
   publisher: 'Brandenburg Plumbing',
   icons: {
-    icon: '/images/favicon.png',
+    icon: '/images/favicon-32x32.png',
+    apple: '/images/apple-touch-icon.png',
   },
   openGraph: {
     type: 'website',
@@ -65,7 +66,7 @@ const organizationJsonLd = {
   '@id': 'https://www.brandenburgplumbing.com/#organization',
   name: 'Brandenburg Plumbing',
   url: 'https://www.brandenburgplumbing.com',
-  logo: 'https://www.brandenburgplumbing.com/images/logo.png',
+  logo: 'https://www.brandenburgplumbing.com/images/Brandenburg Logo_Dark_Red Mark-01.png',
   image: 'https://www.brandenburgplumbing.com/images/team-photo.jpg',
   description: 'Expert Highland Lakes & Austin plumbers you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
   telephone: '+1-512-756-9847',

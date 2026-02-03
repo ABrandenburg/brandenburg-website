@@ -172,7 +172,7 @@ export function Header() {
             {/* Logo */}
             <Link href="/" className="flex-shrink-0">
               <Image
-                src="/images/logo.png"
+                src="/images/Brandenburg Logo_Dark_Red Mark-01.png"
                 alt="Brandenburg Plumbing"
                 width={160}
                 height={40}
