@@ -293,7 +293,7 @@ export function ScorecardContent({
                 />
                 <RankingCard
                     title="Billable Hours"
-                    description="Hours billed to customers"
+                    description="Item billable hours worked"
                     technicians={data.hoursSold}
                 />
             </div>

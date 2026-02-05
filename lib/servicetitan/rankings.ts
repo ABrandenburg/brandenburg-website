@@ -110,20 +110,40 @@ function hasNumericIndices(row: any): boolean {
  *   14: Leads Booked
  *   15: Memberships Sold
  */
+/**
+ * Map numeric indices to field names based on ServiceTitan Technician Performance Report
+ * Column order from exported report:
+ *   0: Name (Technician)
+ *   1: Technician Business Unit
+ *   2: Completed Revenue (invoiced from completed jobs)
+ *   3: Completed Jobs
+ *   4: Opportunity (count of opportunities)
+ *   5: Completed Non-opportunities
+ *   6: Opportunity Conversion Rate (close rate as decimal)
+ *   7: Opportunity Job Average
+ *   8: Replacement Lead Conversion Rate
+ *   9: Jobs on Hold
+ *   10: WIP Jobs
+ *   11: Total Sales (sum of sold estimate subtotals)
+ *   12: Item Billable Hours
+ *   13: Billable Efficiency
+ */
 const NUMERIC_INDEX_MAP: Record<string, number> = {
-    technician: 1,
-    totalRevenueCompleted: 3,  // Invoiced amount from completed jobs
-    opportunityJobAverage: 4,  // Average value per sold opportunity
-    closeRate: 5,              // Close rate as decimal
-    opportunities: 6,          // Count of opportunities/sales
-    membershipConversionRate: 7,
-    optionsPerOpportunity: 8,
-    totalSold: 9,              // Total sold estimate subtotals (dollar amount)
-    // 10, 11 - unknown
-    hoursSold: 12,
-    leads: 13,
-    leadsBooked: 14,
+    technician: 0,
+    totalRevenueCompleted: 2,  // Completed Revenue - invoiced from completed jobs
+    completedJobs: 3,
+    opportunities: 4,          // Count of opportunities
+    closeRate: 6,              // Opportunity Conversion Rate (decimal)
+    opportunityJobAverage: 7,  // Opportunity Job Average
+    totalSold: 11,             // Total Sales - sum of sold estimate subtotals
+    hoursSold: 12,             // Item Billable Hours
+    billableEfficiency: 13,
+    // These may not be in this report - will use named field fallback
     membershipsSold: 15,
+    optionsPerOpportunity: 8,
+    leads: 14,
+    leadsBooked: 15,
+    membershipConversionRate: 8,
 };
 
 /**
@@ -225,34 +245,27 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 membershipConversionRate = membershipConversionRate * 100;
             }
 
-            const opportunityJobAverage = parseFloat(getValueFromRow(row, 'opportunityJobAverage', ['OpportunityJobAverage', 'Opportunity Job Average', 'AvgSale', 'Average Sale'])) || 0;
-            const opportunitiesCount = parseInt(getValueFromRow(row, 'opportunities', ['Opportunities', 'Sales', 'OpportunitiesCount', 'SalesCount'])) || 0;
+            const opportunityJobAverage = parseFloat(getValueFromRow(row, 'opportunityJobAverage', ['OpportunityJobAverage', 'Opportunity Job Average'])) || 0;
+            const opportunitiesCount = parseInt(getValueFromRow(row, 'opportunities', ['Opportunity', 'Opportunities'])) || 0;
             
-            // Get "Total Sold" - the sum of sold estimate subtotals
-            // This is different from revenue (completed jobs) - it's the value of estimates that were sold
-            let totalSold = parseFloat(getValueFromRow(row, 'totalSold', [
-                'TotalSold', 'Total Sold', 
-                'SoldAmount', 'Sold Amount',
-                'SoldSubtotal', 'Sold Subtotal',
-                'EstimatesSold', 'Estimates Sold',
-                'SoldEstimates', 'Sold Estimates',
-                'TotalSales', 'Total Sales',
-                'SalesAmount', 'Sales Amount'
+            // Get "Total Sales" directly from ServiceTitan (index 11) - sum of sold estimate subtotals
+            // This is different from Completed Revenue (completed/invoiced jobs)
+            const totalSold = parseFloat(getValueFromRow(row, 'totalSold', [
+                'Total Sales', 'TotalSales',
+                'Total Sold', 'TotalSold'
             ])) || 0;
             
-            // Log what we found for debugging
-            if (techName.toLowerCase().includes('brendan')) {
-                console.log(`DEBUG ${techName}: totalSold field value = ${totalSold}, oppJobAvg = ${opportunityJobAverage}, oppCount = ${opportunitiesCount}`);
-                console.log(`DEBUG ${techName}: raw row data =`, JSON.stringify(row));
-            }
+            // Get "Completed Revenue" (index 2) - invoiced amount from completed jobs
+            const totalRevenueCompleted = parseFloat(getValueFromRow(row, 'totalRevenueCompleted', [
+                'Completed Revenue', 'CompletedRevenue',
+                'Total Revenue Completed', 'TotalRevenueCompleted'
+            ])) || 0;
             
-            // Only fall back to calculation if no direct field found AND we have the components
-            if (totalSold === 0 && opportunityJobAverage > 0 && opportunitiesCount > 0) {
-                totalSold = opportunityJobAverage * opportunitiesCount;
-                console.log(`DEBUG ${techName}: Using calculated totalSold = ${totalSold}`);
-            }
-            
-            const totalRevenueCompleted = parseFloat(getValueFromRow(row, 'totalRevenueCompleted', ['TotalRevenueCompleted', 'Total Revenue Completed', 'Revenue', 'TotalRevenue', 'CompletedRevenue'])) || 0;
+            // Get "Item Billable Hours" (index 12)
+            const itemBillableHours = parseFloat(getValueFromRow(row, 'hoursSold', [
+                'Item Billable Hours', 'ItemBillableHours',
+                'Billable Hours', 'BillableHours'
+            ])) || 0;
             
             return {
                 id: slugify(techName),
@@ -265,9 +278,9 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 membershipConversionRate,
                 leads: parseInt(getValueFromRow(row, 'leads', ['Leads', 'TotalLeads', 'Total Leads'])) || 0,
                 leadsBooked: parseInt(getValueFromRow(row, 'leadsBooked', ['LeadsBooked', 'Leads Booked'])) || 0,
-                hoursSold: parseFloat(getValueFromRow(row, 'hoursSold', ['SoldHours', 'Sold Hours', 'HoursSold', 'Hours Sold', 'BillableHours'])) || 0,
+                hoursSold: itemBillableHours, // Item Billable Hours from index 12
                 sales: opportunitiesCount,
-                totalSales: totalSold, // dollar amount of estimates sold
+                totalSales: totalSold, // Total Sales from index 11 - sum of sold estimate subtotals
             };
         });
 
