@@ -15,7 +15,7 @@ export default async function DisplayLayout({
     } = await supabase.auth.getUser()
 
     if (!user) {
-        redirect('/admin/login')
+        redirect('/admin/login?next=/admin/display/scorecard')
     }
 
     const signOut = async () => {

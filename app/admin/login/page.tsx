@@ -79,11 +79,14 @@ export default function LoginPage() {
         setMessage('')
         setIsError(false)
 
+        // Get the intended destination from URL params, default to /admin
+        const next = searchParams.get('next') || '/admin'
+
         try {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/auth/callback?next=/admin`,
+                    redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
                     queryParams: {
                         hd: 'brandenburgplumbing.com', // Hint to Google to show only this domain
                     },
