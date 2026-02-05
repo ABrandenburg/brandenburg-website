@@ -208,7 +208,7 @@ export function ScorecardContent({
                 <Header
                     title="Technician Scorecard"
                     description={`Last ${days} days${lastUpdated ? ` • Updated ${lastUpdated.toLocaleTimeString()}` : ''}`}
-                    showTimeFilter={!isFullscreen}
+                    showTimeFilter={true}
                     actions={
                         <button
                             onClick={toggleFullscreen}
