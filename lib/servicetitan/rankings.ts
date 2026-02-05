@@ -111,39 +111,35 @@ function hasNumericIndices(row: any): boolean {
  *   15: Memberships Sold
  */
 /**
- * Map numeric indices to field names based on ServiceTitan Technician Performance Report
- * Column order from exported report:
- *   0: Name (Technician)
- *   1: Technician Business Unit
- *   2: Completed Revenue (invoiced from completed jobs)
- *   3: Completed Jobs
- *   4: Opportunity (count of opportunities)
- *   5: Completed Non-opportunities
- *   6: Opportunity Conversion Rate (close rate as decimal)
- *   7: Opportunity Job Average
- *   8: Replacement Lead Conversion Rate
- *   9: Jobs on Hold
- *   10: WIP Jobs
- *   11: Total Sales (sum of sold estimate subtotals)
- *   12: Item Billable Hours
- *   13: Billable Efficiency
+ * Map numeric indices to field names based on ServiceTitan Technician Performance Report API
+ * NOTE: API column order differs from Excel export!
+ * 
+ * API returns (numeric indices):
+ *   0: Department/Team
+ *   1: Technician name
+ *   2: (varies)
+ *   3: Completed Revenue (invoiced from completed jobs)
+ *   4: Opportunity Job Average
+ *   5: Opportunity Conversion Rate (close rate as decimal)
+ *   6: Opportunity count
+ *   ...
+ *   12: Total Sales (sum of sold estimate subtotals)
+ *   13: Item Billable Hours
  */
 const NUMERIC_INDEX_MAP: Record<string, number> = {
-    technician: 0,
-    totalRevenueCompleted: 2,  // Completed Revenue - invoiced from completed jobs
-    completedJobs: 3,
-    opportunities: 4,          // Count of opportunities
-    closeRate: 6,              // Opportunity Conversion Rate (decimal)
-    opportunityJobAverage: 7,  // Opportunity Job Average
-    totalSold: 11,             // Total Sales - sum of sold estimate subtotals
-    hoursSold: 12,             // Item Billable Hours
-    billableEfficiency: 13,
+    technician: 1,             // Technician name (NOT index 0 which is Department)
+    totalRevenueCompleted: 3,  // Completed Revenue - invoiced from completed jobs
+    opportunityJobAverage: 4,  // Opportunity Job Average
+    closeRate: 5,              // Opportunity Conversion Rate (decimal)
+    opportunities: 6,          // Count of opportunities
+    totalSold: 12,             // Total Sales - sum of sold estimate subtotals
+    hoursSold: 13,             // Item Billable Hours
     // These may not be in this report - will use named field fallback
-    membershipsSold: 15,
     optionsPerOpportunity: 8,
+    membershipsSold: 15,
     leads: 14,
     leadsBooked: 15,
-    membershipConversionRate: 8,
+    membershipConversionRate: 7,
 };
 
 /**
