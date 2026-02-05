@@ -247,7 +247,7 @@ export function ScorecardContent({
                 />
                 <RankingCard
                     title="Total Sales"
-                    description="Dollar value of sold estimates"
+                    description="Sum of sold estimate subtotals"
                     technicians={data.totalSales}
                     showTotal={true}
                     totalLabel="Total Team Sales"

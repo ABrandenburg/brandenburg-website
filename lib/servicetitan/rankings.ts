@@ -112,18 +112,18 @@ function hasNumericIndices(row: any): boolean {
  */
 const NUMERIC_INDEX_MAP: Record<string, number> = {
     technician: 1,
-    totalRevenueCompleted: 3,
-    opportunityJobAverage: 4,
-    closeRate: 5,
-    opportunities: 6, // Count of opportunities (presented/sold)
+    totalRevenueCompleted: 3,  // Invoiced amount from completed jobs
+    opportunityJobAverage: 4,  // Average value per sold opportunity
+    closeRate: 5,              // Close rate as decimal
+    opportunities: 6,          // Count of opportunities/sales
+    membershipConversionRate: 7,
     optionsPerOpportunity: 8,
-    totalSold: 9, // Direct "Total Sold" amount from estimates (if available)
+    totalSold: 9,              // Total sold estimate subtotals (dollar amount)
+    // 10, 11 - unknown
+    hoursSold: 12,
     leads: 13,
     leadsBooked: 14,
     membershipsSold: 15,
-    // These may need adjustment based on actual report columns
-    membershipConversionRate: 7,
-    hoursSold: 12,
 };
 
 /**
@@ -225,15 +225,31 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 membershipConversionRate = membershipConversionRate * 100;
             }
 
-            const opportunityJobAverage = parseFloat(getValueFromRow(row, 'opportunityJobAverage', ['OpportunityJobAverage', 'Opportunity Job Average'])) || 0;
-            const opportunitiesCount = parseInt(getValueFromRow(row, 'opportunities', ['Opportunities', 'Sales', 'OpportunitiesCount'])) || 0;
+            const opportunityJobAverage = parseFloat(getValueFromRow(row, 'opportunityJobAverage', ['OpportunityJobAverage', 'Opportunity Job Average', 'AvgSale', 'Average Sale'])) || 0;
+            const opportunitiesCount = parseInt(getValueFromRow(row, 'opportunities', ['Opportunities', 'Sales', 'OpportunitiesCount', 'SalesCount'])) || 0;
             
-            // Try to get direct "Total Sold" value first (estimates sold amount)
-            // Fall back to calculated value if not available
-            let totalSold = parseFloat(getValueFromRow(row, 'totalSold', ['TotalSold', 'Total Sold', 'SoldAmount', 'Sold Amount', 'EstimatesSold', 'Estimates Sold'])) || 0;
+            // Get "Total Sold" - the sum of sold estimate subtotals
+            // This is different from revenue (completed jobs) - it's the value of estimates that were sold
+            let totalSold = parseFloat(getValueFromRow(row, 'totalSold', [
+                'TotalSold', 'Total Sold', 
+                'SoldAmount', 'Sold Amount',
+                'SoldSubtotal', 'Sold Subtotal',
+                'EstimatesSold', 'Estimates Sold',
+                'SoldEstimates', 'Sold Estimates',
+                'TotalSales', 'Total Sales',
+                'SalesAmount', 'Sales Amount'
+            ])) || 0;
+            
+            // Log what we found for debugging
+            if (techName.toLowerCase().includes('brendan')) {
+                console.log(`DEBUG ${techName}: totalSold field value = ${totalSold}, oppJobAvg = ${opportunityJobAverage}, oppCount = ${opportunitiesCount}`);
+                console.log(`DEBUG ${techName}: raw row data =`, JSON.stringify(row));
+            }
+            
+            // Only fall back to calculation if no direct field found AND we have the components
             if (totalSold === 0 && opportunityJobAverage > 0 && opportunitiesCount > 0) {
-                // Calculate from opportunity average × count as fallback
                 totalSold = opportunityJobAverage * opportunitiesCount;
+                console.log(`DEBUG ${techName}: Using calculated totalSold = ${totalSold}`);
             }
             
             const totalRevenueCompleted = parseFloat(getValueFromRow(row, 'totalRevenueCompleted', ['TotalRevenueCompleted', 'Total Revenue Completed', 'Revenue', 'TotalRevenue', 'CompletedRevenue'])) || 0;
