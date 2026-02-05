@@ -25,9 +25,12 @@ export function RankingCard({
     showTotal = false,
     basePath = '/admin/tools/scorecard/technician',
 }: RankingCardProps) {
+    // Guard against undefined technicians (e.g., from stale cache)
+    const safeTechnicians = technicians ?? [];
+    
     // Calculate team total and average
-    const teamTotal = technicians.reduce((sum, t) => sum + t.value, 0);
-    const teamAverage = technicians.length > 0 ? teamTotal / technicians.length : 0;
+    const teamTotal = safeTechnicians.reduce((sum, t) => sum + t.value, 0);
+    const teamAverage = safeTechnicians.length > 0 ? teamTotal / safeTechnicians.length : 0;
 
     const goalProgress = goal ? Math.min((teamAverage / goal.value) * 100, 150) : 0;
 
@@ -84,7 +87,7 @@ export function RankingCard({
 
             <CardContent className="flex-1 overflow-auto pt-0">
                 <div className="space-y-1">
-                    {technicians.map((tech) => (
+                    {safeTechnicians.map((tech) => (
                         <Link
                             key={tech.id}
                             href={`${basePath}/${tech.id}`}
@@ -127,7 +130,7 @@ export function RankingCard({
                         </Link>
                     ))}
 
-                    {technicians.length === 0 && (
+                    {safeTechnicians.length === 0 && (
                         <div className="py-8 text-center text-slate-400 text-sm">
                             No data available
                         </div>
