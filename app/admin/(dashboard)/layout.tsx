@@ -1,11 +1,7 @@
-
-
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import { LogOut, LayoutDashboard, FileText, Settings, BookOpen } from 'lucide-react'
 import { Sidebar } from '@/components/admin/Sidebar'
+import { AdminProvider } from '@/lib/admin-context'
 
 export default async function AdminLayout({
     children,
@@ -30,16 +26,18 @@ export default async function AdminLayout({
     }
 
     return (
-        <div className="flex h-screen bg-slate-50">
-            {/* Sidebar */}
-            <Sidebar userEmail={user.email} signOutAction={signOut} />
+        <AdminProvider>
+            <div className="flex h-screen bg-slate-50">
+                {/* Sidebar */}
+                <Sidebar userEmail={user.email} signOutAction={signOut} />
 
-            {/* Main Content */}
-            <main className="flex-1 overflow-auto">
-                <div className="p-8">
-                    {children}
-                </div>
-            </main>
-        </div>
+                {/* Main Content */}
+                <main className="flex-1 overflow-auto">
+                    <div className="p-8">
+                        {children}
+                    </div>
+                </main>
+            </div>
+        </AdminProvider>
     )
 }

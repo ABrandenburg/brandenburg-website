@@ -12,6 +12,7 @@ import {
 } from './types';
 import {
     fetchTechnicianPerformance,
+    fetchSoldHours,
     isServiceTitanConfigured,
 } from './client';
 import {
@@ -223,10 +224,13 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 membershipConversionRate = membershipConversionRate * 100;
             }
 
+            const opportunityJobAverage = parseFloat(getValueFromRow(row, 'opportunityJobAverage', ['OpportunityJobAverage', 'Opportunity Job Average'])) || 0;
+            const salesCount = parseInt(getValueFromRow(row, 'sales', ['Sales', 'Opportunities', 'Jobs', 'JobsCompleted'])) || 0;
+            
             return {
                 id: slugify(techName),
                 name: techName,
-                opportunityJobAverage: parseFloat(getValueFromRow(row, 'opportunityJobAverage', ['OpportunityJobAverage', 'Opportunity Job Average'])) || 0,
+                opportunityJobAverage,
                 totalRevenueCompleted: parseFloat(getValueFromRow(row, 'totalRevenueCompleted', ['TotalRevenueCompleted', 'Total Revenue Completed', 'Revenue', 'TotalRevenue'])) || 0,
                 optionsPerOpportunity: parseFloat(getValueFromRow(row, 'optionsPerOpportunity', ['OptionsPerOpportunity', 'Options Per Opportunity'])) || 0,
                 closeRate,
@@ -235,7 +239,8 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 leads: parseInt(getValueFromRow(row, 'leads', ['Leads', 'TotalLeads', 'Total Leads'])) || 0,
                 leadsBooked: parseInt(getValueFromRow(row, 'leadsBooked', ['LeadsBooked', 'Leads Booked'])) || 0,
                 hoursSold: parseFloat(getValueFromRow(row, 'hoursSold', ['SoldHours', 'Sold Hours', 'HoursSold', 'Hours Sold', 'BillableHours'])) || 0,
-                sales: parseInt(getValueFromRow(row, 'sales', ['Sales', 'Opportunities', 'Jobs', 'JobsCompleted'])) || 0,
+                sales: salesCount,
+                totalSales: opportunityJobAverage * salesCount, // dollar amount of estimates sold
             };
         });
 
@@ -317,6 +322,7 @@ function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[
                 leadsBooked: 0,
                 hoursSold: 0,
                 sales: 0,
+                totalSales: 0,
             };
 
             // Sum all values
@@ -327,6 +333,7 @@ function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[
                 merged.leadsBooked += tech.leadsBooked;
                 merged.hoursSold += tech.hoursSold;
                 merged.sales += tech.sales;
+                merged.totalSales += tech.totalSales;
             }
 
             // For rates and averages, use weighted average based on revenue
@@ -556,6 +563,83 @@ async function calculateRankingsFromCache(days: ValidPeriod): Promise<RankedKPIs
 }
 
 /**
+ * Process sold hours data and return a map of technician name -> hours sold
+ */
+function processSoldHoursData(rawData: any[]): Map<string, number> {
+    const hoursMap = new Map<string, number>();
+    
+    if (!rawData || rawData.length === 0) {
+        console.log('processSoldHoursData: No raw data received');
+        return hoursMap;
+    }
+
+    // Log field names from first row for debugging
+    const sampleRow = rawData[0];
+    const fieldNames = Object.keys(sampleRow);
+    const isNumericFormat = hasNumericIndices(sampleRow);
+    
+    console.log('processSoldHoursData: Available fields:', fieldNames);
+    console.log('processSoldHoursData: Using numeric index format:', isNumericFormat);
+    console.log('processSoldHoursData: Sample row:', JSON.stringify(sampleRow));
+
+    // Find technician and hours fields
+    let techField: string | null = null;
+    let hoursField: string | null = null;
+
+    if (isNumericFormat) {
+        // For numeric indices, try common positions
+        // Typically: 0=Technician, and hours could be in various positions
+        techField = '0';
+        // Try to find hours field - look for a numeric value that seems like hours
+        for (let i = 1; i <= 10; i++) {
+            const val = sampleRow[i.toString()];
+            if (typeof val === 'number' && val >= 0 && val < 1000) {
+                hoursField = i.toString();
+                break;
+            }
+        }
+    } else {
+        techField = findField(sampleRow, ['Technician', 'TechnicianName', 'technician', 'Tech', 'Employee', 'Name']);
+        hoursField = findField(sampleRow, ['SoldHours', 'Sold Hours', 'Hours', 'HoursSold', 'BillableHours', 'Billable Hours', 'TotalHours', 'Total Hours']);
+    }
+
+    console.log(`processSoldHoursData: Tech field: ${techField}, Hours field: ${hoursField}`);
+
+    if (!techField) {
+        console.error('processSoldHoursData: Could not find technician field');
+        return hoursMap;
+    }
+
+    for (const row of rawData) {
+        const techName = row[techField];
+        if (!techName || typeof techName !== 'string') continue;
+        if (shouldExclude(techName)) continue;
+
+        const hours = hoursField ? parseFloat(row[hoursField]) || 0 : 0;
+        
+        // Aggregate hours per technician (in case of multiple rows)
+        const existingHours = hoursMap.get(techName.toLowerCase()) || 0;
+        hoursMap.set(techName.toLowerCase(), existingHours + hours);
+    }
+
+    console.log(`processSoldHoursData: Processed hours for ${hoursMap.size} technicians`);
+    return hoursMap;
+}
+
+/**
+ * Merge sold hours into technician KPIs
+ */
+function mergeSoldHours(technicians: TechnicianKPIs[], soldHoursMap: Map<string, number>): TechnicianKPIs[] {
+    return technicians.map(tech => {
+        const hours = soldHoursMap.get(tech.name.toLowerCase()) || 0;
+        return {
+            ...tech,
+            hoursSold: hours,
+        };
+    });
+}
+
+/**
  * Fetch fresh data and calculate rankings
  */
 async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs> {
@@ -566,7 +650,7 @@ async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs>
 
     const dateRange = getFullDateRange(days);
 
-    // Fetch current period
+    // Fetch current period technician performance
     const currentData = await executeWithLock(
         'technician-performance',
         '3017',
@@ -574,7 +658,7 @@ async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs>
     );
     await setCachedTechnicianPeriod(days, currentData, false);
 
-    // Fetch previous period
+    // Fetch previous period technician performance
     const previousData = await executeWithLock(
         'technician-performance',
         '3017',
@@ -582,8 +666,46 @@ async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs>
     );
     await setCachedTechnicianPeriod(days, previousData, true);
 
-    const technicians = processTechnicianData(currentData);
-    const previousTechnicians = previousData ? processTechnicianData(previousData) : null;
+    // Fetch sold hours data from separate report (Report 239)
+    let currentSoldHours: any[] = [];
+    let previousSoldHours: any[] = [];
+    
+    try {
+        currentSoldHours = await executeWithLock(
+            'sold-hours',
+            '239',
+            () => fetchSoldHours(dateRange.startDate, dateRange.endDate)
+        );
+        console.log(`Fetched ${currentSoldHours.length} sold hours records for current period`);
+    } catch (err) {
+        console.warn('Failed to fetch current sold hours:', err);
+    }
+
+    try {
+        previousSoldHours = await executeWithLock(
+            'sold-hours',
+            '239',
+            () => fetchSoldHours(dateRange.previousStartDate, dateRange.previousEndDate)
+        );
+        console.log(`Fetched ${previousSoldHours.length} sold hours records for previous period`);
+    } catch (err) {
+        console.warn('Failed to fetch previous sold hours:', err);
+    }
+
+    // Process technician data
+    let technicians = processTechnicianData(currentData);
+    let previousTechnicians = previousData ? processTechnicianData(previousData) : null;
+
+    // Merge sold hours data if available
+    if (currentSoldHours.length > 0) {
+        const soldHoursMap = processSoldHoursData(currentSoldHours);
+        technicians = mergeSoldHours(technicians, soldHoursMap);
+    }
+
+    if (previousSoldHours.length > 0 && previousTechnicians) {
+        const prevSoldHoursMap = processSoldHoursData(previousSoldHours);
+        previousTechnicians = mergeSoldHours(previousTechnicians, prevSoldHoursMap);
+    }
 
     const rankings = buildRankings(technicians, previousTechnicians, days);
     await setCachedRankings(days, rankings);
@@ -612,6 +734,7 @@ function buildRankings(
         leads: rankBy(technicians, previousTechnicians, 'leads', formatNumber),
         leadsBooked: rankBy(technicians, previousTechnicians, 'leadsBooked', formatNumber),
         sales: rankBy(technicians, previousTechnicians, 'sales', formatNumber),
+        totalSales: rankBy(technicians, previousTechnicians, 'totalSales', formatCurrency),
         leadsSummary: calculateLeadsSummary(technicians, previousTechnicians),
         overallStats: calculateOverallStats(technicians, previousTechnicians),
         dateRange: {
@@ -665,6 +788,7 @@ function getMockRankings(days: ValidPeriod): RankedKPIs {
         leads: generateRankings(formatNumber, 50, 10),
         leadsBooked: generateRankings(formatNumber, 40, 8),
         sales: generateRankings(formatNumber, 15, 3),
+        totalSales: generateRankings(formatCurrency, 37500, 6000), // ~$2500 avg * 15 sales
         leadsSummary: {
             totalLeads: 180,
             bookedLeads: 145,

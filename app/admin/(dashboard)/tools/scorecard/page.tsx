@@ -11,6 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle, AlertTriangle, Maximize, Minimize } from 'lucide-react';
 import type { RankedKPIs, ValidPeriod } from '@/lib/servicetitan/types';
 import { formatCurrency, formatPercentage, formatDecimal } from '@/lib/servicetitan/rankings';
+import { useAdminContext } from '@/lib/admin-context';
 
 // Auto-refresh interval in milliseconds (5 minutes)
 const REFRESH_INTERVAL = 5 * 60 * 1000;
@@ -24,6 +25,7 @@ interface ApiMeta {
 function ScorecardContent() {
     const searchParams = useSearchParams();
     const days = (parseInt(searchParams.get('days') || '7', 10) as ValidPeriod) || 7;
+    const { setFullscreenLocked } = useAdminContext();
 
     const [data, setData] = useState<RankedKPIs | null>(null);
     const [meta, setMeta] = useState<ApiMeta | null>(null);
@@ -73,23 +75,27 @@ function ScorecardContent() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().then(() => {
                 setIsFullscreen(true);
+                setFullscreenLocked(true);
             }).catch(console.error);
         } else {
             document.exitFullscreen().then(() => {
                 setIsFullscreen(false);
+                setFullscreenLocked(false);
             }).catch(console.error);
         }
-    }, []);
+    }, [setFullscreenLocked]);
 
-    // Listen for fullscreen changes
+    // Listen for fullscreen changes (handles ESC key exit, etc.)
     useEffect(() => {
         const handleFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement);
+            const isNowFullscreen = !!document.fullscreenElement;
+            setIsFullscreen(isNowFullscreen);
+            setFullscreenLocked(isNowFullscreen);
         };
 
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    }, []);
+    }, [setFullscreenLocked]);
 
     if (loading) {
         return <ScorecardSkeleton />;
@@ -211,9 +217,14 @@ function ScorecardContent() {
                     }}
                 />
                 <RankingCard
-                    title="Sales"
-                    technicians={data.sales}
+                    title="Total Sales"
+                    technicians={data.totalSales}
                     showTotal={true}
+                    goal={{
+                        value: 15000,
+                        formatValue: formatCurrency,
+                        label: 'Average Goal',
+                    }}
                 />
                 <RankingCard
                     title="Close Rate"
@@ -244,15 +255,6 @@ function ScorecardContent() {
                     title="Memberships Sold"
                     technicians={data.membershipsSold}
                     trendSuffix=""
-                />
-                <RankingCard
-                    title="Membership Conversion"
-                    technicians={data.membershipConversionRate}
-                    trendSuffix=" pts"
-                    goal={{
-                        value: 40,
-                        formatValue: (v) => `${v}%`,
-                    }}
                 />
                 <RankingCard
                     title="Billable Hours"

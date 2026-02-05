@@ -6,6 +6,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { openScheduler } from '@/lib/scheduler'
+import { HeroVideo } from './hero-video'
+import type { VideoInfo } from '@/lib/youtube-utils'
+
+interface HeroProps {
+  video?: VideoInfo | null
+}
 
 const valueProps = [
   '24/7 Same Day Service',
@@ -18,17 +24,12 @@ const fadeInUp = {
   animate: { opacity: 1, y: 0 },
 }
 
-const fadeInRight = {
-  initial: { opacity: 0, x: 30 },
-  animate: { opacity: 1, x: 0 },
-}
-
 const scaleIn = {
   initial: { opacity: 0, scale: 0.95 },
   animate: { opacity: 1, scale: 1 },
 }
 
-export function Hero() {
+export function Hero({ video }: HeroProps) {
   return (
     <section className="relative bg-gradient-to-b from-gray-50/50 to-white py-12 lg:py-20 overflow-hidden">
       {/* Subtle background pattern */}
@@ -159,62 +160,105 @@ export function Hero() {
             </motion.div>
           </div>
 
-          {/* Right Column - Images */}
+          {/* Right Column - Video or Images */}
           <div className="order-1 lg:order-2">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Left Column - Two smaller stacked images */}
-              <div className="flex flex-col gap-4">
-                <motion.div
-                  className="relative aspect-square rounded-xl overflow-hidden shadow-soft"
-                  variants={scaleIn}
-                  initial="initial"
-                  animate="animate"
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                >
-                  <Image
-                    src="/images/home-hero-team.jpg"
-                    alt="Brandenburg Plumbing team"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                  />
-                </motion.div>
+            {video ? (
+              /* Video Display */
+              <div className="space-y-4">
+                <HeroVideo video={video} />
+                
+                {/* Small images below video */}
+                <div className="grid grid-cols-2 gap-4">
+                  <motion.div
+                    className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-soft"
+                    variants={scaleIn}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                  >
+                    <Image
+                      src="/images/team-hero.jpg"
+                      alt="Brandenburg Plumbing team"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                    />
+                  </motion.div>
 
+                  <motion.div
+                    className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-soft"
+                    variants={scaleIn}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                  >
+                    <Image
+                      src="/images/trucks-hero.png"
+                      alt="Brandenburg service trucks"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                    />
+                  </motion.div>
+                </div>
+              </div>
+            ) : (
+              /* Original Image Grid (fallback when no video) */
+              <div className="grid grid-cols-2 gap-4">
+                {/* Left Column - Two smaller stacked images */}
+                <div className="flex flex-col gap-4">
+                  <motion.div
+                    className="relative aspect-square rounded-xl overflow-hidden shadow-soft"
+                    variants={scaleIn}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                  >
+                    <Image
+                      src="/images/team-hero.jpg"
+                      alt="Brandenburg Plumbing team"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                    />
+                  </motion.div>
+
+                  <motion.div
+                    className="relative aspect-square rounded-xl overflow-hidden shadow-soft"
+                    variants={scaleIn}
+                    initial="initial"
+                    animate="animate"
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                  >
+                    <Image
+                      src="/images/trucks-hero.png"
+                      alt="Brandenburg service trucks"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 50vw, 25vw"
+                    />
+                  </motion.div>
+                </div>
+
+                {/* Right Column - Main vertical image */}
                 <motion.div
-                  className="relative aspect-square rounded-xl overflow-hidden shadow-soft"
+                  className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-soft-lg"
                   variants={scaleIn}
                   initial="initial"
                   animate="animate"
-                  transition={{ duration: 0.6, delay: 0.4 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                 >
                   <Image
-                    src="/images/home-hero-truck.jpg"
-                    alt="Brandenburg service trucks"
+                    src="/images/home-hero-main.avif"
+                    alt="Brandenburg technician consulting with customer"
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 50vw, 25vw"
+                    priority
                   />
                 </motion.div>
               </div>
-
-              {/* Right Column - Main vertical image */}
-              <motion.div
-                className="relative aspect-[3/4] rounded-xl overflow-hidden shadow-soft-lg"
-                variants={scaleIn}
-                initial="initial"
-                animate="animate"
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <Image
-                  src="/images/home-hero-main.avif"
-                  alt="Brandenburg plumber consulting with customer"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 50vw, 25vw"
-                  priority
-                />
-              </motion.div>
-            </div>
+            )}
           </div>
         </div>
       </div>

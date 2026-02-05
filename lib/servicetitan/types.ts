@@ -21,6 +21,7 @@ export interface TechnicianKPIs {
   leadsBooked: number;
   hoursSold: number;
   sales: number; // number of completed sales/opportunities
+  totalSales: number; // dollar amount of estimates sold (opportunityJobAverage * sales)
 }
 
 // Ranked technician (with trends and formatted values)
@@ -74,6 +75,7 @@ export interface RankedKPIs {
   leads: RankedTechnician[];
   leadsBooked: RankedTechnician[];
   sales: RankedTechnician[];
+  totalSales: RankedTechnician[]; // dollar amount of estimates sold
   leadsSummary?: LeadsSummary;
   overallStats?: OverallStats;
   dateRange: {

@@ -64,6 +64,10 @@ export async function GET(
                     ...extractMetric(rankings.totalRevenueCompleted, technicianId),
                 },
                 {
+                    label: 'Total Sales',
+                    ...extractMetric(rankings.totalSales, technicianId),
+                },
+                {
                     label: 'Opportunity Job Average',
                     ...extractMetric(rankings.opportunityJobAverage, technicianId),
                 },
@@ -80,20 +84,8 @@ export async function GET(
                     ...extractMetric(rankings.membershipsSold, technicianId),
                 },
                 {
-                    label: 'Membership Conversion Rate',
-                    ...extractMetric(rankings.membershipConversionRate, technicianId),
-                },
-                {
                     label: 'Billable Hours',
                     ...extractMetric(rankings.hoursSold, technicianId),
-                },
-                {
-                    label: 'Leads',
-                    ...extractMetric(rankings.leads, technicianId),
-                },
-                {
-                    label: 'Leads Booked',
-                    ...extractMetric(rankings.leadsBooked, technicianId),
                 },
             ],
         };
