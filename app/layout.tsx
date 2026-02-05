@@ -165,20 +165,6 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Font Awesome */}
-        <Script
-          src="https://kit.fontawesome.com/9598769622.js"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-
-        {/* AnyTrack Tracking Code */}
-        <Script id="anytrack-script" strategy="afterInteractive">
-          {`
-            !function(e,t,n,s,a){(a=t.createElement(n)).async=!0,a.src="https://assets.anytrack.io/O1jBFCOs80NX.js",(t=t.getElementsByTagName(n)[0]).parentNode.insertBefore(a,t),e[s]=e[s]||function(){(e[s].q=e[s].q||[]).push(arguments)}}(window,document,"script","AnyTrack");
-          `}
-        </Script>
-
         {/* ServiceTitan DNI (Dynamic Number Insertion) */}
         <Script id="servicetitan-dni" strategy="afterInteractive">
           {`
