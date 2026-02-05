@@ -207,14 +207,22 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
 
     console.log('processTechnicianData: Available fields:', fieldNames);
     console.log('processTechnicianData: Using numeric index format:', isNumericFormat);
+    console.log('processTechnicianData: Sample row data:', JSON.stringify(sampleRow));
 
     // Determine technician field
     let technicianField: string | null = null;
     if (isNumericFormat) {
         technicianField = NUMERIC_INDEX_MAP.technician.toString();
         console.log(`processTechnicianData: Using numeric index ${technicianField} for technician name`);
+        // Log all values to help debug column mapping
+        console.log('processTechnicianData: Row values by index:');
+        for (let i = 0; i <= 15; i++) {
+            if (sampleRow[i.toString()] !== undefined) {
+                console.log(`  Index ${i}: ${sampleRow[i.toString()]}`);
+            }
+        }
     } else {
-        technicianField = findField(sampleRow, ['Technician', 'TechnicianName', 'technician', 'Tech']);
+        technicianField = findField(sampleRow, ['Technician', 'TechnicianName', 'technician', 'Tech', 'Name']);
     }
 
     if (!technicianField || sampleRow[technicianField] === undefined) {
@@ -248,27 +256,42 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 membershipConversionRate = membershipConversionRate * 100;
             }
 
-            const opportunityJobAverage = parseFloat(getValueFromRow(row, 'opportunityJobAverage', ['OpportunityJobAverage', 'Opportunity Job Average'])) || 0;
-            const opportunitiesCount = parseInt(getValueFromRow(row, 'opportunities', ['Opportunity', 'Opportunities'])) || 0;
+            // Get values using flexible field matching (works with both named fields and numeric indices)
+            const opportunityJobAverage = parseFloat(getValueFromRow(row, 'opportunityJobAverage', [
+                'Opportunity Job Average', 'OpportunityJobAverage', 'Opp Job Avg', 'AvgJobValue'
+            ])) || 0;
             
-            // Get "Total Sales" directly from ServiceTitan (index 11) - sum of sold estimate subtotals
-            // This is different from Completed Revenue (completed/invoiced jobs)
+            const opportunitiesCount = parseInt(getValueFromRow(row, 'opportunities', [
+                'Opportunity', 'Opportunities', 'Opp', 'OpportunityCount'
+            ])) || 0;
+            
+            // Get "Total Sales" - sum of sold estimate subtotals
             const totalSold = parseFloat(getValueFromRow(row, 'totalSold', [
-                'Total Sales', 'TotalSales',
-                'Total Sold', 'TotalSold'
+                'Total Sales', 'TotalSales', 'Sold', 'TotalSold', 'Sales Total'
             ])) || 0;
             
-            // Get "Completed Revenue" (index 2) - invoiced amount from completed jobs
+            // Get "Completed Revenue" - invoiced amount from completed jobs
             const totalRevenueCompleted = parseFloat(getValueFromRow(row, 'totalRevenueCompleted', [
-                'Completed Revenue', 'CompletedRevenue',
-                'Total Revenue Completed', 'TotalRevenueCompleted'
+                'Completed Revenue', 'CompletedRevenue', 'Revenue', 'Total Revenue', 'TotalRevenue'
             ])) || 0;
             
-            // Get "Item Billable Hours" (index 12)
+            // Get "Item Billable Hours"
             const itemBillableHours = parseFloat(getValueFromRow(row, 'hoursSold', [
-                'Item Billable Hours', 'ItemBillableHours',
-                'Billable Hours', 'BillableHours'
+                'Item Billable Hours', 'ItemBillableHours', 'Billable Hours', 'BillableHours', 'Hours'
             ])) || 0;
+            
+            // Log first technician's data to verify field mapping
+            if (rawData.indexOf(row) === 0) {
+                console.log('processTechnicianData: First tech values:', {
+                    name: techName,
+                    totalRevenueCompleted,
+                    totalSold,
+                    opportunityJobAverage,
+                    opportunitiesCount,
+                    itemBillableHours,
+                    closeRate
+                });
+            }
             
             return {
                 id: slugify(techName),

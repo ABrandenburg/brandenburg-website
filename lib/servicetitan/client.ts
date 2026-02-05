@@ -192,8 +192,9 @@ export async function serviceTitanFetch<T>(
 
             return response.json();
         } catch (error) {
+            console.error(`ServiceTitan API attempt ${attempt + 1}/${maxRetries} failed:`, error);
             if (attempt < maxRetries - 1) {
-                console.warn(`Request failed, retrying in ${retryDelayMs}ms:`, error);
+                console.warn(`Retrying in ${retryDelayMs}ms...`);
                 await delay(retryDelayMs);
                 continue;
             }
@@ -201,7 +202,7 @@ export async function serviceTitanFetch<T>(
         }
     }
 
-    throw new Error(`Failed after ${maxRetries} retries`);
+    throw new Error(`ServiceTitan API: Failed after ${maxRetries} retries. Check server logs for details.`);
 }
 
 /**
