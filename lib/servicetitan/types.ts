@@ -138,6 +138,7 @@ export const EXCLUDED_TECHNICIANS = [
   'Michael Hamilton',
   'Terry Brandenburg',
   'Landon Christian',
+  'Imanol',
 ];
 
 // Technicians whose archived profiles should be merged with their current profile
