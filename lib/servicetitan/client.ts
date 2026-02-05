@@ -206,7 +206,7 @@ export async function serviceTitanFetch<T>(
 }
 
 /**
- * Fetch technician performance report data (Report ID: 3017)
+ * Fetch technician performance report data (Report ID: 3594 - Technician Performance Board)
  */
 export async function fetchTechnicianPerformance(
     startDate: string,
@@ -215,7 +215,7 @@ export async function fetchTechnicianPerformance(
     const tenantId = process.env.SERVICETITAN_TENANT_ID;
 
     const response = await serviceTitanFetch<{ data: any[] }>(
-        `/reporting/v2/tenant/{tenantId}/report-category/technician-dashboard/reports/3017/data`,
+        `/reporting/v2/tenant/{tenantId}/report-category/technician-dashboard/reports/3594/data`,
         {
             method: 'POST',
             body: JSON.stringify({
