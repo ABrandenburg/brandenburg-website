@@ -235,8 +235,10 @@ export function ScorecardContent({
             <div className={`grid gap-4 ${isFullscreen ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'}`}>
                 <RankingCard
                     title="Total Revenue"
+                    description="Invoiced amount from completed jobs"
                     technicians={data.totalRevenueCompleted}
                     showTotal={true}
+                    totalLabel="Total Team Revenue"
                     goal={{
                         value: 15000,
                         formatValue: formatCurrency,
@@ -245,8 +247,10 @@ export function ScorecardContent({
                 />
                 <RankingCard
                     title="Total Sales"
+                    description="Dollar value of sold estimates"
                     technicians={data.totalSales}
                     showTotal={true}
+                    totalLabel="Total Team Sales"
                     goal={{
                         value: 15000,
                         formatValue: formatCurrency,
@@ -255,6 +259,7 @@ export function ScorecardContent({
                 />
                 <RankingCard
                     title="Close Rate"
+                    description="% of opportunities that resulted in a sale"
                     technicians={data.closeRate}
                     trendSuffix=" pts"
                     goal={{
@@ -264,6 +269,7 @@ export function ScorecardContent({
                 />
                 <RankingCard
                     title="Opportunity Job Avg"
+                    description="Average dollar value per sold opportunity"
                     technicians={data.opportunityJobAverage}
                     goal={{
                         value: 2000,
@@ -272,6 +278,7 @@ export function ScorecardContent({
                 />
                 <RankingCard
                     title="Options per Opportunity"
+                    description="Average # of options presented to customers"
                     technicians={data.optionsPerOpportunity}
                     goal={{
                         value: 3,
@@ -280,11 +287,13 @@ export function ScorecardContent({
                 />
                 <RankingCard
                     title="Memberships Sold"
+                    description="Number of membership agreements sold"
                     technicians={data.membershipsSold}
                     trendSuffix=""
                 />
                 <RankingCard
                     title="Billable Hours"
+                    description="Hours billed to customers"
                     technicians={data.hoursSold}
                 />
             </div>

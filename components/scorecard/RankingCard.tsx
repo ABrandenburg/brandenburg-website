@@ -8,21 +8,25 @@ import type { RankedTechnician, GoalConfig } from '@/lib/servicetitan/types';
 
 interface RankingCardProps {
     title: string;
+    description?: string;
     technicians: RankedTechnician[];
     trendSuffix?: string;
     showTrends?: boolean;
     goal?: GoalConfig;
     showTotal?: boolean;
+    totalLabel?: string;
     basePath?: string;
 }
 
 export function RankingCard({
     title,
+    description,
     technicians,
     trendSuffix = '%',
     showTrends = true,
     goal,
     showTotal = false,
+    totalLabel = 'Team Total',
     basePath = '/admin/tools/scorecard/technician',
 }: RankingCardProps) {
     // Guard against undefined technicians (e.g., from stale cache)
@@ -38,9 +42,16 @@ export function RankingCard({
         <Card className="h-full flex flex-col bg-white border-slate-200">
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold uppercase tracking-wide text-slate-600">
-                        {title}
-                    </CardTitle>
+                    <div>
+                        <CardTitle className="text-sm font-semibold uppercase tracking-wide text-slate-600">
+                            {title}
+                        </CardTitle>
+                        {description && (
+                            <p className="text-xs text-slate-400 mt-0.5 font-normal normal-case tracking-normal">
+                                {description}
+                            </p>
+                        )}
+                    </div>
                     {goal && (
                         <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded">
                             Goal: {goal.formatValue(goal.value)}
@@ -51,7 +62,7 @@ export function RankingCard({
                 {showTotal && (
                     <div className="mt-3 p-3 bg-gradient-to-r from-brand-blue/5 to-brand-blue/10 rounded-lg border border-brand-blue/10">
                         <div className="text-xs text-slate-500 mb-1">
-                            Total Team Revenue
+                            {totalLabel}
                         </div>
                         <div className="text-2xl font-bold text-brand-blue">
                             {goal?.formatValue(teamTotal) || teamTotal.toLocaleString()}
