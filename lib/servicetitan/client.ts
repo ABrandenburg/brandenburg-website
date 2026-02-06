@@ -253,6 +253,53 @@ export async function fetchTechnicianPerformance(
 }
 
 /**
+ * Fetch Field Conversion Report data (Report ID: 3624)
+ * Category: "technician"
+ * 
+ * Includes metrics not in Report 3594: Options per Opportunity, Memberships Sold,
+ * SLM Conversion Rate, etc.
+ * Converts array rows to named objects using fields metadata.
+ */
+export async function fetchFieldConversionReport(
+    startDate: string,
+    endDate: string
+): Promise<any[]> {
+    console.log(`Fetching Field Conversion Report (Report 3624) for ${startDate} to ${endDate}`);
+
+    const response = await serviceTitanFetch<{ fields?: { name: string; label: string }[]; data: any[] }>(
+        `/reporting/v2/tenant/{tenantId}/report-category/technician/reports/3624/data`,
+        {
+            method: 'POST',
+            body: JSON.stringify({
+                parameters: [
+                    { name: 'From', value: startDate },
+                    { name: 'To', value: endDate },
+                ],
+            }),
+        }
+    );
+
+    const rawData = response.data || [];
+    console.log(`Field Conversion Report returned ${rawData.length} rows`);
+
+    // Convert array rows to named objects using fields metadata
+    if (response.fields && response.fields.length > 0 && rawData.length > 0 && Array.isArray(rawData[0])) {
+        const fieldNames = response.fields.map(f => f.name);
+        console.log('Report 3624 fields:', fieldNames.join(', '));
+        
+        return rawData.map((row: any[]) => {
+            const obj: Record<string, any> = {};
+            fieldNames.forEach((name, index) => {
+                obj[name] = row[index];
+            });
+            return obj;
+        });
+    }
+
+    return rawData;
+}
+
+/**
  * Fetch sold hours report data (Report ID: 239 - Job Completed Detail Report)
  * Category: "operations"
  * 
