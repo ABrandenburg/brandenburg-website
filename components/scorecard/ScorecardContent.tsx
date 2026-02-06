@@ -232,6 +232,10 @@ export function ScorecardContent({
             )}
 
             {/* Ranking Cards Grid - Optimized for portrait iPad */}
+            {/* Goals for cumulative metrics scale with the time period (base = 7 days) */}
+            {(() => {
+                const periodMultiplier = days / 7;
+                return (
             <div className={`grid gap-4 ${isFullscreen ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'}`}>
                 <RankingCard
                     title="Total Revenue"
@@ -240,7 +244,7 @@ export function ScorecardContent({
                     showTotal={true}
                     totalLabel="Total Team Revenue"
                     goal={{
-                        value: 15000,
+                        value: Math.round(15000 * periodMultiplier),
                         formatValue: formatCurrency,
                         label: 'Average Goal',
                     }}
@@ -252,7 +256,7 @@ export function ScorecardContent({
                     showTotal={true}
                     totalLabel="Total Team Sales"
                     goal={{
-                        value: 15000,
+                        value: Math.round(15000 * periodMultiplier),
                         formatValue: formatCurrency,
                         label: 'Average Goal',
                     }}
@@ -295,8 +299,14 @@ export function ScorecardContent({
                     title="Billable Hours"
                     description="Item billable hours worked"
                     technicians={data.hoursSold}
+                    goal={{
+                        value: Math.round(20 * periodMultiplier),
+                        formatValue: (v) => v.toFixed(0),
+                    }}
                 />
             </div>
+                );
+            })()}
 
             {/* Date Range Info - Only show when not fullscreen */}
             {!isFullscreen && (
