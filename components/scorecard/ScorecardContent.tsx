@@ -276,21 +276,7 @@ export function ScorecardContent({
                         formatValue: formatCurrency,
                     }}
                 />
-                <RankingCard
-                    title="Options per Opportunity"
-                    description="Average # of options presented to customers"
-                    technicians={data.optionsPerOpportunity}
-                    goal={{
-                        value: 3,
-                        formatValue: (v) => v.toFixed(1),
-                    }}
-                />
-                <RankingCard
-                    title="Memberships Sold"
-                    description="Number of membership agreements sold"
-                    technicians={data.membershipsSold}
-                    trendSuffix=""
-                />
+                {/* Options per Opportunity and Memberships Sold removed - not available in Report 3594 */}
                 <RankingCard
                     title="Billable Hours"
                     description="Item billable hours worked"
