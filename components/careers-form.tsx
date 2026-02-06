@@ -9,28 +9,13 @@ import { Button } from "@/components/ui/button"
 import { jobApplicationSchema, type JobApplicationValues } from "@/lib/schemas/job-application-schema"
 import { submitApplication } from "@/app/actions/submit-application"
 import { HoneypotField } from "@/components/ui/honeypot-field"
-import { Turnstile } from "@/components/ui/turnstile"
 import { getJobById, type JobListing } from "@/lib/jobs-data"
 
 export function CareersForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null)
-
-  // Memoize Turnstile callbacks to prevent widget re-initialization on every render
-  const handleTurnstileVerify = useCallback((token: string) => {
-    setTurnstileToken(token)
-  }, [])
-
-  const handleTurnstileError = useCallback(() => {
-    setError('Security verification failed. Please refresh and try again.')
-  }, [])
-
-  const handleTurnstileExpire = useCallback(() => {
-    setTurnstileToken(null)
-  }, [])
 
   const defaultValues: Partial<JobApplicationValues> = {
     // Shared
@@ -121,18 +106,10 @@ export function CareersForm() {
     const formElement = document.querySelector('form')
     const honeypotValue = formElement?.querySelector<HTMLInputElement>('[name="website_url"]')?.value
 
-    // Validate Turnstile token
-    if (!turnstileToken && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
-      setError('Please complete the security verification')
-      setIsSubmitting(false)
-      return
-    }
-
     try {
       const result = await submitApplication({
         ...data,
         website_url: honeypotValue,
-        turnstileToken,
       } as any)
       if (result.success) {
         setIsSubmitted(true)
@@ -551,16 +528,6 @@ export function CareersForm() {
 
         {/* Honeypot Field (invisible to humans) */}
         <HoneypotField />
-
-        {/* Turnstile Widget */}
-        <div className="pt-2">
-          <Turnstile
-            onVerify={handleTurnstileVerify}
-            onError={handleTurnstileError}
-            onExpire={handleTurnstileExpire}
-            size="flexible"
-          />
-        </div>
 
         {error && (
           <div className="p-4 bg-red-50 text-red-600 rounded-lg text-sm">

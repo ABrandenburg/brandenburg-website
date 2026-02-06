@@ -5,13 +5,11 @@ import { jobApplicationSchema, JobApplicationValues } from "@/lib/schemas/job-ap
 import { db } from "@/lib/db"
 import { submissions } from "@/lib/schema"
 import { validateHoneypot, HONEYPOT_FIELD_NAME } from "@/lib/spam-prevention/honeypot"
-import { verifyTurnstileToken } from "@/lib/spam-prevention/turnstile"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 type SubmissionData = JobApplicationValues & {
   [HONEYPOT_FIELD_NAME]?: string
-  turnstileToken?: string
 }
 
 export async function submitApplication(data: SubmissionData) {
@@ -22,18 +20,8 @@ export async function submitApplication(data: SubmissionData) {
     return { success: true } // Silent success for bots
   }
 
-  // 2. Turnstile verification
-  if (data.turnstileToken) {
-    const turnstileResult = await verifyTurnstileToken(data.turnstileToken)
-    if (!turnstileResult.success) {
-      return { success: false, error: 'Security verification failed' }
-    }
-  } else if (process.env.TURNSTILE_SECRET_KEY) {
-    return { success: false, error: 'Security verification required' }
-  }
-
-  // 3. Clean data for schema validation (remove spam prevention fields)
-  const { [HONEYPOT_FIELD_NAME]: _, turnstileToken: __, ...cleanData } = data
+  // 2. Clean data for schema validation (remove spam prevention fields)
+  const { [HONEYPOT_FIELD_NAME]: _, ...cleanData } = data
 
   const result = jobApplicationSchema.safeParse(cleanData)
 
