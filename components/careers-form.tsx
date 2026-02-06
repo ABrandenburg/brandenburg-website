@@ -558,7 +558,7 @@ export function CareersForm() {
             onVerify={handleTurnstileVerify}
             onError={handleTurnstileError}
             onExpire={handleTurnstileExpire}
-            size="invisible"
+            size="flexible"
           />
         </div>
 

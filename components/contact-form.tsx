@@ -272,7 +272,7 @@ export function ContactForm() {
           onVerify={handleTurnstileVerify}
           onError={handleTurnstileError}
           onExpire={handleTurnstileExpire}
-          size="invisible"
+          size="flexible"
         />
         {turnstileError && (
           <p className="mt-2 text-sm text-red-500">

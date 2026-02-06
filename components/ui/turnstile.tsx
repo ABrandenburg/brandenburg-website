@@ -14,7 +14,7 @@ declare global {
           'error-callback': () => void
           'expired-callback': () => void
           theme?: 'light' | 'dark' | 'auto'
-          size?: 'normal' | 'compact' | 'invisible'
+          size?: 'normal' | 'compact' | 'flexible'
         }
       ) => string
       reset: (widgetId: string) => void
@@ -28,7 +28,7 @@ interface TurnstileProps {
   onError?: () => void
   onExpire?: () => void
   theme?: 'light' | 'dark' | 'auto'
-  size?: 'normal' | 'compact' | 'invisible'
+  size?: 'normal' | 'compact' | 'flexible'
   className?: string
 }
 
