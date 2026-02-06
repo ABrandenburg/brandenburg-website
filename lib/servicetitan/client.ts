@@ -218,7 +218,7 @@ export async function fetchTechnicianPerformance(
     console.log(`Fetching Technician Performance Board (Report 3594) for ${startDate} to ${endDate}`);
 
     const response = await serviceTitanFetch<{ data: any[] }>(
-        `/reporting/v2/tenant/{tenantId}/report-category/custom/reports/3594/data`,
+        `/reporting/v2/tenant/{tenantId}/report-category/technician/reports/3594/data`,
         {
             method: 'POST',
             body: JSON.stringify({
