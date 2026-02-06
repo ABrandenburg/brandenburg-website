@@ -77,11 +77,14 @@ export async function POST(request: NextRequest) {
       })
     } catch (error) {
       console.error('Database Error:', error)
-      // Continue to send email even if DB fails
+      return NextResponse.json(
+        { error: 'Something went wrong. Please try again.' },
+        { status: 500 }
+      )
     }
 
-    // Send email using Resend
-    const { error } = await resend.emails.send({
+    // Fire-and-forget: send emails without awaiting — don't block the response to the user
+    resend.emails.send({
       from: 'Brandenburg Plumbing <no-reply@brandenburgplumbing.com>',
       to: ['service@brandenburgplumbing.com'],
       replyTo: email,
@@ -123,10 +126,10 @@ ${message}
 ---
 This message was sent from the contact form on brandenburgplumbing.com
       `,
-    })
+    }).catch((err) => console.error('Resend error (non-blocking):', err))
 
-    // Send auto-reply to the user
-    await resend.emails.send({
+    // Auto-reply to the user
+    resend.emails.send({
       from: 'Brandenburg Plumbing <no-reply@brandenburgplumbing.com>',
       to: [email],
       subject: 'We received your message - Brandenburg Plumbing',
@@ -174,15 +177,7 @@ ${message}
 Brandenburg Plumbing
 (512) 756-9847
       `,
-    })
-
-    if (error) {
-      console.error('Resend error:', error)
-      return NextResponse.json(
-        { error: 'Failed to send email' },
-        { status: 500 }
-      )
-    }
+    }).catch((err) => console.error('Auto-reply email failed (non-blocking):', err))
 
     return NextResponse.json(
       { message: 'Email sent successfully' },

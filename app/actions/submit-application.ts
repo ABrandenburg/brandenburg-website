@@ -52,16 +52,12 @@ export async function submitApplication(data: SubmissionData) {
     })
   } catch (error) {
     console.error("Database Error:", error)
-    // We continue to send email even if DB fails, or should we? 
-    // Usually better to fail safe, but for now let's log and proceed or fail?
-    // Let's log and proceed so we at least get the email. 
-    // NOTE: In a robust system we might want transaction or guarantee both.
+    return { success: false, error: "Something went wrong. Please try again." }
   }
 
-  // Format data for email
+  // Build email content before returning
   const subject = `New Job Application: ${role.toUpperCase()} - ${rest.fullName}`
 
-  // Construct HTML body
   let body = `
     <h1>New Job Application</h1>
     <h2>Contact Information</h2>
@@ -107,22 +103,15 @@ export async function submitApplication(data: SubmissionData) {
     `
   }
 
-  try {
-    const emailResponse = await resend.emails.send({
-      from: "Brandenburg Careers <careers@brandenburgplumbing.com>", // Update if domain verified differently
-      to: ["service@brandenburgplumbing.com"],
-      subject: subject,
-      html: body,
-    })
+  // Fire-and-forget: send email without awaiting — don't block the response to the user
+  resend.emails.send({
+    from: "Brandenburg Careers <careers@brandenburgplumbing.com>",
+    to: ["service@brandenburgplumbing.com"],
+    subject: subject,
+    html: body,
+  }).catch((error) => {
+    console.error("Email notification failed (non-blocking):", error)
+  })
 
-    if (emailResponse.error) {
-      console.error("Resend Error:", emailResponse.error)
-      return { success: false, error: "Failed to send email" }
-    }
-
-    return { success: true }
-  } catch (error) {
-    console.error("Submission Error:", error)
-    return { success: false, error: "Something went wrong" }
-  }
+  return { success: true }
 }
