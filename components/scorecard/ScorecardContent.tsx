@@ -207,7 +207,7 @@ export function ScorecardContent({
             {!hideHeader && (
                 <Header
                     title="Technician Scorecard"
-                    description={`Last ${days} days${lastUpdated ? ` • Updated ${lastUpdated.toLocaleTimeString()}` : ''}`}
+                    description={`Last ${days} days • Data updated daily at 6:00 AM CT`}
                     showTimeFilter={true}
                     actions={
                         <button
@@ -323,7 +323,7 @@ export function ScorecardContent({
             {/* Auto-refresh indicator in fullscreen */}
             {isFullscreen && (
                 <div className="fixed bottom-4 right-4 text-xs text-slate-400 bg-white/80 px-3 py-1.5 rounded-full shadow">
-                    Auto-refreshes every 5 minutes
+                    Data updated daily at 6:00 AM CT
                 </div>
             )}
         </div>
