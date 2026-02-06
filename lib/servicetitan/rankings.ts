@@ -12,6 +12,7 @@ import {
 } from './types';
 import {
     fetchTechnicianPerformance,
+    fetchFieldConversionReport,
     isServiceTitanConfigured,
     delay,
 } from './client';
@@ -549,11 +550,54 @@ async function calculateRankingsFromCache(days: ValidPeriod): Promise<RankedKPIs
 }
 
 /**
+ * Process Report 3624 (Field Conversion Report) data and merge into technician KPIs
+ * Adds: OptionsPerOpportunity, MembershipConversionRate
+ */
+function mergeFieldConversionData(technicians: TechnicianKPIs[], reportData: any[]): TechnicianKPIs[] {
+    if (!reportData || reportData.length === 0) return technicians;
+
+    // Build a map of technician name (lowercase) -> supplemental data
+    const supplementMap = new Map<string, any>();
+    for (const row of reportData) {
+        const name = getFieldValue(row, ['Name', 'Technician', 'TechnicianName'], null);
+        if (name && typeof name === 'string') {
+            supplementMap.set(name.toLowerCase(), row);
+        }
+    }
+
+    console.log(`mergeFieldConversionData: Merging data for ${supplementMap.size} technicians from Report 3624`);
+
+    return technicians.map(tech => {
+        const supplement = supplementMap.get(tech.name.toLowerCase());
+        if (!supplement) return tech;
+
+        const optionsPerOpportunity = parseFloat(getFieldValue(supplement, [
+            'OptionsPerOpportunity', 'Options Per Opportunity'
+        ])) || 0;
+
+        // MembershipConversionRate comes as decimal (e.g. 0.07 = 7%)
+        let membershipConversionRate = parseFloat(getFieldValue(supplement, [
+            'MembershipConversionRate', 'Membership Conversion Rate'
+        ])) || 0;
+        if (membershipConversionRate > 0 && membershipConversionRate <= 1) {
+            membershipConversionRate = membershipConversionRate * 100;
+        }
+
+        return {
+            ...tech,
+            optionsPerOpportunity,
+            membershipConversionRate,
+        };
+    });
+}
+
+/**
  * Fetch fresh data and calculate rankings
  * 
- * Report 3594 (Technician Performance Board) already includes all metrics we need:
- * CompletedRevenue, TotalSales, ItemBillableHours, OpportunityJobAverage, etc.
- * No need for separate Report 239 calls - this reduces API calls and avoids rate limiting.
+ * Report 3594 (Technician Performance Board): Revenue, Sales, Close Rate, Job Avg, Hours
+ * Report 3624 (Field Conversion Report): Options per Opportunity, Membership Conversion Rate
+ * 
+ * These are different reports, so each has its own 5 req/min rate limit.
  */
 async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs> {
     if (!isServiceTitanConfigured()) {
@@ -571,8 +615,22 @@ async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs>
     );
     await setCachedTechnicianPeriod(days, currentData, false);
 
-    // Fetch previous period for trend comparison
-    // Add a small delay to avoid rate limiting between consecutive API calls
+    // Fetch current period Field Conversion Report 3624 (different report = different rate limit)
+    let currentFieldConversion: any[] = [];
+    let previousFieldConversion: any[] = [];
+    try {
+        await delay(2000);
+        currentFieldConversion = await executeWithLock(
+            'field-conversion',
+            '3624',
+            () => fetchFieldConversionReport(dateRange.startDate, dateRange.endDate)
+        );
+        console.log(`Fetched ${currentFieldConversion.length} rows from Field Conversion Report (current)`);
+    } catch (err) {
+        console.warn('Failed to fetch current Field Conversion Report:', err);
+    }
+
+    // Fetch previous period from Report 3594 for trend comparison
     await delay(2000);
     
     let previousData: any[] | null = null;
@@ -587,9 +645,30 @@ async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs>
         console.warn(`Failed to fetch previous period data for ${days}-day rankings, trends will be unavailable:`, err);
     }
 
-    // Process technician data - Report 3594 includes all metrics
-    const technicians = processTechnicianData(currentData);
-    const previousTechnicians = previousData ? processTechnicianData(previousData) : null;
+    // Fetch previous period Field Conversion Report 3624
+    try {
+        await delay(2000);
+        previousFieldConversion = await executeWithLock(
+            'field-conversion',
+            '3624-prev',
+            () => fetchFieldConversionReport(dateRange.previousStartDate, dateRange.previousEndDate)
+        );
+        console.log(`Fetched ${previousFieldConversion.length} rows from Field Conversion Report (previous)`);
+    } catch (err) {
+        console.warn('Failed to fetch previous Field Conversion Report:', err);
+    }
+
+    // Process technician data from Report 3594
+    let technicians = processTechnicianData(currentData);
+    let previousTechnicians = previousData ? processTechnicianData(previousData) : null;
+
+    // Merge supplemental data from Report 3624 (Options per Opportunity, Membership Conversion)
+    if (currentFieldConversion.length > 0) {
+        technicians = mergeFieldConversionData(technicians, currentFieldConversion);
+    }
+    if (previousFieldConversion.length > 0 && previousTechnicians) {
+        previousTechnicians = mergeFieldConversionData(previousTechnicians, previousFieldConversion);
+    }
 
     const rankings = buildRankings(technicians, previousTechnicians, days);
     await setCachedRankings(days, rankings);
