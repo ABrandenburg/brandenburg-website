@@ -1,142 +1,111 @@
+import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
-import { NextResponse } from 'next/server'
+import { db } from '@/lib/db'
+import { submissions } from '@/lib/schema'
+import { jobApplicationSchema, JobApplicationValues } from '@/lib/schemas/job-application-schema'
+import { validateHoneypot, HONEYPOT_FIELD_NAME } from '@/lib/spam-prevention/honeypot'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { fullName, email, phone, role, message } = body
 
-    // Validate required fields
-    if (!fullName || !email || !phone || !role || !message) {
+    // 1. Honeypot check
+    const honeypotResult = validateHoneypot(body[HONEYPOT_FIELD_NAME])
+    if (honeypotResult.isSpam) {
+      console.log('Spam detected via honeypot:', honeypotResult.reason)
+      return NextResponse.json({ success: true }, { status: 200 })
+    }
+
+    // 2. Clean data for schema validation
+    const { [HONEYPOT_FIELD_NAME]: _, ...cleanData } = body
+
+    const result = jobApplicationSchema.safeParse(cleanData)
+    if (!result.success) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { error: 'Invalid form data' },
         { status: 400 }
       )
     }
 
-    console.log(`Processing career application for ${fullName} (${email}) - Role: ${role}`)
+    const { role, ...rest } = result.data
 
-    // 1. Send notification email to service@brandenburgplumbing.com
-    const { error: notificationError } = await resend.emails.send({
-      from: 'Brandenburg Plumbing Careers <no-reply@brandenburgplumbing.com>',
-      to: ['service@brandenburgplumbing.com'],
-      replyTo: email,
-      subject: `Career Application: ${role} - ${fullName}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #324759; border-bottom: 2px solid #C41E3A; padding-bottom: 10px;">
-            New Career Application
-          </h2>
-          
-          <div style="margin: 20px 0;">
-            <p style="margin: 10px 0;"><strong>Position:</strong> ${role}</p>
-            <p style="margin: 10px 0;"><strong>Name:</strong> ${fullName}</p>
-            <p style="margin: 10px 0;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-            <p style="margin: 10px 0;"><strong>Phone:</strong> <a href="tel:${phone}">${phone}</a></p>
-          </div>
-          
-          <div style="margin: 20px 0; padding: 15px; background-color: #f5f5f5; border-radius: 8px;">
-            <p style="margin: 0 0 10px 0; font-weight: bold;">Message:</p>
-            <p style="margin: 0; white-space: pre-wrap;">${message}</p>
-          </div>
-          
-          <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
-          
-          <p style="color: #666; font-size: 12px;">
-            This application was submitted via brandenburgplumbing.com/careers
-          </p>
-        </div>
-      `,
-      text: `
-New Career Application
-
-Position: ${role}
-Name: ${fullName}
-Email: ${email}
-Phone: ${phone}
-
-Message:
-${message}
-
----
-This application was submitted via brandenburgplumbing.com/careers
-      `,
-    })
-
-    if (notificationError) {
-      console.error('Error sending notification email:', notificationError)
+    // 3. Save to database
+    try {
+      await db.insert(submissions).values({
+        type: 'career',
+        payload: result.data,
+        status: 'new',
+      })
+    } catch (error) {
+      console.error('Database Error:', error)
       return NextResponse.json(
-        { error: 'Failed to send application notification' },
+        { error: 'Something went wrong. Please try again.' },
         { status: 500 }
       )
     }
 
-    // 2. Send confirmation email to the applicant
-    const { error: confirmationError } = await resend.emails.send({
-      from: 'Brandenburg Plumbing <no-reply@brandenburgplumbing.com>',
-      to: [email],
-      subject: 'We received your application - Brandenburg Plumbing',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #324759; border-bottom: 2px solid #C41E3A; padding-bottom: 10px;">
-            Application Received
-          </h2>
-          
-          <div style="margin: 20px 0;">
-            <p>Dear ${fullName},</p>
-            <p>Thank you for applying to join the Brandenburg Plumbing team. We have received your application for the <strong>${role}</strong> position.</p>
-            <p>We will review your application and reach out to you within the next few business days.</p>
-            <p>Here is a copy of your submission:</p>
-          </div>
-          
-          <div style="margin: 20px 0; padding: 15px; background-color: #f5f5f5; border-radius: 8px;">
-            <p style="margin: 0 0 10px 0;"><strong>Phone:</strong> ${phone}</p>
-            <p style="margin: 0 0 10px 0; font-weight: bold;">Message:</p>
-            <p style="margin: 0; white-space: pre-wrap;">${message}</p>
-          </div>
-          
-          <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
-          
-          <p style="color: #666; font-size: 12px;">
-            Brandenburg Plumbing<br/>
-            (512) 756-9847
-          </p>
-        </div>
-      `,
-      text: `
-Application Received
+    // 4. Build and send notification email (fire-and-forget)
+    const subject = `New Job Application: ${role.toUpperCase()} - ${rest.fullName}`
 
-Dear ${fullName},
+    let emailBody = `
+      <h1>New Job Application</h1>
+      <h2>Contact Information</h2>
+      <ul>
+        <li><strong>Name:</strong> ${rest.fullName}</li>
+        <li><strong>Email:</strong> ${rest.email}</li>
+        <li><strong>Phone:</strong> ${rest.phone}</li>
+        <li><strong>Zip Code:</strong> ${rest.zipCode}</li>
+        <li><strong>Source:</strong> ${rest.source}</li>
+      </ul>
+      <h2>Role Specifics: ${role.toUpperCase()}</h2>
+    `
 
-Thank you for applying to join the Brandenburg Plumbing team. We have received your application for the ${role} position.
-
-We will review your application and reach out to you within the next few business days.
-
-Here is a copy of your submission:
-
-Phone: ${phone}
-
-Message:
-${message}
-
----
-Brandenburg Plumbing
-(512) 756-9847
-      `,
-    })
-
-    if (confirmationError) {
-      console.error('Error sending confirmation email:', confirmationError)
-      // We don't fail the request here if the confirmation fails, but we log it
+    if (role === 'technician') {
+      const d = result.data as Extract<JobApplicationValues, { role: 'technician' }>
+      emailBody += `
+        <ul>
+          <li><strong>Trade:</strong> ${d.trade}</li>
+          <li><strong>Experience:</strong> ${d.experienceYears}</li>
+          <li><strong>Has License:</strong> ${d.hasLicense ? 'Yes' : 'No'}</li>
+          ${d.licenseType ? `<li><strong>License Type:</strong> ${d.licenseType}</li>` : ''}
+          <li><strong>Motivation:</strong> ${d.motivation}</li>
+          ${d.mostRecentEmployer ? `<li><strong>Recent Employer:</strong> ${d.mostRecentEmployer}</li>` : ''}
+        </ul>
+      `
+    } else if (role === 'office') {
+      const d = result.data as Extract<JobApplicationValues, { role: 'office' }>
+      emailBody += `
+        <ul>
+          <li><strong>Experience:</strong> ${d.officeExperience}</li>
+          <li><strong>Known Software (ServiceTitan/HCP):</strong> ${d.knownSoftware ? 'Yes' : 'No'}</li>
+          <li><strong>Comfortable w/ High Call Volume:</strong> ${d.callVolumeComfort ? 'Yes' : 'No'}</li>
+          ${d.mostRecentEmployer ? `<li><strong>Recent Employer:</strong> ${d.mostRecentEmployer}</li>` : ''}
+        </ul>
+      `
+    } else if (role === 'warehouse') {
+      const d = result.data as Extract<JobApplicationValues, { role: 'warehouse' }>
+      emailBody += `
+        <ul>
+          <li><strong>Can Lift 50lbs:</strong> ${d.canLift50lbs ? 'Yes' : 'No'}</li>
+          <li><strong>Driver's License:</strong> ${d.hasDriversLicense ? 'Yes' : 'No'}</li>
+        </ul>
+      `
     }
 
-    console.log('Successfully sent notification and confirmation emails')
+    resend.emails.send({
+      from: 'Brandenburg Careers <careers@brandenburgplumbing.com>',
+      to: ['service@brandenburgplumbing.com'],
+      subject,
+      html: emailBody,
+    }).catch((error) => {
+      console.error('Email notification failed (non-blocking):', error)
+    })
 
-    return NextResponse.json({ success: true, message: 'Application submitted successfully' })
+    return NextResponse.json({ success: true }, { status: 200 })
   } catch (error) {
-    console.error('API error:', error)
+    console.error('Careers API error:', error)
     return NextResponse.json(
       { error: 'An unexpected error occurred' },
       { status: 500 }

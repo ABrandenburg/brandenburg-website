@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Loader2, CheckCircle, ArrowRight, Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { jobApplicationSchema, type JobApplicationValues } from "@/lib/schemas/job-application-schema"
-import { submitApplication } from "@/app/actions/submit-application"
 import { HoneypotField } from "@/components/ui/honeypot-field"
 import { getJobById, type JobListing } from "@/lib/jobs-data"
 
@@ -107,11 +106,18 @@ export function CareersForm() {
     const honeypotValue = formElement?.querySelector<HTMLInputElement>('[name="website_url"]')?.value
 
     try {
-      const result = await submitApplication({
-        ...data,
-        website_url: honeypotValue,
-      } as any)
-      if (result.success) {
+      const response = await fetch('/api/careers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...data,
+          website_url: honeypotValue,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok && result.success) {
         setIsSubmitted(true)
         form.reset()
 
