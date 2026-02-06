@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Phone, CalendarCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { LeadsSummary as LeadsSummaryType } from '@/lib/servicetitan/types';
+import type { LeadsSummary as LeadsSummaryType } from '@/lib/scorecard/types';
 
 interface LeadsSummaryProps {
     data: LeadsSummaryType;

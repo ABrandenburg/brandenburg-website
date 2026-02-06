@@ -39,7 +39,7 @@ export default function ToolsPage() {
               Technician Scorecard
             </h2>
             <p className="text-slate-500 text-sm mt-1">
-              View technician performance rankings and company-wide KPIs from ServiceTitan.
+              View technician performance rankings and company-wide KPIs.
             </p>
           </div>
           

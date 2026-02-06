@@ -1,8 +1,10 @@
 // Individual Technician API Route
 // GET /api/scorecard/technician/:id?days=7|30|90|365
+// Reads from the scorecard_data table
 
 import { NextRequest, NextResponse } from 'next/server';
-import { calculateRankings, VALID_PERIODS, ValidPeriod, RankedTechnician } from '@/lib/servicetitan';
+import { createClient } from '@supabase/supabase-js';
+import { VALID_PERIODS, type ValidPeriod, type RankedTechnician, type RankedKPIs } from '@/lib/scorecard';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +19,19 @@ interface TechnicianDetail {
         rank: number;
         totalTechnicians: number;
     }[];
+}
+
+function getSupabaseAdmin() {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !serviceRoleKey) {
+        return null;
+    }
+
+    return createClient(url, serviceRoleKey, {
+        auth: { persistSession: false },
+    });
 }
 
 export async function GET(
@@ -40,7 +55,37 @@ export async function GET(
             );
         }
 
-        const rankings = await calculateRankings(days);
+        const supabase = getSupabaseAdmin();
+        if (!supabase) {
+            return NextResponse.json(
+                { error: 'Database not configured', success: false },
+                { status: 500 }
+            );
+        }
+
+        // Fetch the most recent scorecard data for this period
+        const { data: scorecardRow, error } = await supabase
+            .from('scorecard_data')
+            .select('data, report_date')
+            .eq('period', days)
+            .order('report_date', { ascending: false })
+            .limit(1)
+            .single();
+
+        if (error || !scorecardRow) {
+            return NextResponse.json(
+                { error: 'No scorecard data available', success: false },
+                { status: 404 }
+            );
+        }
+
+        const rankings: RankedKPIs = scorecardRow.data?.rankings;
+        if (!rankings) {
+            return NextResponse.json(
+                { error: 'No rankings data available', success: false },
+                { status: 404 }
+            );
+        }
 
         // Find the technician in each ranking
         const findTechnician = (list: RankedTechnician[]): RankedTechnician | undefined =>

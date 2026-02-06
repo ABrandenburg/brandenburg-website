@@ -1,4 +1,5 @@
 // Rankings calculation and KPI processing logic
+// Pure data processing -- no API calls or caching
 
 import {
     TechnicianKPIs,
@@ -10,22 +11,7 @@ import {
     EXCLUDED_TECHNICIANS,
     MERGED_TECHNICIANS,
 } from './types';
-import {
-    fetchTechnicianPerformance,
-    fetchFieldConversionReport,
-    fetchMembershipsReport,
-    isServiceTitanConfigured,
-    delay,
-} from './client';
-import {
-    getCachedTechnicianPeriod,
-    setCachedTechnicianPeriod,
-    getCachedRankings,
-    getCachedRankingsWithStale,
-    setCachedRankings,
-} from './cache';
 import { getFullDateRange } from './date-utils';
-import { executeWithLock } from './api-queue';
 
 /**
  * Slugify a name for use as ID
@@ -113,15 +99,15 @@ function getFieldValue(row: any, fieldNames: string[], defaultValue: any = 0): a
 }
 
 /**
- * Process raw ServiceTitan data into TechnicianKPIs
+ * Process raw report data into TechnicianKPIs
  * 
- * Report 3594 (Technician Performance Board) fields from API:
+ * Technician Performance Board fields:
  *   Name, TechnicianBusinessUnit, CompletedRevenue, CompletedJobs,
  *   Opportunity, CompletedNonOpportunities, OpportunityConversionRate,
  *   OpportunityJobAverage, ReplacementLeadConversionRate, JobsOnHold,
  *   WipJobs, TotalSales, ItemBillableHours, BillableEfficiency
  */
-function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
+export function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
     if (!rawData || rawData.length === 0) {
         console.log('processTechnicianData: No raw data received');
         return [];
@@ -188,8 +174,9 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 closeRate = closeRate * 100;
             }
 
-            // Item Billable Hours
+            // Item Billable Hours / Net Billable Hours
             const itemBillableHours = parseFloat(getFieldValue(row, [
+                'Net Billable Hours', 'NetBillableHours',
                 'ItemBillableHours', 'Item Billable Hours', 'BillableHours', 'Billable Hours'
             ])) || 0;
 
@@ -200,6 +187,16 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
             if (replacementRate > 0 && replacementRate <= 1) {
                 replacementRate = replacementRate * 100;
             }
+
+            // Memberships Sold (may be in main report or supplemental)
+            const membershipsSold = parseInt(getFieldValue(row, [
+                'MembershipsSold', 'Memberships Sold'
+            ])) || 0;
+
+            // Options Per Opportunity (may be in main report or supplemental)
+            const optionsPerOpportunity = parseFloat(getFieldValue(row, [
+                'OptionsPerOpportunity', 'Options Per Opportunity'
+            ])) || 0;
 
             // Log first technician's data to verify field mapping
             if (index === 0) {
@@ -212,6 +209,7 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                     completedJobs,
                     itemBillableHours,
                     closeRate,
+                    membershipsSold,
                 });
             }
 
@@ -220,12 +218,12 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
                 name: techName,
                 opportunityJobAverage,
                 totalRevenueCompleted,
-                optionsPerOpportunity: 0, // Not in report 3594
+                optionsPerOpportunity,
                 closeRate,
-                membershipsSold: 0, // Not in report 3594
-                membershipConversionRate: 0, // Not in report 3594
-                leads: 0, // Not in report 3594
-                leadsBooked: 0, // Not in report 3594
+                membershipsSold,
+                membershipConversionRate: 0, // May come from supplemental report
+                leads: 0, // May come from supplemental report
+                leadsBooked: 0, // May come from supplemental report
                 hoursSold: itemBillableHours,
                 sales: opportunitiesCount,
                 totalSales,
@@ -245,29 +243,28 @@ function processTechnicianData(rawData: any[]): TechnicianKPIs[] {
 }
 
 /**
- * Merge archived technician profiles into their canonical profiles
- * Combines KPIs by summing numeric values
+ * Merge duplicate technician profiles into single entries
+ * For the same technician appearing multiple times (e.g., archived profiles):
+ * - Sums: Revenue, Total Sales, Billable Hours, Memberships Sold, Leads, Sales
+ * - Simple averages: Close Rate, Opportunity Job Average, Options Per Opportunity,
+ *   Membership Conversion Rate (only counting entries with non-zero values)
  * Also merges duplicate entries with the same name (case-insensitive)
  */
 function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[] {
     // Build a map of alternate names to canonical names (lowercase -> canonical)
     const aliasToCanonical = new Map<string, string>();
     for (const [canonical, aliases] of Object.entries(MERGED_TECHNICIANS)) {
-        // Add the canonical name itself (lowercase) -> canonical
         aliasToCanonical.set(canonical.toLowerCase(), canonical);
-        // Add all aliases
         for (const alias of aliases) {
             aliasToCanonical.set(alias.toLowerCase(), canonical);
         }
     }
 
     // Group technicians by canonical name (case-insensitive)
-    // Key is lowercase name, value is { canonicalName, techs }
     const grouped = new Map<string, { canonicalName: string; techs: TechnicianKPIs[] }>();
 
     for (const tech of technicians) {
         const lowerName = tech.name.toLowerCase();
-        // Check if this name maps to a canonical name, otherwise use original
         const canonicalName = aliasToCanonical.get(lowerName) || tech.name;
         const groupKey = canonicalName.toLowerCase();
 
@@ -281,9 +278,20 @@ function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[
     const result: TechnicianKPIs[] = [];
 
     grouped.forEach(({ canonicalName, techs }) => {
-        if (techs.length === 1) {
-            // No merging needed, but use canonical name if this was an alias
-            const tech = techs[0];
+        // Filter out entries where ALL metrics are zero (empty archived profiles)
+        const nonEmptyTechs = techs.filter(t =>
+            t.totalRevenueCompleted > 0 ||
+            t.totalSales > 0 ||
+            t.hoursSold > 0 ||
+            t.membershipsSold > 0 ||
+            t.closeRate > 0
+        );
+
+        // If all entries were empty, skip this technician entirely
+        if (nonEmptyTechs.length === 0) return;
+
+        if (nonEmptyTechs.length === 1) {
+            const tech = nonEmptyTechs[0];
             if (tech.name !== canonicalName) {
                 result.push({
                     ...tech,
@@ -294,8 +302,7 @@ function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[
                 result.push(tech);
             }
         } else {
-            // Merge multiple profiles by summing their KPIs
-            console.log(`Merging ${techs.length} profiles for ${canonicalName}:`, techs.map(t => t.name));
+            console.log(`Merging ${nonEmptyTechs.length} profiles for ${canonicalName}:`, nonEmptyTechs.map(t => t.name));
 
             const merged: TechnicianKPIs = {
                 id: slugify(canonicalName),
@@ -313,28 +320,37 @@ function mergeTechnicianProfiles(technicians: TechnicianKPIs[]): TechnicianKPIs[
                 totalSales: 0,
             };
 
-            // Sum all values
-            for (const tech of techs) {
+            // Sum fields: revenue, sales amounts, hours, counts
+            for (const tech of nonEmptyTechs) {
                 merged.totalRevenueCompleted += tech.totalRevenueCompleted;
+                merged.totalSales += tech.totalSales;
+                merged.hoursSold += tech.hoursSold;
                 merged.membershipsSold += tech.membershipsSold;
                 merged.leads += tech.leads;
                 merged.leadsBooked += tech.leadsBooked;
-                merged.hoursSold += tech.hoursSold;
                 merged.sales += tech.sales;
-                merged.totalSales += tech.totalSales;
             }
 
-            // For rates and averages, use weighted average based on revenue
-            const totalRevenue = techs.reduce((sum, t) => sum + t.totalRevenueCompleted, 0);
-            if (totalRevenue > 0) {
-                for (const tech of techs) {
-                    const weight = tech.totalRevenueCompleted / totalRevenue;
-                    merged.opportunityJobAverage += tech.opportunityJobAverage * weight;
-                    merged.optionsPerOpportunity += tech.optionsPerOpportunity * weight;
-                    merged.closeRate += tech.closeRate * weight;
-                    merged.membershipConversionRate += tech.membershipConversionRate * weight;
-                }
-            }
+            // Simple average for rate/average fields (only counting non-zero entries)
+            const avgField = (field: keyof TechnicianKPIs) => {
+                const nonZero = nonEmptyTechs.filter(t => (t[field] as number) > 0);
+                if (nonZero.length === 0) return 0;
+                return nonZero.reduce((sum, t) => sum + (t[field] as number), 0) / nonZero.length;
+            };
+
+            merged.opportunityJobAverage = avgField('opportunityJobAverage');
+            merged.closeRate = avgField('closeRate');
+            merged.optionsPerOpportunity = avgField('optionsPerOpportunity');
+            merged.membershipConversionRate = avgField('membershipConversionRate');
+
+            console.log(`Merged ${canonicalName}:`, {
+                revenue: merged.totalRevenueCompleted,
+                totalSales: merged.totalSales,
+                hours: merged.hoursSold,
+                memberships: merged.membershipsSold,
+                closeRate: merged.closeRate,
+                oppJobAvg: merged.opportunityJobAverage,
+            });
 
             result.push(merged);
         }
@@ -353,14 +369,12 @@ function rankBy(
     formatValue: (value: number) => string,
     ascending: boolean = false
 ): RankedTechnician[] {
-    // Sort by metric
     const sorted = [...technicians].sort((a, b) => {
         const aVal = a[metric] as number;
         const bVal = b[metric] as number;
         return ascending ? aVal - bVal : bVal - aVal;
     });
 
-    // Create previous rankings map
     const previousRankings = new Map<string, { rank: number; value: number }>();
     if (previousTechnicians) {
         const previousSorted = [...previousTechnicians].sort((a, b) => {
@@ -413,7 +427,7 @@ function calculateOverallStats(
         totalCloseRate: avg(technicians, 'closeRate'),
         optionsPerOpportunity: avg(technicians, 'optionsPerOpportunity'),
         totalRevenue: sum(technicians, 'totalRevenueCompleted'),
-        cancelledJobs: 0, // Will be fetched separately
+        cancelledJobs: 0,
         previousOpportunityJobAverage: previousTechnicians ? avg(previousTechnicians, 'opportunityJobAverage') : undefined,
         previousOpportunityCloseRate: previousTechnicians ? avg(previousTechnicians, 'closeRate') : undefined,
         previousTotalCloseRate: previousTechnicians ? avg(previousTechnicians, 'closeRate') : undefined,
@@ -449,115 +463,13 @@ function calculateLeadsSummary(
     };
 }
 
-// In-flight request deduplication to prevent thundering herd
-const inFlightRequests = new Map<string, Promise<RankedKPIs>>();
-
 /**
- * Fetch and calculate all rankings with stale-while-revalidate support
- */
-export async function calculateRankings(days: ValidPeriod): Promise<RankedKPIs> {
-    // Check for stale-while-revalidate
-    const { data: cachedData, isStale } = await getCachedRankingsWithStale(days);
-
-    if (cachedData && !isStale) {
-        // Fresh cache hit - return immediately
-        return cachedData;
-    }
-
-    // Check for in-flight request to deduplicate
-    const requestKey = `rankings:${days}`;
-    const existingRequest = inFlightRequests.get(requestKey);
-
-    if (existingRequest) {
-        // Another request is already fetching this data
-        if (cachedData && isStale) {
-            // Return stale data while another request refreshes
-            return cachedData;
-        }
-        // Wait for the existing request
-        return existingRequest;
-    }
-
-    // If we have stale data, return it immediately and refresh in background
-    if (cachedData && isStale) {
-        // Trigger background refresh (don't await)
-        refreshRankingsInBackground(days);
-        return cachedData;
-    }
-
-    // No cached data - need to fetch synchronously
-    return fetchRankingsWithDeduplication(days);
-}
-
-/**
- * Refresh rankings in background (fire and forget)
- */
-function refreshRankingsInBackground(days: ValidPeriod): void {
-    const requestKey = `rankings:${days}`;
-
-    // Check if already refreshing
-    if (inFlightRequests.has(requestKey)) return;
-
-    // Start background refresh
-    const refreshPromise = fetchAndCalculateRankings(days)
-        .finally(() => {
-            inFlightRequests.delete(requestKey);
-        });
-
-    inFlightRequests.set(requestKey, refreshPromise);
-
-    // Fire and forget - don't await
-    refreshPromise.catch(err => {
-        console.error(`Background refresh failed for ${days}-day rankings:`, err);
-    });
-}
-
-/**
- * Fetch rankings with request deduplication
- */
-async function fetchRankingsWithDeduplication(days: ValidPeriod): Promise<RankedKPIs> {
-    const requestKey = `rankings:${days}`;
-
-    // Try to build from cached period data first
-    const rankings = await calculateRankingsFromCache(days);
-    if (rankings) {
-        await setCachedRankings(days, rankings);
-        return rankings;
-    }
-
-    // Create new fetch request
-    const fetchPromise = fetchAndCalculateRankings(days)
-        .finally(() => {
-            inFlightRequests.delete(requestKey);
-        });
-
-    inFlightRequests.set(requestKey, fetchPromise);
-    return fetchPromise;
-}
-
-/**
- * Build rankings from cached period data
- */
-async function calculateRankingsFromCache(days: ValidPeriod): Promise<RankedKPIs | null> {
-    const currentData = await getCachedTechnicianPeriod(days, false);
-    const previousData = await getCachedTechnicianPeriod(days, true);
-
-    if (!currentData) return null;
-
-    const technicians = processTechnicianData(currentData);
-    const previousTechnicians = previousData ? processTechnicianData(previousData) : null;
-
-    return buildRankings(technicians, previousTechnicians, days);
-}
-
-/**
- * Process Report 3624 (Field Conversion Report) data and merge into technician KPIs
+ * Process supplemental Field Conversion Report data and merge into technician KPIs
  * Adds: OptionsPerOpportunity, MembershipConversionRate
  */
-function mergeFieldConversionData(technicians: TechnicianKPIs[], reportData: any[]): TechnicianKPIs[] {
+export function mergeFieldConversionData(technicians: TechnicianKPIs[], reportData: any[]): TechnicianKPIs[] {
     if (!reportData || reportData.length === 0) return technicians;
 
-    // Build a map of technician name (lowercase) -> supplemental data
     const supplementMap = new Map<string, any>();
     for (const row of reportData) {
         const name = getFieldValue(row, ['Name', 'Technician', 'TechnicianName'], null);
@@ -566,7 +478,7 @@ function mergeFieldConversionData(technicians: TechnicianKPIs[], reportData: any
         }
     }
 
-    console.log(`mergeFieldConversionData: Merging data for ${supplementMap.size} technicians from Report 3624`);
+    console.log(`mergeFieldConversionData: Merging data for ${supplementMap.size} technicians`);
 
     return technicians.map(tech => {
         const supplement = supplementMap.get(tech.name.toLowerCase());
@@ -576,7 +488,6 @@ function mergeFieldConversionData(technicians: TechnicianKPIs[], reportData: any
             'OptionsPerOpportunity', 'Options Per Opportunity'
         ])) || 0;
 
-        // MembershipConversionRate comes as decimal (e.g. 0.07 = 7%)
         let membershipConversionRate = parseFloat(getFieldValue(supplement, [
             'MembershipConversionRate', 'Membership Conversion Rate'
         ])) || 0;
@@ -593,10 +504,10 @@ function mergeFieldConversionData(technicians: TechnicianKPIs[], reportData: any
 }
 
 /**
- * Process Report 257 (Memberships) data and merge into technician KPIs
+ * Process supplemental Memberships Report data and merge into technician KPIs
  * Adds: membershipsSold (count)
  */
-function mergeMembershipsData(technicians: TechnicianKPIs[], reportData: any[]): TechnicianKPIs[] {
+export function mergeMembershipsData(technicians: TechnicianKPIs[], reportData: any[]): TechnicianKPIs[] {
     if (!reportData || reportData.length === 0) return technicians;
 
     const supplementMap = new Map<string, any>();
@@ -607,7 +518,7 @@ function mergeMembershipsData(technicians: TechnicianKPIs[], reportData: any[]):
         }
     }
 
-    console.log(`mergeMembershipsData: Merging data for ${supplementMap.size} technicians from Report 257`);
+    console.log(`mergeMembershipsData: Merging data for ${supplementMap.size} technicians`);
 
     return technicians.map(tech => {
         const supplement = supplementMap.get(tech.name.toLowerCase());
@@ -625,130 +536,10 @@ function mergeMembershipsData(technicians: TechnicianKPIs[], reportData: any[]):
 }
 
 /**
- * Fetch fresh data and calculate rankings
- * 
- * Report 3594 (Technician Performance Board): Revenue, Sales, Close Rate, Job Avg, Hours
- * Report 3624 (Field Conversion Report): Options per Opportunity, Membership Conversion Rate
- * Report 257 (Memberships): Memberships Sold count
- * 
- * These are different reports, so each has its own 5 req/min rate limit.
+ * Build rankings object from processed technician data
+ * This is the main entry point for building scorecard rankings from any data source
  */
-async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs> {
-    if (!isServiceTitanConfigured()) {
-        return getMockRankings(days);
-    }
-
-    const dateRange = getFullDateRange(days);
-
-    // Fetch current period technician performance from Report 3594
-    console.log(`Fetching rankings for ${days}-day period: ${dateRange.startDate} to ${dateRange.endDate}`);
-    const currentData = await executeWithLock(
-        'technician-performance',
-        '3594',
-        () => fetchTechnicianPerformance(dateRange.startDate, dateRange.endDate)
-    );
-    await setCachedTechnicianPeriod(days, currentData, false);
-
-    // Fetch current period Field Conversion Report 3624 (different report = different rate limit)
-    let currentFieldConversion: any[] = [];
-    let previousFieldConversion: any[] = [];
-    try {
-        await delay(2000);
-        currentFieldConversion = await executeWithLock(
-            'field-conversion',
-            '3624',
-            () => fetchFieldConversionReport(dateRange.startDate, dateRange.endDate)
-        );
-        console.log(`Fetched ${currentFieldConversion.length} rows from Field Conversion Report (current)`);
-    } catch (err) {
-        console.warn('Failed to fetch current Field Conversion Report:', err);
-    }
-
-    // Fetch previous period from Report 3594 for trend comparison
-    await delay(2000);
-    
-    let previousData: any[] | null = null;
-    try {
-        previousData = await executeWithLock(
-            'technician-performance',
-            '3594-prev',
-            () => fetchTechnicianPerformance(dateRange.previousStartDate, dateRange.previousEndDate)
-        );
-        await setCachedTechnicianPeriod(days, previousData, true);
-    } catch (err) {
-        console.warn(`Failed to fetch previous period data for ${days}-day rankings, trends will be unavailable:`, err);
-    }
-
-    // Fetch previous period Field Conversion Report 3624
-    try {
-        await delay(2000);
-        previousFieldConversion = await executeWithLock(
-            'field-conversion',
-            '3624-prev',
-            () => fetchFieldConversionReport(dateRange.previousStartDate, dateRange.previousEndDate)
-        );
-        console.log(`Fetched ${previousFieldConversion.length} rows from Field Conversion Report (previous)`);
-    } catch (err) {
-        console.warn('Failed to fetch previous Field Conversion Report:', err);
-    }
-
-    // Fetch Memberships Report 257 (technician-dashboard category, separate rate limit)
-    let currentMemberships: any[] = [];
-    let previousMemberships: any[] = [];
-    try {
-        await delay(2000);
-        currentMemberships = await executeWithLock(
-            'memberships',
-            '257',
-            () => fetchMembershipsReport(dateRange.startDate, dateRange.endDate)
-        );
-        console.log(`Fetched ${currentMemberships.length} rows from Memberships Report (current)`);
-    } catch (err) {
-        console.warn('Failed to fetch current Memberships Report:', err);
-    }
-
-    try {
-        await delay(2000);
-        previousMemberships = await executeWithLock(
-            'memberships',
-            '257-prev',
-            () => fetchMembershipsReport(dateRange.previousStartDate, dateRange.previousEndDate)
-        );
-        console.log(`Fetched ${previousMemberships.length} rows from Memberships Report (previous)`);
-    } catch (err) {
-        console.warn('Failed to fetch previous Memberships Report:', err);
-    }
-
-    // Process technician data from Report 3594
-    let technicians = processTechnicianData(currentData);
-    let previousTechnicians = previousData ? processTechnicianData(previousData) : null;
-
-    // Merge supplemental data from Report 3624 (Options per Opportunity, Membership Conversion)
-    if (currentFieldConversion.length > 0) {
-        technicians = mergeFieldConversionData(technicians, currentFieldConversion);
-    }
-    if (previousFieldConversion.length > 0 && previousTechnicians) {
-        previousTechnicians = mergeFieldConversionData(previousTechnicians, previousFieldConversion);
-    }
-
-    // Merge memberships sold count from Report 257
-    if (currentMemberships.length > 0) {
-        technicians = mergeMembershipsData(technicians, currentMemberships);
-    }
-    if (previousMemberships.length > 0 && previousTechnicians) {
-        previousTechnicians = mergeMembershipsData(previousTechnicians, previousMemberships);
-    }
-
-    const rankings = buildRankings(technicians, previousTechnicians, days);
-    await setCachedRankings(days, rankings);
-
-    return rankings;
-}
-
-/**
- * Build rankings object from processed data
- */
-function buildRankings(
+export function buildRankings(
     technicians: TechnicianKPIs[],
     previousTechnicians: TechnicianKPIs[] | null,
     days: ValidPeriod
@@ -779,77 +570,16 @@ function buildRankings(
     };
 }
 
-// Mock data for development without ServiceTitan credentials
-
-function getMockRankings(days: ValidPeriod): RankedKPIs {
-    const mockTechnicians = [
-        { id: 'john-smith', name: 'John Smith' },
-        { id: 'jane-doe', name: 'Jane Doe' },
-        { id: 'mike-johnson', name: 'Mike Johnson' },
-        { id: 'sarah-williams', name: 'Sarah Williams' },
-        { id: 'david-brown', name: 'David Brown' },
-    ];
-
-    const generateRankings = (formatFn: (v: number) => string, baseValue: number, variance: number): RankedTechnician[] => {
-        return mockTechnicians.map((tech, i) => {
-            const value = baseValue - (i * variance) + Math.random() * variance * 0.5;
-            const previousValue = value * (0.9 + Math.random() * 0.2);
-            return {
-                id: tech.id,
-                name: tech.name,
-                value,
-                formattedValue: formatFn(value),
-                trend: calculateTrend(value, previousValue),
-                rank: i + 1,
-                previousValue,
-                previousRank: i + 1,
-            };
-        });
-    };
-
-    const dateRange = getFullDateRange(days);
-
-    return {
-        opportunityJobAverage: generateRankings(formatCurrency, 2500, 300),
-        totalRevenueCompleted: generateRankings(formatCurrency, 85000, 15000),
-        optionsPerOpportunity: generateRankings(formatDecimal, 3.5, 0.5),
-        closeRate: generateRankings(formatPercentage, 75, 10),
-        membershipsSold: generateRankings(formatNumber, 25, 5),
-        membershipConversionRate: generateRankings(formatPercentage, 45, 8),
-        hoursSold: generateRankings(formatDecimal, 120, 20),
-        leads: generateRankings(formatNumber, 50, 10),
-        leadsBooked: generateRankings(formatNumber, 40, 8),
-        sales: generateRankings(formatNumber, 15, 3),
-        totalSales: generateRankings(formatCurrency, 37500, 6000), // ~$2500 avg * 15 sales
-        leadsSummary: {
-            totalLeads: 180,
-            bookedLeads: 145,
-            bookingRate: 80.5,
-            previousTotalLeads: 165,
-            previousBookedLeads: 130,
-            previousBookingRate: 78.8,
-        },
-        overallStats: {
-            opportunityJobAverage: 2100,
-            opportunityCloseRate: 68,
-            totalCloseRate: 72,
-            optionsPerOpportunity: 2.8,
-            totalRevenue: 425000,
-            cancelledJobs: 12,
-            previousOpportunityJobAverage: 1950,
-            previousOpportunityCloseRate: 65,
-            previousTotalCloseRate: 70,
-            previousOptionsPerOpportunity: 2.6,
-            previousTotalRevenue: 390000,
-            previousCancelledJobs: 15,
-        },
-        dateRange: {
-            startDate: dateRange.startDate,
-            endDate: dateRange.endDate,
-            previousStartDate: dateRange.previousStartDate,
-            previousEndDate: dateRange.previousEndDate,
-        },
-        hasPreviousPeriodData: true,
-    };
+/**
+ * Calculate rankings from raw report data
+ * Main entry point for the email-based pipeline
+ */
+export function calculateRankingsFromData(
+    currentRows: any[],
+    previousRows: any[] | null,
+    days: ValidPeriod
+): RankedKPIs {
+    const technicians = processTechnicianData(currentRows);
+    const previousTechnicians = previousRows ? processTechnicianData(previousRows) : null;
+    return buildRankings(technicians, previousTechnicians, days);
 }
-

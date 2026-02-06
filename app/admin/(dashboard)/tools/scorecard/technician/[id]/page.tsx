@@ -7,7 +7,7 @@ import { Header, KPICard, KPICardSkeleton } from '@/components/scorecard';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle, AlertTriangle, ArrowLeft, Trophy, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ValidPeriod } from '@/lib/servicetitan/types';
+import type { ValidPeriod } from '@/lib/scorecard/types';
 
 interface TechnicianMetric {
     label: string;

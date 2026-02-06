@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Minus, Trophy, Medal } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { RankedTechnician, GoalConfig } from '@/lib/servicetitan/types';
+import type { RankedTechnician, GoalConfig } from '@/lib/scorecard/types';
 
 interface RankingCardProps {
     title: string;

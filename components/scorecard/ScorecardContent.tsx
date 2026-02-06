@@ -9,8 +9,8 @@ import {
 } from '@/components/scorecard';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertCircle, AlertTriangle, Maximize, Minimize } from 'lucide-react';
-import type { RankedKPIs, ValidPeriod } from '@/lib/servicetitan/types';
-import { formatCurrency } from '@/lib/servicetitan/rankings';
+import type { RankedKPIs, ValidPeriod } from '@/lib/scorecard/types';
+import { formatCurrency } from '@/lib/scorecard/rankings';
 import { useAdminContext } from '@/lib/admin-context';
 
 // Auto-refresh interval in milliseconds (5 minutes)
