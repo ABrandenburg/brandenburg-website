@@ -207,15 +207,18 @@ export async function serviceTitanFetch<T>(
 
 /**
  * Fetch technician performance report data (Report ID: 3594 - Technician Performance Board)
+ * Custom reports use the "custom" category
  */
 export async function fetchTechnicianPerformance(
     startDate: string,
     endDate: string
 ): Promise<any[]> {
     const tenantId = process.env.SERVICETITAN_TENANT_ID;
+    
+    console.log(`Fetching Technician Performance Board (Report 3594) for ${startDate} to ${endDate}`);
 
     const response = await serviceTitanFetch<{ data: any[] }>(
-        `/reporting/v2/tenant/{tenantId}/report-category/technician-dashboard/reports/3594/data`,
+        `/reporting/v2/tenant/{tenantId}/report-category/custom/reports/3594/data`,
         {
             method: 'POST',
             body: JSON.stringify({
@@ -226,6 +229,8 @@ export async function fetchTechnicianPerformance(
             }),
         }
     );
+    
+    console.log(`Technician Performance Board returned ${response.data?.length || 0} rows`);
 
     return response.data || [];
 }
