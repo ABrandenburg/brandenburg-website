@@ -207,17 +207,19 @@ export async function serviceTitanFetch<T>(
 
 /**
  * Fetch technician performance report data (Report ID: 3594 - Technician Performance Board)
- * Custom reports use the "custom" category
+ * Category: "technician"
+ * 
+ * The API returns { fields: [{name, label}], data: [[val, val, ...], ...] }
+ * We convert the array rows into named objects using the fields metadata
+ * so downstream processing uses reliable named keys instead of fragile numeric indices.
  */
 export async function fetchTechnicianPerformance(
     startDate: string,
     endDate: string
 ): Promise<any[]> {
-    const tenantId = process.env.SERVICETITAN_TENANT_ID;
-    
     console.log(`Fetching Technician Performance Board (Report 3594) for ${startDate} to ${endDate}`);
 
-    const response = await serviceTitanFetch<{ data: any[] }>(
+    const response = await serviceTitanFetch<{ fields?: { name: string; label: string }[]; data: any[] }>(
         `/reporting/v2/tenant/{tenantId}/report-category/technician/reports/3594/data`,
         {
             method: 'POST',
@@ -229,20 +231,40 @@ export async function fetchTechnicianPerformance(
             }),
         }
     );
-    
-    console.log(`Technician Performance Board returned ${response.data?.length || 0} rows`);
 
-    return response.data || [];
+    const rawData = response.data || [];
+    console.log(`Technician Performance Board returned ${rawData.length} rows`);
+
+    // If the API provides field metadata, convert array rows to named objects
+    if (response.fields && response.fields.length > 0 && rawData.length > 0 && Array.isArray(rawData[0])) {
+        const fieldNames = response.fields.map(f => f.name);
+        console.log('Report fields:', fieldNames.join(', '));
+        
+        return rawData.map((row: any[]) => {
+            const obj: Record<string, any> = {};
+            fieldNames.forEach((name, index) => {
+                obj[name] = row[index];
+            });
+            return obj;
+        });
+    }
+
+    return rawData;
 }
 
 /**
- * Fetch sold hours report data (Report ID: 239)
+ * Fetch sold hours report data (Report ID: 239 - Job Completed Detail Report)
+ * Category: "operations"
+ * 
+ * Converts array rows to named objects using fields metadata.
  */
 export async function fetchSoldHours(
     startDate: string,
     endDate: string
 ): Promise<any[]> {
-    const response = await serviceTitanFetch<{ data: any[] }>(
+    console.log(`Fetching Job Completed Detail Report (Report 239) for ${startDate} to ${endDate}`);
+
+    const response = await serviceTitanFetch<{ fields?: { name: string; label: string }[]; data: any[] }>(
         `/reporting/v2/tenant/{tenantId}/report-category/operations/reports/239/data`,
         {
             method: 'POST',
@@ -256,7 +278,24 @@ export async function fetchSoldHours(
         }
     );
 
-    return response.data || [];
+    const rawData = response.data || [];
+    console.log(`Job Completed Detail Report returned ${rawData.length} rows`);
+
+    // Convert array rows to named objects using fields metadata
+    if (response.fields && response.fields.length > 0 && rawData.length > 0 && Array.isArray(rawData[0])) {
+        const fieldNames = response.fields.map(f => f.name);
+        console.log('Report 239 fields:', fieldNames.join(', '));
+        
+        return rawData.map((row: any[]) => {
+            const obj: Record<string, any> = {};
+            fieldNames.forEach((name, index) => {
+                obj[name] = row[index];
+            });
+            return obj;
+        });
+    }
+
+    return rawData;
 }
 
 /**
