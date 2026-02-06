@@ -13,6 +13,7 @@ import {
 import {
     fetchTechnicianPerformance,
     fetchFieldConversionReport,
+    fetchMembershipsReport,
     isServiceTitanConfigured,
     delay,
 } from './client';
@@ -592,10 +593,43 @@ function mergeFieldConversionData(technicians: TechnicianKPIs[], reportData: any
 }
 
 /**
+ * Process Report 257 (Memberships) data and merge into technician KPIs
+ * Adds: membershipsSold (count)
+ */
+function mergeMembershipsData(technicians: TechnicianKPIs[], reportData: any[]): TechnicianKPIs[] {
+    if (!reportData || reportData.length === 0) return technicians;
+
+    const supplementMap = new Map<string, any>();
+    for (const row of reportData) {
+        const name = getFieldValue(row, ['Name', 'Technician'], null);
+        if (name && typeof name === 'string') {
+            supplementMap.set(name.toLowerCase(), row);
+        }
+    }
+
+    console.log(`mergeMembershipsData: Merging data for ${supplementMap.size} technicians from Report 257`);
+
+    return technicians.map(tech => {
+        const supplement = supplementMap.get(tech.name.toLowerCase());
+        if (!supplement) return tech;
+
+        const membershipsSold = parseInt(getFieldValue(supplement, [
+            'MembershipsSold', 'Memberships Sold'
+        ])) || 0;
+
+        return {
+            ...tech,
+            membershipsSold,
+        };
+    });
+}
+
+/**
  * Fetch fresh data and calculate rankings
  * 
  * Report 3594 (Technician Performance Board): Revenue, Sales, Close Rate, Job Avg, Hours
  * Report 3624 (Field Conversion Report): Options per Opportunity, Membership Conversion Rate
+ * Report 257 (Memberships): Memberships Sold count
  * 
  * These are different reports, so each has its own 5 req/min rate limit.
  */
@@ -658,6 +692,33 @@ async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs>
         console.warn('Failed to fetch previous Field Conversion Report:', err);
     }
 
+    // Fetch Memberships Report 257 (technician-dashboard category, separate rate limit)
+    let currentMemberships: any[] = [];
+    let previousMemberships: any[] = [];
+    try {
+        await delay(2000);
+        currentMemberships = await executeWithLock(
+            'memberships',
+            '257',
+            () => fetchMembershipsReport(dateRange.startDate, dateRange.endDate)
+        );
+        console.log(`Fetched ${currentMemberships.length} rows from Memberships Report (current)`);
+    } catch (err) {
+        console.warn('Failed to fetch current Memberships Report:', err);
+    }
+
+    try {
+        await delay(2000);
+        previousMemberships = await executeWithLock(
+            'memberships',
+            '257-prev',
+            () => fetchMembershipsReport(dateRange.previousStartDate, dateRange.previousEndDate)
+        );
+        console.log(`Fetched ${previousMemberships.length} rows from Memberships Report (previous)`);
+    } catch (err) {
+        console.warn('Failed to fetch previous Memberships Report:', err);
+    }
+
     // Process technician data from Report 3594
     let technicians = processTechnicianData(currentData);
     let previousTechnicians = previousData ? processTechnicianData(previousData) : null;
@@ -668,6 +729,14 @@ async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs>
     }
     if (previousFieldConversion.length > 0 && previousTechnicians) {
         previousTechnicians = mergeFieldConversionData(previousTechnicians, previousFieldConversion);
+    }
+
+    // Merge memberships sold count from Report 257
+    if (currentMemberships.length > 0) {
+        technicians = mergeMembershipsData(technicians, currentMemberships);
+    }
+    if (previousMemberships.length > 0 && previousTechnicians) {
+        previousTechnicians = mergeMembershipsData(previousTechnicians, previousMemberships);
     }
 
     const rankings = buildRankings(technicians, previousTechnicians, days);

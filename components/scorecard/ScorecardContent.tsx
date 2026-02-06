@@ -290,10 +290,10 @@ export function ScorecardContent({
                     }}
                 />
                 <RankingCard
-                    title="Membership Conversion %"
-                    description="% of jobs where a membership was sold"
-                    technicians={data.membershipConversionRate}
-                    trendSuffix=" pts"
+                    title="Memberships Sold"
+                    description="Number of membership agreements sold"
+                    technicians={data.membershipsSold}
+                    trendSuffix=""
                 />
                 <RankingCard
                     title="Billable Hours"
