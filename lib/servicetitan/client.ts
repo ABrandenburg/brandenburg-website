@@ -117,7 +117,7 @@ export async function serviceTitanFetch<T>(
     endpoint: string,
     options: FetchOptions = {}
 ): Promise<T> {
-    const { maxRetries = 3, retryDelayMs = 15000, ...fetchOptions } = options;
+    const { maxRetries = 3, retryDelayMs = 30000, ...fetchOptions } = options;
 
     const tenantId = process.env.SERVICETITAN_TENANT_ID?.trim();
     const appKey = process.env.SERVICETITAN_APP_KEY?.trim();

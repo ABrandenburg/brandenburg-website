@@ -12,8 +12,8 @@ import {
 } from './types';
 import {
     fetchTechnicianPerformance,
-    fetchSoldHours,
     isServiceTitanConfigured,
+    delay,
 } from './client';
 import {
     getCachedTechnicianPeriod,
@@ -549,134 +549,47 @@ async function calculateRankingsFromCache(days: ValidPeriod): Promise<RankedKPIs
 }
 
 /**
- * Process sold hours data and return a map of technician name -> hours sold
- * Report 239 (Job Completed Detail Report) - rows are now named objects
- */
-function processSoldHoursData(rawData: any[]): Map<string, number> {
-    const hoursMap = new Map<string, number>();
-    
-    if (!rawData || rawData.length === 0) {
-        console.log('processSoldHoursData: No raw data received');
-        return hoursMap;
-    }
-
-    const sampleRow = rawData[0];
-    const fieldNames = Object.keys(sampleRow);
-    console.log('processSoldHoursData: Available fields:', fieldNames);
-
-    // Find technician and hours fields using named matching
-    const techField = findField(sampleRow, [
-        'Technician', 'TechnicianName', 'technician', 'Tech', 'Employee', 'Name'
-    ]);
-    const hoursField = findField(sampleRow, [
-        'SoldHours', 'Sold Hours', 'Hours', 'HoursSold',
-        'BillableHours', 'Billable Hours', 'TotalHours', 'Total Hours',
-        'ItemBillableHours', 'Item Billable Hours'
-    ]);
-
-    console.log(`processSoldHoursData: Tech field: ${techField}, Hours field: ${hoursField}`);
-
-    if (!techField) {
-        console.error('processSoldHoursData: Could not find technician field');
-        return hoursMap;
-    }
-
-    for (const row of rawData) {
-        const techName = row[techField];
-        if (!techName || typeof techName !== 'string') continue;
-        if (shouldExclude(techName)) continue;
-
-        const hours = hoursField ? parseFloat(row[hoursField]) || 0 : 0;
-        
-        // Aggregate hours per technician (in case of multiple rows)
-        const existingHours = hoursMap.get(techName.toLowerCase()) || 0;
-        hoursMap.set(techName.toLowerCase(), existingHours + hours);
-    }
-
-    console.log(`processSoldHoursData: Processed hours for ${hoursMap.size} technicians`);
-    return hoursMap;
-}
-
-/**
- * Merge sold hours into technician KPIs
- */
-function mergeSoldHours(technicians: TechnicianKPIs[], soldHoursMap: Map<string, number>): TechnicianKPIs[] {
-    return technicians.map(tech => {
-        const hours = soldHoursMap.get(tech.name.toLowerCase()) || 0;
-        return {
-            ...tech,
-            hoursSold: hours,
-        };
-    });
-}
-
-/**
  * Fetch fresh data and calculate rankings
+ * 
+ * Report 3594 (Technician Performance Board) already includes all metrics we need:
+ * CompletedRevenue, TotalSales, ItemBillableHours, OpportunityJobAverage, etc.
+ * No need for separate Report 239 calls - this reduces API calls and avoids rate limiting.
  */
 async function fetchAndCalculateRankings(days: ValidPeriod): Promise<RankedKPIs> {
     if (!isServiceTitanConfigured()) {
-        // Return mock data if ServiceTitan is not configured
         return getMockRankings(days);
     }
 
     const dateRange = getFullDateRange(days);
 
-    // Fetch current period technician performance
+    // Fetch current period technician performance from Report 3594
+    console.log(`Fetching rankings for ${days}-day period: ${dateRange.startDate} to ${dateRange.endDate}`);
     const currentData = await executeWithLock(
         'technician-performance',
-        '3017',
+        '3594',
         () => fetchTechnicianPerformance(dateRange.startDate, dateRange.endDate)
     );
     await setCachedTechnicianPeriod(days, currentData, false);
 
-    // Fetch previous period technician performance
-    const previousData = await executeWithLock(
-        'technician-performance',
-        '3017',
-        () => fetchTechnicianPerformance(dateRange.previousStartDate, dateRange.previousEndDate)
-    );
-    await setCachedTechnicianPeriod(days, previousData, true);
-
-    // Fetch sold hours data from separate report (Report 239)
-    let currentSoldHours: any[] = [];
-    let previousSoldHours: any[] = [];
+    // Fetch previous period for trend comparison
+    // Add a small delay to avoid rate limiting between consecutive API calls
+    await delay(2000);
     
+    let previousData: any[] | null = null;
     try {
-        currentSoldHours = await executeWithLock(
-            'sold-hours',
-            '239',
-            () => fetchSoldHours(dateRange.startDate, dateRange.endDate)
+        previousData = await executeWithLock(
+            'technician-performance',
+            '3594-prev',
+            () => fetchTechnicianPerformance(dateRange.previousStartDate, dateRange.previousEndDate)
         );
-        console.log(`Fetched ${currentSoldHours.length} sold hours records for current period`);
+        await setCachedTechnicianPeriod(days, previousData, true);
     } catch (err) {
-        console.warn('Failed to fetch current sold hours:', err);
+        console.warn(`Failed to fetch previous period data for ${days}-day rankings, trends will be unavailable:`, err);
     }
 
-    try {
-        previousSoldHours = await executeWithLock(
-            'sold-hours',
-            '239',
-            () => fetchSoldHours(dateRange.previousStartDate, dateRange.previousEndDate)
-        );
-        console.log(`Fetched ${previousSoldHours.length} sold hours records for previous period`);
-    } catch (err) {
-        console.warn('Failed to fetch previous sold hours:', err);
-    }
-
-    // Process technician data
-    let technicians = processTechnicianData(currentData);
-    let previousTechnicians = previousData ? processTechnicianData(previousData) : null;
-
-    // Merge sold hours data if available
-    if (currentSoldHours.length > 0) {
-        const soldHoursMap = processSoldHoursData(currentSoldHours);
-        technicians = mergeSoldHours(technicians, soldHoursMap);
-    }
-
-    if (previousSoldHours.length > 0 && previousTechnicians) {
-        const prevSoldHoursMap = processSoldHoursData(previousSoldHours);
-        previousTechnicians = mergeSoldHours(previousTechnicians, prevSoldHoursMap);
-    }
+    // Process technician data - Report 3594 includes all metrics
+    const technicians = processTechnicianData(currentData);
+    const previousTechnicians = previousData ? processTechnicianData(previousData) : null;
 
     const rankings = buildRankings(technicians, previousTechnicians, days);
     await setCachedRankings(days, rankings);
