@@ -12,6 +12,7 @@ import { parseReportAttachment } from '@/lib/email-reports';
 import { calculateRankingsFromData, type ValidPeriod } from '@/lib/scorecard';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 export const maxDuration = 60;
 
 function getSupabaseAdmin() {
@@ -24,6 +25,9 @@ function getSupabaseAdmin() {
 
     return createClient(url, serviceRoleKey, {
         auth: { persistSession: false },
+        global: {
+            fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }),
+        },
     });
 }
 

@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import { VALID_PERIODS, type ValidPeriod, type RankedTechnician, type RankedKPIs } from '@/lib/scorecard';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 interface TechnicianDetail {
     id: string;
@@ -31,6 +32,9 @@ function getSupabaseAdmin() {
 
     return createClient(url, serviceRoleKey, {
         auth: { persistSession: false },
+        global: {
+            fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }),
+        },
     });
 }
 

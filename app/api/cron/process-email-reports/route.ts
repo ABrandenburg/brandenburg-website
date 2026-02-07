@@ -11,6 +11,7 @@ import { parseReportAttachment } from '@/lib/email-reports';
 import { calculateRankingsFromData, type ValidPeriod, VALID_PERIODS } from '@/lib/scorecard';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 export const maxDuration = 300; // 5 minutes max for cron job
 
 interface ProcessResult {
@@ -31,6 +32,9 @@ function getSupabaseAdmin() {
 
     return createClient(url, serviceRoleKey, {
         auth: { persistSession: false },
+        global: {
+            fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }),
+        },
     });
 }
 

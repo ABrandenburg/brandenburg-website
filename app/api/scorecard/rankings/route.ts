@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import { VALID_PERIODS, type ValidPeriod, type RankedKPIs } from '@/lib/scorecard';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 function getSupabaseAdmin() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -18,6 +19,9 @@ function getSupabaseAdmin() {
 
     return createClient(url, serviceRoleKey, {
         auth: { persistSession: false },
+        global: {
+            fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }),
+        },
     });
 }
 
