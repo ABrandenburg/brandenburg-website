@@ -16,6 +16,12 @@ import { useAdminContext } from '@/lib/admin-context';
 // Auto-refresh interval in milliseconds (5 minutes)
 const REFRESH_INTERVAL = 5 * 60 * 1000;
 
+// Daily cron runs at 12:00 UTC (6:00 AM CT). Reload shortly after to pick up new data.
+const CRON_HOUR_UTC = 12;
+const CRON_MINUTE_UTC = 0;
+// Buffer after cron time to allow processing to complete (5 minutes)
+const RELOAD_BUFFER_MS = 5 * 60 * 1000;
+
 interface ApiMeta {
     dataSource: string;
     technicianCount: number;
@@ -79,6 +85,33 @@ export function ScorecardContent({
 
         return () => clearInterval(intervalId);
     }, [fetchData]);
+
+    // Schedule a full page reload after the daily cron job completes.
+    // This clears any accumulated browser state and ensures fresh data
+    // on long-running displays (iPad, TV, etc.).
+    useEffect(() => {
+        function getNextReloadTime(): number {
+            const now = new Date();
+            const target = new Date(now);
+            target.setUTCHours(CRON_HOUR_UTC, CRON_MINUTE_UTC, 0, 0);
+
+            // Add buffer for cron processing time
+            const reloadAt = target.getTime() + RELOAD_BUFFER_MS;
+
+            // If we've already passed today's reload time, schedule for tomorrow
+            if (now.getTime() >= reloadAt) {
+                return reloadAt + 24 * 60 * 60 * 1000 - now.getTime();
+            }
+            return reloadAt - now.getTime();
+        }
+
+        const msUntilReload = getNextReloadTime();
+        const reloadTimer = setTimeout(() => {
+            window.location.reload();
+        }, msUntilReload);
+
+        return () => clearTimeout(reloadTimer);
+    }, []);
 
     // Fullscreen toggle
     const toggleFullscreen = useCallback(() => {
@@ -323,7 +356,10 @@ export function ScorecardContent({
             {/* Auto-refresh indicator in fullscreen */}
             {isFullscreen && (
                 <div className="fixed bottom-4 right-4 text-xs text-slate-400 bg-white/80 px-3 py-1.5 rounded-full shadow">
-                    Data updated daily at 6:00 AM CT
+                    Updated daily at 6:00 AM CT
+                    {lastUpdated && (
+                        <span> • Last checked {lastUpdated.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span>
+                    )}
                 </div>
             )}
         </div>
