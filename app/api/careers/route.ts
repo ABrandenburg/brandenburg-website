@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     resend.emails.send({
       from: 'Brandenburg Careers <careers@brandenburgplumbing.com>',
-      to: ['service@brandenburgplumbing.com'],
+      to: ['service@brandenburgplumbing.com', 'lucas@brandenburgplumbing.com', 'Adam@brandenburgplumbing.com'],
       subject,
       html: emailBody,
     }).catch((error) => {
