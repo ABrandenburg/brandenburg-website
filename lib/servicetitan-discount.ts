@@ -1,6 +1,6 @@
 // ServiceTitan API Client for Discount Calculator
 // Uses serviceTitanFetch from client.ts for authentication and API requests
-// Version: 2026-02-16-v8 (fix: query params + robust response parsing)
+// Version: 2026-02-16-v9 (fix: body params with args + robust response parsing)
 
 import { CapacityData, getStatusFromAvailability } from './discount-calculator'
 import { serviceTitanFetch, clearTokenCache } from './servicetitan/client'
@@ -155,17 +155,19 @@ export async function getCapacityWithStatus(): Promise<CapacityWithDebug> {
   const startsOnOrAfter = today.toISOString()
   const endsOnOrBefore = endDate.toISOString()
 
-  // Build endpoint with query parameters (ServiceTitan Dispatch v2 expects query params)
-  const queryParams = new URLSearchParams({
+  const endpoint = `/dispatch/v2/tenant/{tenantId}/capacity`
+
+  const requestBody = {
     startsOnOrAfter,
     endsOnOrBefore,
-  })
-  const endpoint = `/dispatch/v2/tenant/{tenantId}/capacity?${queryParams.toString()}`
+    skillBasedAvailability: false,
+    args: {},
+  }
 
   console.log('ServiceTitan capacity API request:', {
     endpoint,
     method: 'POST',
-    queryParams: { startsOnOrAfter, endsOnOrBefore },
+    body: requestBody,
   })
 
   const debug: CapacityDebugInfo = {
@@ -182,7 +184,7 @@ export async function getCapacityWithStatus(): Promise<CapacityWithDebug> {
       endpoint,
       {
         method: 'POST',
-        body: JSON.stringify({ skillBasedAvailability: false }),
+        body: JSON.stringify(requestBody),
       }
     )
 

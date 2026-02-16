@@ -45,17 +45,20 @@ export async function GET(request: NextRequest) {
       const startsOnOrAfter = today.toISOString()
       const endsOnOrBefore = endDate.toISOString()
 
-      const queryParams = new URLSearchParams({
+      const endpoint = `/dispatch/v2/tenant/{tenantId}/capacity`
+
+      const requestBody = {
         startsOnOrAfter,
         endsOnOrBefore,
-      })
-      const endpoint = `/dispatch/v2/tenant/{tenantId}/capacity?${queryParams.toString()}`
+        skillBasedAvailability: false,
+        args: {},
+      }
 
       const rawResponse = await serviceTitanFetch<any>(
         endpoint,
         {
           method: 'POST',
-          body: JSON.stringify({ skillBasedAvailability: false }),
+          body: JSON.stringify(requestBody),
         }
       )
 
@@ -93,8 +96,7 @@ export async function GET(request: NextRequest) {
         request: {
           endpoint,
           method: 'POST',
-          queryParams: { startsOnOrAfter, endsOnOrBefore },
-          body: { skillBasedAvailability: false },
+          body: requestBody,
         },
         rawResponse,
         topLevelKeys,
