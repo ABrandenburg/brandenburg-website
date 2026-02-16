@@ -4,11 +4,15 @@
 import { serviceTitanFetch } from './client';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
 // Create admin client for server-side operations (bypasses RLS)
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+function getSupabaseAdmin() {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) {
+        throw new Error('Supabase credentials not configured');
+    }
+    return createClient(url, key);
+}
 
 export interface ServiceTitanJob {
     id: string;
@@ -119,7 +123,7 @@ export async function syncJobsToDatabase(jobs: ServiceTitanJob[]): Promise<numbe
         synced_at: new Date().toISOString(),
     }));
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseAdmin()
         .from('raw_servicetitan_jobs')
         .upsert(jobRecords, {
             onConflict: 'job_id',
@@ -148,7 +152,7 @@ export async function getJobsEligibleForReviews(): Promise<any[]> {
     console.log('Finding jobs eligible for review requests...');
 
     // Step 1: Get completed jobs from the last hour
-    const { data: jobs, error: jobsError } = await supabase
+    const { data: jobs, error: jobsError } = await getSupabaseAdmin()
         .from('raw_servicetitan_jobs')
         .select('*')
         .eq('status', 'Completed')
@@ -166,7 +170,7 @@ export async function getJobsEligibleForReviews(): Promise<any[]> {
 
     // Step 2: Get all review requests for these job_ids
     const jobIds = jobs.map(j => j.job_id);
-    const { data: existingRequests, error: requestsError } = await supabase
+    const { data: existingRequests, error: requestsError } = await getSupabaseAdmin()
         .from('review_requests')
         .select('job_id')
         .in('job_id', jobIds);

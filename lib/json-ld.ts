@@ -2,14 +2,17 @@ import { Service } from './services-data'
 import { Location } from './locations-data'
 import { JobListing } from './jobs-data'
 
+const hvacSlugs = ['ac-repair', 'ac-installation', 'heating-repair', 'heating-installation', 'ductwork', 'heat-pumps']
+
 export function generateServiceSchema(service: Service) {
+    const providerType = hvacSlugs.includes(service.slug) ? 'HVACBusiness' : 'PlumbingService'
     return {
         '@context': 'https://schema.org',
         '@type': 'Service',
         name: service.name,
         description: service.metaDesc,
         provider: {
-            '@type': 'PlumbingService',
+            '@type': providerType,
             name: 'Brandenburg Plumbing',
             image: 'https://www.brandenburgplumbing.com/images/Brandenburg Logo_Dark_Red Mark-01.png',
             telephone: '+1-512-756-9847',

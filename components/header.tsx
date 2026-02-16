@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { ChevronDown, User, Key, CreditCard, Users } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { getServicesForNav } from '@/lib/services-data'
+import { getPlumbingServices, getHvacServices } from '@/lib/services-data'
 import { openScheduler } from '@/lib/scheduler'
 
 const aboutLinks = [
@@ -16,8 +16,9 @@ const aboutLinks = [
   { name: 'FAQ', href: '/frequently-asked-questions' },
 ]
 
-// Get services from data file
-const { left: servicesLeft, right: servicesRight } = getServicesForNav()
+// Get services from data file, grouped by category
+const plumbingServices = getPlumbingServices()
+const hvacServices = getHvacServices()
 
 const locationsLeft = [
   { name: 'Kingsland', href: '/location/kingsland' },
@@ -128,6 +129,53 @@ const ServiceIcon = ({ type }: { type: string }) => {
           <path d="M8 6V4h8v2M8 14h8M8 10h8" />
         </svg>
       )
+    case 'ac-repair':
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 3v3m0 12v3M3 12h3m12 0h3" />
+          <circle cx="12" cy="12" r="5" />
+          <path d="M14.5 9.5l-5 5M9.5 9.5l5 5" />
+        </svg>
+      )
+    case 'ac-install':
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="2" y="4" width="20" height="12" rx="2" />
+          <path d="M6 8h12M6 12h12" />
+          <path d="M8 16v4M16 16v4" />
+        </svg>
+      )
+    case 'heating-repair':
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 2c-2 4-4 6-4 9a4 4 0 008 0c0-3-2-5-4-9z" />
+          <path d="M12 22v-4M8 20h8" />
+        </svg>
+      )
+    case 'heating-install':
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="4" y="2" width="16" height="16" rx="2" />
+          <path d="M8 22h8M12 18v4" />
+          <path d="M8 8h8M8 12h8" />
+        </svg>
+      )
+    case 'ductwork':
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M4 8h8v8H4z" />
+          <path d="M12 10h8v4h-8" />
+          <path d="M6 8V4M10 8V4" />
+        </svg>
+      )
+    case 'heat-pump':
+      return (
+        <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="6" width="18" height="12" rx="2" />
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 6v2M12 16v2M6 12h2M16 12h2" />
+        </svg>
+      )
     default:
       return null
   }
@@ -139,6 +187,15 @@ export function Header() {
 
   return (
     <>
+      {/* Announcement Banner */}
+      <div className="bg-brand-red text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm font-semibold py-2">
+            Now offering HVAC services! We start running air conditioning and heating calls March 2nd.
+          </p>
+        </div>
+      </div>
+
       {/* Top Banner */}
       <div className="bg-brand-blue text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -233,12 +290,13 @@ export function Header() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
-                      className="bg-white rounded-lg shadow-lg border border-gray-100 p-6 min-w-[500px]"
+                      className="bg-white rounded-lg shadow-lg border border-gray-100 p-6 min-w-[620px]"
                     >
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-1">
-                        {/* Left Column */}
+                      {/* Plumbing Services */}
+                      <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 px-2">Plumbing</p>
+                      <div className="grid grid-cols-2 gap-x-8 gap-y-1 mb-4">
                         <div className="space-y-1">
-                          {servicesLeft.map((service) => (
+                          {plumbingServices.slice(0, Math.ceil(plumbingServices.length / 2)).map((service) => (
                             <Link
                               key={service.slug}
                               href={`/service/${service.slug}`}
@@ -251,9 +309,8 @@ export function Header() {
                             </Link>
                           ))}
                         </div>
-                        {/* Right Column */}
                         <div className="space-y-1">
-                          {servicesRight.map((service) => (
+                          {plumbingServices.slice(Math.ceil(plumbingServices.length / 2)).map((service) => (
                             <Link
                               key={service.slug}
                               href={`/service/${service.slug}`}
@@ -267,9 +324,43 @@ export function Header() {
                           ))}
                         </div>
                       </div>
+                      {/* HVAC Services */}
+                      <div className="border-t border-gray-100 pt-4">
+                        <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 px-2">HVAC</p>
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                          <div className="space-y-1">
+                            {hvacServices.slice(0, Math.ceil(hvacServices.length / 2)).map((service) => (
+                              <Link
+                                key={service.slug}
+                                href={`/service/${service.slug}`}
+                                className="group flex items-center gap-3 px-2 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:translate-x-1 rounded-md transition-all duration-200"
+                              >
+                                <div className="w-10 h-10 shrink-0 bg-text-primary rounded-full flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-brand-blue transition-all duration-300">
+                                  <ServiceIcon type={service.icon} />
+                                </div>
+                                <span className="group-hover:text-brand-blue transition-colors">{service.name}</span>
+                              </Link>
+                            ))}
+                          </div>
+                          <div className="space-y-1">
+                            {hvacServices.slice(Math.ceil(hvacServices.length / 2)).map((service) => (
+                              <Link
+                                key={service.slug}
+                                href={`/service/${service.slug}`}
+                                className="group flex items-center gap-3 px-2 py-2.5 text-[15px] text-text-primary hover:bg-gray-50 hover:translate-x-1 rounded-md transition-all duration-200"
+                              >
+                                <div className="w-10 h-10 shrink-0 bg-text-primary rounded-full flex items-center justify-center text-white group-hover:scale-110 group-hover:bg-brand-blue transition-all duration-300">
+                                  <ServiceIcon type={service.icon} />
+                                </div>
+                                <span className="group-hover:text-brand-blue transition-colors">{service.name}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                       <div className="mt-6 pt-4 border-t border-gray-100">
                         <p className="text-sm text-text-muted">
-                          Serving the Highland Lakes & North Austin with expert plumbing, gas, and sewer services since 1997.
+                          Serving the Highland Lakes & North Austin with expert plumbing, HVAC, gas, and sewer services since 1997.
                         </p>
                       </div>
                     </motion.div>
@@ -412,8 +503,21 @@ export function Header() {
                   ))}
                 </div>
                 <div className="py-2 border-t border-gray-100">
-                  <p className="font-medium text-text-primary mb-2">Services</p>
-                  {[...servicesLeft, ...servicesRight].map((service) => (
+                  <p className="font-medium text-text-primary mb-2">Plumbing Services</p>
+                  {plumbingServices.map((service) => (
+                    <Link
+                      key={service.slug}
+                      href={`/service/${service.slug}`}
+                      className="block py-2 pl-4 text-sm text-text-muted hover:text-brand-blue hover:translate-x-1 transition-all"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {service.name}
+                    </Link>
+                  ))}
+                </div>
+                <div className="py-2 border-t border-gray-100">
+                  <p className="font-medium text-text-primary mb-2">HVAC Services</p>
+                  {hvacServices.map((service) => (
                     <Link
                       key={service.slug}
                       href={`/service/${service.slug}`}

@@ -4,9 +4,14 @@
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+function getSupabaseAdmin() {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) {
+        throw new Error('Supabase credentials not configured');
+    }
+    return createClient(url, key);
+}
 
 // Environment configuration
 const GOOGLE_PLACE_ID = process.env.GOOGLE_PLACE_ID;
@@ -117,7 +122,7 @@ export async function processReviewRequests(jobs: ReviewRequestJob[]): Promise<{
             }
 
             // Ensure technician exists in database
-            const { data: techData, error: techError } = await supabase
+            const { data: techData, error: techError } = await getSupabaseAdmin()
                 .from('technicians')
                 .upsert({
                     servicetitan_id: job.technician_id,
@@ -148,7 +153,7 @@ export async function processReviewRequests(jobs: ReviewRequestJob[]): Promise<{
             );
 
             // Insert review request record
-            const { error: requestError } = await supabase
+            const { error: requestError } = await getSupabaseAdmin()
                 .from('review_requests')
                 .insert({
                     job_id: job.job_id,

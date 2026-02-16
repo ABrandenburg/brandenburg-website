@@ -6,9 +6,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+function getSupabaseAdmin() {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) {
+        throw new Error('Supabase credentials not configured');
+    }
+    return createClient(url, key);
+}
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // 1 minute
@@ -40,7 +45,7 @@ export async function GET(request: NextRequest) {
 
         // Refresh materialized view
         console.log('Refreshing tech_performance_card materialized view...');
-        const { error } = await supabase.rpc('refresh_tech_performance_card');
+        const { error } = await getSupabaseAdmin().rpc('refresh_tech_performance_card');
 
         if (error) {
             throw error;

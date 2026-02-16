@@ -80,6 +80,41 @@ const services = [
       </svg>
     ),
   },
+  {
+    name: "AC Repair",
+    description: "Fast AC diagnostics and repair for all makes and models.",
+    href: "/service/ac-repair",
+    icon: (
+      <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M12 3v3m0 12v3M3 12h3m12 0h3" />
+        <circle cx="12" cy="12" r="5" />
+        <path d="M14.5 9.5l-5 5M9.5 9.5l5 5" />
+      </svg>
+    ),
+  },
+  {
+    name: "Heating Repair",
+    description: "Furnace and heat pump repair to keep your home warm all winter.",
+    href: "/service/heating-repair",
+    icon: (
+      <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M12 2c-2 4-4 6-4 9a4 4 0 008 0c0-3-2-5-4-9z" />
+        <path d="M12 22v-4M8 20h8" />
+      </svg>
+    ),
+  },
+  {
+    name: "Heat Pumps",
+    description: "Energy-efficient heating and cooling in one versatile system.",
+    href: "/service/heat-pumps",
+    icon: (
+      <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="3" y="6" width="18" height="12" rx="2" />
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 6v2M12 16v2M6 12h2M16 12h2" />
+      </svg>
+    ),
+  },
 ]
 
 export function LocationServices({ locationName, header }: LocationServicesProps) {
@@ -98,7 +133,7 @@ export function LocationServices({ locationName, header }: LocationServicesProps
             {header}
           </h2>
           <p className="text-lg text-text-muted max-w-2xl mx-auto">
-            From routine maintenance to emergency repairs, our licensed plumbers handle it all.
+            From routine plumbing maintenance to HVAC installation and emergency repairs, our licensed technicians handle it all.
           </p>
         </motion.div>
 

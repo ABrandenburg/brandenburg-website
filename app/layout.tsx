@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: '%s | Brandenburg Plumbing',
   },
   description: 'Expert Highland Lakes & Austin plumbers you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
-  keywords: ['plumber', 'plumbing', 'Highland Lakes', 'Austin', 'Burnet County', 'Texas', 'water heater', 'drain cleaning', 'emergency plumber', 'Marble Falls plumber'],
+  keywords: ['plumber', 'plumbing', 'Highland Lakes', 'Austin', 'Burnet County', 'Texas', 'water heater', 'drain cleaning', 'emergency plumber', 'Marble Falls plumber', 'ac repair', 'hvac', 'heating repair', 'ac installation', 'heat pump', 'ductwork'],
   authors: [{ name: 'Brandenburg Plumbing' }],
   creator: 'Brandenburg Plumbing',
   publisher: 'Brandenburg Plumbing',
@@ -119,7 +119,7 @@ const organizationJsonLd = {
   ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',
-    name: 'Plumbing Services',
+    name: 'Plumbing & HVAC Services',
     itemListElement: [
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Water Heater Installation & Repair' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Drain Cleaning' } },
@@ -127,6 +127,10 @@ const organizationJsonLd = {
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Emergency Plumbing' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Bathroom Plumbing' } },
       { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Kitchen Plumbing' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'AC Repair & Installation' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Heating Repair & Installation' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Heat Pump Services' } },
+      { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Ductwork Services' } },
     ],
   },
 }

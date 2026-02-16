@@ -365,6 +365,192 @@ export const faqs: FAQ[] = [
     question: "Do you provide written estimates and documentation?",
     answer: "Yes, we provide detailed written estimates for all commercial work, including scope of work, materials, labor, timeline, and payment terms. We also maintain thorough documentation throughout the project and provide all necessary paperwork for your records, warranty information, and compliance requirements.",
   },
+  // AC Repair FAQs
+  {
+    id: "acr1",
+    serviceType: "AC Repair",
+    question: "Why is my AC running but not cooling the house?",
+    answer: "This is one of the most common calls we get during a Central Texas summer. The cause is usually one of a few things: low refrigerant from a leak, a dirty or clogged condenser coil, a failing compressor, or a frozen evaporator coil. Each of these requires professional diagnosis with proper gauges and equipment. We'll pinpoint the problem and give you an honest repair-vs-replace recommendation.",
+  },
+  {
+    id: "acr2",
+    serviceType: "AC Repair",
+    question: "How often should I change my AC filter?",
+    answer: "We recommend checking your filter every 30 days and replacing it at least every 60-90 days, or more frequently if you have pets, allergies, or live in a dusty area. A clogged filter restricts airflow, makes your system work harder, increases energy bills, and can lead to frozen coils and compressor damage. It's the single easiest thing you can do to prevent costly AC repairs.",
+  },
+  {
+    id: "acr3",
+    serviceType: "AC Repair",
+    question: "Why is my AC making a loud or unusual noise?",
+    answer: "Different sounds point to different issues. A grinding or screeching noise usually means a motor bearing is failing. A clicking sound at startup could be a relay problem. A hissing or bubbling sound often indicates a refrigerant leak. A banging noise can mean a loose or broken component inside the compressor. Any unusual sound should be checked promptly to prevent a small repair from turning into a major one.",
+  },
+  {
+    id: "acr4",
+    serviceType: "AC Repair",
+    question: "Should I repair or replace my air conditioner?",
+    answer: "As a general rule, if your AC is over 10-12 years old and the repair cost is more than half the price of a new system, replacement is usually the better investment. Newer systems are significantly more efficient—upgrading from a 10 SEER unit to a 16 SEER can cut your cooling costs by nearly 40%. We'll always give you both options with transparent pricing so you can make the best decision.",
+  },
+  {
+    id: "acr5",
+    serviceType: "AC Repair",
+    question: "Do you offer emergency AC repair?",
+    answer: "Yes. We understand that losing AC in a Texas summer isn't just uncomfortable—it can be dangerous, especially for children and the elderly. We offer priority emergency service and aim to respond as quickly as possible. Our trucks are stocked with the most common parts so we can complete most repairs on the first visit.",
+  },
+  // AC Installation FAQs
+  {
+    id: "aci1",
+    serviceType: "AC Installation",
+    question: "How do I know what size AC system I need?",
+    answer: "Proper sizing requires a professional load calculation—not just a guess based on square footage. We evaluate your home's insulation, window placement, ceiling height, ductwork, and local climate data to determine the exact cooling capacity needed. An oversized unit short-cycles and wastes energy, while an undersized unit runs constantly and can't keep up. Getting the size right is the most important part of any installation.",
+  },
+  {
+    id: "aci2",
+    serviceType: "AC Installation",
+    question: "What SEER rating should I look for in a new AC?",
+    answer: "SEER (Seasonal Energy Efficiency Ratio) measures cooling efficiency. The current federal minimum for our region is 15 SEER, but we often recommend 16-18 SEER systems for the best balance of upfront cost and long-term energy savings. Higher SEER units cost more upfront but pay for themselves through lower monthly bills, especially given how many months we run AC here in Central Texas.",
+  },
+  {
+    id: "aci3",
+    serviceType: "AC Installation",
+    question: "How long does a new AC installation take?",
+    answer: "A standard replacement of the outdoor condenser and indoor evaporator coil typically takes one day. If we're also replacing the furnace or air handler, adding a new thermostat, or making ductwork modifications, it may take an additional half day. We'll give you a clear timeline before we start and make sure everything is tested and running perfectly before we leave.",
+  },
+  {
+    id: "aci4",
+    serviceType: "AC Installation",
+    question: "Will a new AC system work with my existing ductwork?",
+    answer: "In most cases, yes—but it depends on the condition and design of your existing ducts. Older or undersized ductwork can restrict airflow and prevent a new system from performing at its rated efficiency. We inspect your ductwork as part of every installation and will let you know if any modifications, sealing, or insulation upgrades are needed to get the most out of your investment.",
+  },
+  {
+    id: "aci5",
+    serviceType: "AC Installation",
+    question: "Do you offer financing for new AC systems?",
+    answer: "Yes, we offer flexible financing options to help make a new AC system affordable. We understand that a full system replacement is a significant investment, and we want to make sure comfort is accessible. We'll walk you through all available options, including any manufacturer rebates or utility company incentives that may apply to your installation.",
+  },
+  // Heating Repair FAQs
+  {
+    id: "htr1",
+    serviceType: "Heating Repair",
+    question: "Why is my furnace blowing cold air?",
+    answer: "A furnace blowing cold air is typically caused by a faulty ignitor, a bad flame sensor, a tripped high-limit switch, or a thermostat issue. The high-limit switch is a safety device that shuts off the burner if the heat exchanger overheats, often due to restricted airflow from a dirty filter. We diagnose the root cause and fix it properly so you're not dealing with the same problem again next week.",
+  },
+  {
+    id: "htr2",
+    serviceType: "Heating Repair",
+    question: "My heater smells like something is burning. Is this dangerous?",
+    answer: "A brief burning smell when you first turn on your heater after months of not using it is usually just dust burning off the heat exchanger and is normal. However, if the smell persists, smells like plastic or electrical burning, or is accompanied by unusual noises, shut the system off and call us immediately. These could indicate a serious issue like an overheating motor or electrical problem.",
+  },
+  {
+    id: "htr3",
+    serviceType: "Heating Repair",
+    question: "How often should my heating system be serviced?",
+    answer: "We recommend annual maintenance before the heating season begins, ideally in the fall. A tune-up includes cleaning the burners, checking the heat exchanger for cracks, testing the ignition system, verifying gas pressure, inspecting the flue, and checking all safety controls. Regular maintenance prevents breakdowns, catches carbon monoxide risks early, and keeps your manufacturer warranty valid.",
+  },
+  {
+    id: "htr4",
+    serviceType: "Heating Repair",
+    question: "Why does my heater keep turning on and off?",
+    answer: "Short-cycling—where your heater repeatedly starts and stops—is usually caused by an overheating heat exchanger (often from a dirty filter), a malfunctioning flame sensor, or a thermostat issue. It wastes energy, puts excessive wear on your system, and can lead to premature failure. This should be addressed promptly, as it can also indicate a cracked heat exchanger, which is a carbon monoxide safety concern.",
+  },
+  {
+    id: "htr5",
+    serviceType: "Heating Repair",
+    question: "Do you repair all types of heating systems?",
+    answer: "Yes, our technicians are trained and experienced with all types of residential heating systems, including gas furnaces, electric furnaces, heat pumps, and dual-fuel hybrid systems. We work on all major brands and carry common replacement parts on our trucks for faster repairs.",
+  },
+  // Heating Installation FAQs
+  {
+    id: "hti1",
+    serviceType: "Heating Installation",
+    question: "Should I choose a furnace or a heat pump for my home?",
+    answer: "It depends on your home and priorities. Heat pumps are extremely efficient for heating in mild climates like Central Texas and also provide cooling, making them a versatile two-in-one solution. Gas furnaces deliver stronger heat output for the coldest days. Many homeowners are choosing dual-fuel systems that combine both—the heat pump handles most of the winter, and the furnace kicks in only when temperatures drop significantly.",
+  },
+  {
+    id: "hti2",
+    serviceType: "Heating Installation",
+    question: "How long does a new furnace or heating system last?",
+    answer: "A gas furnace typically lasts 15-20 years, while heat pumps average 12-15 years. Proper sizing, quality installation, and regular maintenance are the biggest factors in how long your system will last. We ensure every installation is done right the first time, with proper airflow, gas connections, and safety testing to maximize the life and performance of your new system.",
+  },
+  {
+    id: "hti3",
+    serviceType: "Heating Installation",
+    question: "Are there any rebates or incentives for a new heating system?",
+    answer: "Yes, there are often manufacturer rebates, utility company incentives, and federal tax credits available for high-efficiency heating equipment, especially heat pumps. These incentives can significantly reduce your out-of-pocket cost. We stay current on all available programs and will help you identify every rebate and credit you qualify for during our consultation.",
+  },
+  {
+    id: "hti4",
+    serviceType: "Heating Installation",
+    question: "What size heating system do I need?",
+    answer: "Just like AC, proper sizing is critical. We perform a detailed load calculation that accounts for your home's square footage, insulation levels, window types, ceiling heights, and local climate data. An oversized heater short-cycles and creates uncomfortable temperature swings, while an undersized unit runs constantly and never reaches your desired temperature. We get the sizing right so your home stays comfortable and efficient.",
+  },
+  {
+    id: "hti5",
+    serviceType: "Heating Installation",
+    question: "How long does a heating system installation take?",
+    answer: "A standard furnace replacement typically takes one day. If we're installing a complete system change—like switching from a furnace to a heat pump, or adding a dual-fuel system—it may take one to two days depending on the scope of work. We handle all the details, including removing and disposing of your old equipment, and make sure everything is tested and running before we leave.",
+  },
+  // Ductwork FAQs
+  {
+    id: "dw1",
+    serviceType: "Ductwork",
+    question: "How do I know if my ductwork is leaking?",
+    answer: "Common signs of leaky ductwork include rooms that are consistently too hot or too cold, higher-than-expected energy bills, excessive dust in your home, and your HVAC system running longer than it should. In Texas, where most ductwork runs through unconditioned attic space, leaks are extremely common and can waste 20-30% of your conditioned air. We use diagnostic tools to test your ducts and pinpoint exactly where the leaks are.",
+  },
+  {
+    id: "dw2",
+    serviceType: "Ductwork",
+    question: "Why is duct insulation so important in Texas?",
+    answer: "Texas attic temperatures can easily reach 140°F or more in summer. When your cold, conditioned air travels through uninsulated or poorly insulated ducts in that extreme heat, it can warm up by 10-20 degrees before it even reaches your rooms. This forces your AC to work much harder and drives up your energy bills. Properly insulated ducts maintain the temperature of the air and dramatically improve system efficiency.",
+  },
+  {
+    id: "dw3",
+    serviceType: "Ductwork",
+    question: "Can ductwork affect my indoor air quality?",
+    answer: "Absolutely. Leaky ducts in your attic or crawl space can pull in dust, insulation fibers, mold spores, and other contaminants and distribute them throughout your home. Poorly sealed duct connections also allow humid outside air into the system, which can promote mold growth inside the ducts. Sealing and cleaning your ductwork is one of the most effective ways to improve the air quality in your home.",
+  },
+  {
+    id: "dw4",
+    serviceType: "Ductwork",
+    question: "How long does ductwork last?",
+    answer: "Most ductwork is designed to last 15-25 years, but in Texas attics where temperatures are extreme, flex duct can deteriorate faster. The connections, tape, and insulation break down over time, leading to leaks and reduced efficiency. If your ductwork is over 15 years old, we recommend a professional inspection to assess its condition and identify any areas that need repair or replacement.",
+  },
+  {
+    id: "dw5",
+    serviceType: "Ductwork",
+    question: "Do you design and install new duct systems?",
+    answer: "Yes, we design and install complete duct systems for home additions, renovations, and new construction. Proper duct design is critical to system performance—it ensures the right amount of airflow reaches every room. We calculate the correct duct sizes, plan efficient layouts, and use quality materials to deliver a system that keeps your home comfortable and your energy bills low.",
+  },
+  // Heat Pump FAQs
+  {
+    id: "hp1",
+    serviceType: "Heat Pumps",
+    question: "How does a heat pump work?",
+    answer: "A heat pump works like an air conditioner that can run in reverse. In summer, it removes heat from inside your home and transfers it outside, just like a standard AC. In winter, it reverses the process, extracting heat energy from the outdoor air and moving it inside to warm your home. This makes it a highly efficient two-in-one system for both heating and cooling.",
+  },
+  {
+    id: "hp2",
+    serviceType: "Heat Pumps",
+    question: "Are heat pumps effective in Texas?",
+    answer: "Heat pumps are an excellent choice for Central Texas. Our mild winters are ideal for heat pump efficiency—they work best when outdoor temperatures stay above freezing, which covers the vast majority of our heating season. For the rare deep freezes, a dual-fuel system that pairs the heat pump with a gas furnace backup gives you the best of both worlds: efficiency most of the time and powerful heat when you need it most.",
+  },
+  {
+    id: "hp3",
+    serviceType: "Heat Pumps",
+    question: "What is a dual-fuel or hybrid heat pump system?",
+    answer: "A dual-fuel system combines an electric heat pump with a gas furnace. The heat pump handles heating and cooling most of the year at high efficiency. When outdoor temperatures drop below a set point (usually around 35-40°F), the system automatically switches to the gas furnace for stronger, more economical heating. It's the most versatile and efficient setup for Texas homeowners who want year-round comfort without compromise.",
+  },
+  {
+    id: "hp4",
+    serviceType: "Heat Pumps",
+    question: "How much can I save with a heat pump?",
+    answer: "Heat pumps are significantly more efficient than traditional heating and cooling systems. Many homeowners see a 30-50% reduction in heating costs compared to a standard gas furnace or electric resistance heat. Because the system also provides cooling, you get year-round savings. Combined with available federal tax credits and utility rebates for high-efficiency heat pumps, the long-term savings can be substantial.",
+  },
+  {
+    id: "hp5",
+    serviceType: "Heat Pumps",
+    question: "How long does a heat pump last?",
+    answer: "A well-maintained heat pump typically lasts 12-15 years. Because it runs year-round for both heating and cooling, it does work harder than a furnace that only runs in winter. Regular maintenance—including annual tune-ups, filter changes, and keeping the outdoor unit clean—is key to maximizing its lifespan and performance. We offer maintenance plans to help you protect your investment.",
+  },
   // General Company FAQs
   {
     id: "gnq1",
@@ -421,13 +607,16 @@ export function getGeneralFAQs(count: number = 8): FAQ[] {
   // Select a diverse mix of FAQs from different service types
   const selectedTypes = [
     "Water Heater",
-    "Drain Cleaning", 
+    "Drain Cleaning",
     "Bathroom",
     "Toilets",
     "Kitchen",
     "Water Treatment",
     "Emergency",
     "Pipe Replacements",
+    "AC Repair",
+    "Heating Repair",
+    "Heat Pumps",
   ]
   
   const result: FAQ[] = []
@@ -459,6 +648,12 @@ const slugToServiceType: Record<string, string> = {
   'water-heaters': 'Water Heater',
   'water-softeners': 'Water Treatment',
   'water-drain-lines': 'Pipe Replacements',
+  'ac-repair': 'AC Repair',
+  'ac-installation': 'AC Installation',
+  'heating-repair': 'Heating Repair',
+  'heating-installation': 'Heating Installation',
+  'ductwork': 'Ductwork',
+  'heat-pumps': 'Heat Pumps',
 }
 
 // Get FAQs by service slug (for service pages)

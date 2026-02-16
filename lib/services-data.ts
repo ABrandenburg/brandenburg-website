@@ -28,6 +28,12 @@ const serviceImages: Record<string, string> = {
   'water-heaters': '/images/water_heater.jpg',
   'water-softeners': '/images/water-softeners.jpg',
   'water-drain-lines': '/images/service-trucks.jpg',
+  'ac-repair': '/images/hvac/ac-repair.jpg',
+  'ac-installation': '/images/hvac/ac-installation.jpg',
+  'heating-repair': '/images/hvac/heating-repair.jpg',
+  'heating-installation': '/images/hvac/heating-installation.jpg',
+  'ductwork': '/images/hvac/ductwork.jpg',
+  'heat-pumps': '/images/hvac/heat-pumps.jpg',
 }
 
 // Map slugs to icon types (used in header)
@@ -42,6 +48,12 @@ const serviceIcons: Record<string, string> = {
   'water-heaters': 'heater',
   'water-softeners': 'softener',
   'water-drain-lines': 'pipes',
+  'ac-repair': 'ac-repair',
+  'ac-installation': 'ac-install',
+  'heating-repair': 'heating-repair',
+  'heating-installation': 'heating-install',
+  'ductwork': 'ductwork',
+  'heat-pumps': 'heat-pump',
 }
 
 export const services: Service[] = [
@@ -197,6 +209,91 @@ export const services: Service[] = [
     image: serviceImages['water-drain-lines'],
     icon: serviceIcons['water-drain-lines'],
   },
+  // HVAC Services
+  {
+    name: "AC Repair",
+    slug: "ac-repair",
+    servicesHeader: "Fast AC Repair - Beat the Central Texas Heat with Same-Day Service",
+    metaTitle: "AC Repair",
+    metaDesc: "Emergency AC repair for Central Texas homes. We fix refrigerant leaks, compressor failures, and all cooling issues. Same-day service available.",
+    trustHeader: "Why Homeowners Trust Us for AC Repair",
+    locationBlurb: "Providing best-in-class AC Repair Services in the Highland Lakes & North Austin",
+    serviceSubheading: "When your AC goes down in a Texas summer, you need it fixed fast. We diagnose and repair all makes and models, from refrigerant leaks and compressor failures to thermostat issues and frozen coils. Our trucks are fully stocked so we can get your home cool again on the first visit.",
+    faqHeader: "Common Questions About AC Repair",
+    faqIds: ["acr1", "acr2", "acr3", "acr4", "acr5"],
+    image: serviceImages['ac-repair'],
+    icon: serviceIcons['ac-repair'],
+  },
+  {
+    name: "AC Installation",
+    slug: "ac-installation",
+    servicesHeader: "New AC Installation - Properly Sized Systems for Maximum Efficiency",
+    metaTitle: "AC Installation",
+    metaDesc: "Professional AC installation with proper load calculations and sizing. High-efficiency systems, expert ductwork integration, and energy savings for your Texas home.",
+    trustHeader: "Why Homeowners Trust Us for AC Installation",
+    locationBlurb: "Providing best-in-class AC Installation Services in the Highland Lakes & North Austin",
+    serviceSubheading: "A properly sized and installed AC system is the key to comfort and energy savings. We perform detailed load calculations for your home, recommend the best equipment for your budget, and ensure every installation meets manufacturer specifications for peak performance and full warranty coverage.",
+    faqHeader: "Common Questions About AC Installation",
+    faqIds: ["aci1", "aci2", "aci3", "aci4", "aci5"],
+    image: serviceImages['ac-installation'],
+    icon: serviceIcons['ac-installation'],
+  },
+  {
+    name: "Heating Repair",
+    slug: "heating-repair",
+    servicesHeader: "Heating Repair - Furnace & Heat Pump Diagnostics You Can Trust",
+    metaTitle: "Heating Repair",
+    metaDesc: "Expert heating repair for furnaces, heat pumps, and all heating systems. Fast diagnostics and reliable fixes to keep your home warm through Texas winters.",
+    trustHeader: "Why Homeowners Trust Us for Heating Repair",
+    locationBlurb: "Providing best-in-class Heating Repair Services in the Highland Lakes & North Austin",
+    serviceSubheading: "When your heater stops working on a cold Hill Country night, we respond fast. Our technicians diagnose and repair all types of heating systems, including gas furnaces, electric furnaces, and heat pumps. From ignitor and thermocouple replacements to heat exchanger inspections, we get your heat restored safely.",
+    faqHeader: "Common Questions About Heating Repair",
+    faqIds: ["htr1", "htr2", "htr3", "htr4", "htr5"],
+    image: serviceImages['heating-repair'],
+    icon: serviceIcons['heating-repair'],
+  },
+  {
+    name: "Heating Installation",
+    slug: "heating-installation",
+    servicesHeader: "New Heating Installation - Furnaces & Heat Pumps Sized for Your Home",
+    metaTitle: "Heating Installation",
+    metaDesc: "Professional furnace and heat pump installation for Central Texas homes. Proper sizing, energy-efficient options, and expert installation with full warranty.",
+    trustHeader: "Why Homeowners Trust Us for Heating Installation",
+    locationBlurb: "Providing best-in-class Heating Installation Services in the Highland Lakes & North Austin",
+    serviceSubheading: "Whether you're replacing an aging furnace or upgrading to a high-efficiency heat pump, we help you choose the right system for your home and budget. We walk you through all your options, including available energy rebates, and handle every detail of the installation from start to finish.",
+    faqHeader: "Common Questions About Heating Installation",
+    faqIds: ["hti1", "hti2", "hti3", "hti4", "hti5"],
+    image: serviceImages['heating-installation'],
+    icon: serviceIcons['heating-installation'],
+  },
+  {
+    name: "Ductwork",
+    slug: "ductwork",
+    servicesHeader: "Ductwork Services - Sealing, Insulation & Design for Better Comfort",
+    metaTitle: "Ductwork Services",
+    metaDesc: "Professional ductwork sealing, insulation, repair, and design. Improve indoor air quality, reduce energy bills, and fix hot/cold spots in your Texas home.",
+    trustHeader: "Why Homeowners Trust Us for Ductwork",
+    locationBlurb: "Providing best-in-class Ductwork Services in the Highland Lakes & North Austin",
+    serviceSubheading: "Your ductwork is the hidden backbone of your HVAC system. Leaky or poorly insulated ducts—especially in Texas attics where temperatures can exceed 140°F—waste energy and create uncomfortable hot and cold spots. We seal, insulate, repair, and design duct systems to deliver even temperatures and cleaner air throughout your home.",
+    faqHeader: "Common Questions About Ductwork",
+    faqIds: ["dw1", "dw2", "dw3", "dw4", "dw5"],
+    image: serviceImages['ductwork'],
+    icon: serviceIcons['ductwork'],
+  },
+  {
+    name: "Heat Pumps",
+    slug: "heat-pumps",
+    servicesHeader: "Heat Pumps - Year-Round Comfort with One Energy-Efficient System",
+    metaTitle: "Heat Pump Installation & Repair",
+    metaDesc: "Heat pump installation, repair, and maintenance for Central Texas homes. Energy-efficient heating and cooling in one system. Dual-fuel options available.",
+    trustHeader: "Why Homeowners Trust Us for Heat Pumps",
+    locationBlurb: "Providing best-in-class Heat Pump Services in the Highland Lakes & North Austin",
+    serviceSubheading: "Heat pumps provide both heating and cooling from a single, highly efficient system—making them ideal for Central Texas's mild winters and hot summers. We install, repair, and maintain all types of heat pumps, including standard air-source and dual-fuel hybrid systems that pair with a gas furnace for the coldest days.",
+    faqHeader: "Common Questions About Heat Pumps",
+    faqIds: ["hp1", "hp2", "hp3", "hp4", "hp5"],
+    image: serviceImages['heat-pumps'],
+    icon: serviceIcons['heat-pumps'],
+  },
 ]
 
 // Get all services
@@ -232,6 +329,22 @@ export function getServicesForFooter(): Service[] {
     'kitchen',
     'bathroom',
     'water-drain-lines',
+    'ac-repair',
+    'heating-repair',
+    'heat-pumps',
   ]
   return footerSlugs.map(slug => getServiceBySlug(slug)).filter((s): s is Service => s !== undefined)
+}
+
+// HVAC service slugs
+const hvacSlugs = ['ac-repair', 'ac-installation', 'heating-repair', 'heating-installation', 'ductwork', 'heat-pumps']
+
+// Get only plumbing services
+export function getPlumbingServices(): Service[] {
+  return services.filter(s => !hvacSlugs.includes(s.slug))
+}
+
+// Get only HVAC services
+export function getHvacServices(): Service[] {
+  return services.filter(s => hvacSlugs.includes(s.slug))
 }
