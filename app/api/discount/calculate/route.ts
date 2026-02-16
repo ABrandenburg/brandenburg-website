@@ -27,13 +27,14 @@ export async function POST(request: NextRequest) {
     // Get capacity data
     let capacityData
     let isDemoMode = false
-    
+
     if (!isServiceTitanConfigured()) {
       capacityData = getDemoCapacityData()
       isDemoMode = true
     } else {
       try {
-        capacityData = await getCapacityWithStatus()
+        const result = await getCapacityWithStatus()
+        capacityData = result.data
       } catch (error) {
         console.error('ServiceTitan API error, falling back to demo:', error)
         capacityData = getDemoCapacityData()
