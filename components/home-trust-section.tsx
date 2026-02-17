@@ -46,7 +46,7 @@ export function HomeTrustSection() {
             Picayune&apos;s Locals Love Us Winner • 2024 & 2025
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-4">
-            Three Generations of Highland Lakes & North Austin Plumbing Excellence
+            Three Generations of Highland Lakes & North Austin Plumbing and Air Excellence
           </h2>
           <p className="text-lg text-text-muted max-w-2xl mx-auto">
             When you choose Brandenburg Plumbing, you&apos;re choosing a team that treats your home like our own.

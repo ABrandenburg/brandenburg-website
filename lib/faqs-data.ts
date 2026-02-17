@@ -556,13 +556,13 @@ export const faqs: FAQ[] = [
     id: "gnq1",
     serviceType: "General",
     question: "Are you a licensed and insured plumbing company?",
-    answer: "Absolutely. Brandenburg Plumbing is a fully licensed and insured plumbing contractor. Our technicians are certified, highly trained, and undergo regular professional development to stay on top of the latest industry standards and technology. Your peace of mind and safety are our top priorities.",
+    answer: "Absolutely. Brandenburg Plumbing is a fully licensed and insured plumbing and HVAC contractor. Our technicians are certified, highly trained, and undergo regular professional development to stay on top of the latest industry standards and technology. Your peace of mind and safety are our top priorities.",
   },
   {
     id: "gnq2",
     serviceType: "General",
     question: "What areas do you serve?",
-    answer: "We proudly provide plumbing services to residential and commercial clients throughout the Highland Lakes & North Austin, including Burnet, Lampasas, Williamson, and Llano counties. If you're unsure whether you fall within our service area, please don't hesitate to call us at 737-251-5032.",
+    answer: "We proudly provide plumbing and HVAC services to residential and commercial clients throughout the Highland Lakes & North Austin, including Burnet, Lampasas, Williamson, and Llano counties. If you're unsure whether you fall within our service area, please don't hesitate to call us at 737-251-5032.",
   },
   {
     id: "gnq3",
@@ -573,14 +573,14 @@ export const faqs: FAQ[] = [
   {
     id: "gnq4",
     serviceType: "General",
-    question: "What kind of plumbing services do you offer?",
-    answer: "We are a full-service plumbing company. Our services include, but are not limited to:\n\nLeak Detection and Repair\nDrain Cleaning and Unclogging\nWater Heater Installation & Repair (both tank and tankless)\nSewer Line Camera Inspection, Repair, and Replacement\nFaucet, Toilet, and Fixture Repair & Installation\nGas Line Services\nSump Pump Installation and Repair\nWater Filtration and Softener Systems\nPlumbing for Remodels and Additions (not new construction)",
+    question: "What kind of plumbing and HVAC services do you offer?",
+    answer: "We are a full-service plumbing and HVAC company. Our services include, but are not limited to:\n\nLeak Detection and Repair\nDrain Cleaning and Unclogging\nWater Heater Installation & Repair (both tank and tankless)\nSewer Line Camera Inspection, Repair, and Replacement\nFaucet, Toilet, and Fixture Repair & Installation\nGas Line Services\nSump Pump Installation and Repair\nWater Filtration and Softener Systems\nAC Repair and Installation\nHeating Repair and Installation\nHeat Pump Services\nDuctwork Sealing, Insulation, and Design\nPlumbing for Remodels and Additions (not new construction)",
   },
   {
     id: "gnq5",
     serviceType: "General",
     question: "Do you offer preventative maintenance plans?",
-    answer: "Yes, we do! Regular maintenance is the best way to prevent costly emergencies and extend the life of your plumbing system. Our maintenance plans include services like drain cleaning, water heater tune-ups, and comprehensive plumbing inspections. Contact us to learn more about our plans.",
+    answer: "Yes, we do! Regular maintenance is the best way to prevent costly emergencies and extend the life of your plumbing and HVAC systems. Our maintenance plans include services like drain cleaning, water heater tune-ups, AC tune-ups, and comprehensive plumbing and HVAC inspections. Contact us to learn more about our plans.",
   },
   {
     id: "gnq6",

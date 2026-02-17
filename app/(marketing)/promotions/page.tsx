@@ -7,13 +7,13 @@ import { openScheduler } from '@/lib/scheduler'
 
 export const metadata: Metadata = {
   title: 'Current Promotions | Brandenburg Plumbing',
-  description: 'Save on plumbing services with current promotions and special offers from Brandenburg Plumbing. Limited time offers available.',
+  description: 'Save on plumbing and HVAC services with current promotions and special offers from Brandenburg Plumbing. Limited time offers available.',
   alternates: {
     canonical: 'https://www.brandenburgplumbing.com/promotions',
   },
   openGraph: {
     title: 'Current Promotions | Brandenburg Plumbing',
-    description: 'Save on plumbing services with current promotions and special offers from Brandenburg Plumbing.',
+    description: 'Save on plumbing and HVAC services with current promotions and special offers from Brandenburg Plumbing.',
     type: 'website',
     url: 'https://www.brandenburgplumbing.com/promotions',
     images: ['/images/plumber-customer.jpg'],
@@ -39,7 +39,7 @@ export default function PromotionsPage() {
                 Current Promotions
               </h1>
               <p className="text-lg text-text-muted">
-                Take advantage of our current special offers and save on quality plumbing services.
+                Take advantage of our current special offers and save on quality plumbing and HVAC services.
               </p>
             </div>
           </div>
@@ -76,7 +76,7 @@ export default function PromotionsPage() {
                   Free Estimates
                 </h3>
                 <p className="text-text-muted mb-6">
-                  Not sure what&apos;s wrong? We offer free estimates on all plumbing services.
+                  Not sure what&apos;s wrong? We offer free estimates on all plumbing and HVAC services.
                   No obligation, no pressure—just honest advice.
                 </p>
                 <div className="flex items-center gap-2 text-text-muted mb-6">

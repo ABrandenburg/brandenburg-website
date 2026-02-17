@@ -5,10 +5,10 @@ import './globals.css'
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.brandenburgplumbing.com'),
   title: {
-    default: 'Plumbing Repair, Replace, and Install Service | Brandenburg Plumbing',
+    default: 'Plumbing & HVAC Services | Brandenburg Plumbing',
     template: '%s | Brandenburg Plumbing',
   },
-  description: 'Expert Highland Lakes & Austin plumbers you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
+  description: 'Expert Highland Lakes & Austin plumbing & HVAC pros you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
   keywords: ['plumber', 'plumbing', 'Highland Lakes', 'Austin', 'Burnet County', 'Texas', 'water heater', 'drain cleaning', 'emergency plumber', 'Marble Falls plumber', 'ac repair', 'hvac', 'heating repair', 'ac installation', 'heat pump', 'ductwork'],
   authors: [{ name: 'Brandenburg Plumbing' }],
   creator: 'Brandenburg Plumbing',
@@ -22,8 +22,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://www.brandenburgplumbing.com',
     siteName: 'Brandenburg Plumbing',
-    title: 'Brandenburg Plumbing | Expert Plumbers in Highland Lakes & Austin',
-    description: 'Expert Highland Lakes & Austin plumbers you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
+    title: 'Brandenburg Plumbing | Expert Plumbing & HVAC in Highland Lakes & Austin',
+    description: 'Expert Highland Lakes & Austin plumbing & HVAC pros you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
     images: [
       {
         url: '/images/team-photo.jpg',
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Brandenburg Plumbing | Expert Plumbers in Highland Lakes & Austin',
-    description: 'Expert Highland Lakes & Austin plumbers you can trust. 24/7 same day service.',
+    title: 'Brandenburg Plumbing | Expert Plumbing & HVAC in Highland Lakes & Austin',
+    description: 'Expert Highland Lakes & Austin plumbing & HVAC pros you can trust. 24/7 same day service.',
     images: ['/images/team-photo.jpg'],
   },
   robots: {
@@ -62,13 +62,13 @@ export const metadata: Metadata = {
 // Organization JSON-LD structured data
 const organizationJsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Plumber',
+  '@type': 'HomeAndConstructionBusiness',
   '@id': 'https://www.brandenburgplumbing.com/#organization',
   name: 'Brandenburg Plumbing',
   url: 'https://www.brandenburgplumbing.com',
   logo: 'https://www.brandenburgplumbing.com/images/Brandenburg Logo_Dark_Red Mark-01.png',
   image: 'https://www.brandenburgplumbing.com/images/team-photo.jpg',
-  description: 'Expert Highland Lakes & Austin plumbers you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
+  description: 'Expert Highland Lakes & Austin plumbing & HVAC pros you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
   telephone: '+1-512-756-9847',
   email: 'service@brandenburgplumbing.com',
   foundingDate: '1997',

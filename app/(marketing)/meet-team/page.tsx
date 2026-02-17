@@ -5,13 +5,13 @@ import { PageHeader } from '@/components/page-header'
 
 export const metadata: Metadata = {
   title: 'Meet Our Team | Brandenburg Plumbing',
-  description: 'Meet the talented team at Brandenburg Plumbing. Our experienced plumbers and staff are dedicated to providing excellent service to the Highland Lakes & North Austin.',
+  description: 'Meet the talented team at Brandenburg Plumbing. Our experienced plumbing and HVAC technicians are dedicated to providing excellent service to the Highland Lakes & North Austin.',
   alternates: {
     canonical: 'https://www.brandenburgplumbing.com/meet-team',
   },
   openGraph: {
     title: 'Meet Our Team | Brandenburg Plumbing',
-    description: 'Meet the talented team at Brandenburg Plumbing. Our experienced plumbers and staff are dedicated to providing excellent service to the Highland Lakes & North Austin.',
+    description: 'Meet the talented team at Brandenburg Plumbing. Our experienced plumbing and HVAC technicians are dedicated to providing excellent service to the Highland Lakes & North Austin.',
     type: 'website',
     url: 'https://www.brandenburgplumbing.com/meet-team',
     images: ['/images/team-photo.jpg'],
@@ -25,7 +25,7 @@ export default function TeamPage() {
         <PageHeader
           title="Meet Our Team"
           breadcrumb={[{ label: 'Meet the Team' }]}
-          description="Meet the talented team at Brandenburg Plumbing. Our experienced plumbers and staff are dedicated to providing excellent service to the Highland Lakes & North Austin."
+          description="Meet the talented team at Brandenburg Plumbing. Our experienced plumbing and HVAC technicians are dedicated to providing excellent service in the Highland Lakes & North Austin."
           imageSrc="/images/team-photo.jpg"
           imageAlt="The Brandenburg Plumbing Team"
         />

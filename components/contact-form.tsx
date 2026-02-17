@@ -231,7 +231,7 @@ export function ContactForm() {
             rows={5}
             className={`w-full px-4 py-3 rounded-lg border ${errors.message ? 'border-red-500' : 'border-gray-200'
               } bg-white text-text-primary placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all resize-none`}
-            placeholder="Tell us about your plumbing needs..."
+            placeholder="Tell us about your plumbing or HVAC needs..."
           />
           {errors.message && (
             <p className="mt-1 text-sm text-red-500">{errors.message}</p>

@@ -34,7 +34,7 @@ export function generateLocationSchema(location: Location) {
 
     return {
         '@context': 'https://schema.org',
-        '@type': 'PlumbingService',
+        '@type': 'HomeAndConstructionBusiness',
         name: `Brandenburg Plumbing - ${location.name}`,
         description: location.metaDesc,
         url: `https://www.brandenburgplumbing.com/location/${location.slug}`,
@@ -51,7 +51,7 @@ export function generateLocationSchema(location: Location) {
         },
         priceRange: '$$',
         parentOrganization: {
-            '@type': 'PlumbingService',
+            '@type': 'HomeAndConstructionBusiness',
             name: 'Brandenburg Plumbing',
             url: 'https://www.brandenburgplumbing.com',
         },

@@ -58,7 +58,7 @@ export function Hero({ video }: HeroProps) {
               animate="animate"
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              Highland Lakes Plumbing Problems? We&apos;ve Been Solving Them for 27 Years.
+              Highland Lakes Plumbing and Air Problems? We&apos;ve Been Solving Them for 27 Years.
             </motion.h1>
 
             {/* Value Props */}

@@ -12,7 +12,7 @@ export function ServiceAreasList() {
                         Proudly Serving the Highland Lakes & North Austin
                     </h2>
                     <p className="text-text-muted">
-                        Our expert plumbers are available in these communities:
+                        Our expert plumbing and HVAC technicians are available in these communities:
                     </p>
                 </div>
 

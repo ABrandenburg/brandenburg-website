@@ -67,7 +67,7 @@ export function FAQAccordion({ faqs, header }: FAQAccordionProps) {
             {header}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Find answers to common plumbing questions from our expert team.
+            Find answers to common plumbing and HVAC questions from our expert team.
           </p>
         </motion.div>
 

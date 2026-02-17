@@ -59,7 +59,7 @@ const benefits = [
   {
     icon: GraduationCap,
     title: 'Ongoing Training',
-    description: 'The best plumbing company needs the best plumbers, so we train weekly on the newest technologies and practices to keep our skills sharp.',
+    description: 'The best plumbing & HVAC company needs the best technicians, so we train weekly on the newest technologies and practices to keep our skills sharp.',
   },
   {
     icon: TrendingUp,
@@ -69,7 +69,7 @@ const benefits = [
   {
     icon: Scale,
     title: 'Balanced Work Culture',
-    description: 'We strongly believe the best plumbing company invests in the balance between work and rest, competition and teamwork. We value excellence while respecting the needs of each employee.',
+    description: 'We strongly believe the best plumbing & HVAC company invests in the balance between work and rest, competition and teamwork. We value excellence while respecting the needs of each employee.',
   },
 ]
 

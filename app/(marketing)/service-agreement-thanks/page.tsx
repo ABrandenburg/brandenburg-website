@@ -24,7 +24,7 @@ export default function ServiceAgreementThanksPage() {
             
             <p className="text-lg text-text-muted mb-8">
               Your service agreement has been received. Welcome to the Brandenburg Plumbing family! 
-              We&apos;re committed to providing you with exceptional plumbing services and priority support.
+              We&apos;re committed to providing you with exceptional plumbing and HVAC services and priority support.
             </p>
 
             <div className="bg-gray-50 rounded-xl p-8 mb-8 text-left">

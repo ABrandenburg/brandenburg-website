@@ -9,7 +9,7 @@ import { generateJobPostingSchema } from '@/lib/json-ld'
 
 export const metadata: Metadata = {
   title: 'Careers | Join Our Team | Brandenburg Plumbing',
-  description: 'Join the Brandenburg Plumbing team! We offer competitive pay, excellent benefits, and career growth opportunities. Apply today for plumbing and support positions.',
+  description: 'Join the Brandenburg Plumbing team! We offer competitive pay, excellent benefits, and career growth opportunities. Apply today for plumbing, HVAC, and support positions.',
   alternates: {
     canonical: 'https://www.brandenburgplumbing.com/careers',
   },

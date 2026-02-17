@@ -49,7 +49,7 @@ export function CTASection({ locationName, serviceName, headline: customHeadline
 
           {/* Subheadline */}
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Our expert plumbers are standing by to help. Get upfront pricing with no hidden fees.
+            Our expert technicians are standing by to help. Get upfront pricing with no hidden fees.
           </p>
 
           {/* CTAs */}

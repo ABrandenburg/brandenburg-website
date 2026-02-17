@@ -7,13 +7,13 @@ import { MessageSquare, Phone, MapPin } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Contact Us | Brandenburg Plumbing',
-  description: 'Contact Brandenburg Plumbing for all your plumbing needs. Available 24/7 for emergency service. Serving the Highland Lakes & North Austin.',
+  description: 'Contact Brandenburg Plumbing for all your plumbing and HVAC needs. Available 24/7 for emergency service. Serving the Highland Lakes & North Austin.',
   alternates: {
     canonical: 'https://www.brandenburgplumbing.com/contact',
   },
   openGraph: {
     title: 'Contact Us | Brandenburg Plumbing',
-    description: 'Contact Brandenburg Plumbing for all your plumbing needs. Available 24/7 for emergency service.',
+    description: 'Contact Brandenburg Plumbing for all your plumbing and HVAC needs. Available 24/7 for emergency service.',
     type: 'website',
     url: 'https://www.brandenburgplumbing.com/contact',
     images: ['/images/plumber-customer.jpg'],
@@ -27,7 +27,7 @@ export default function ContactPage() {
         <PageHeader
           title="Contact Us"
           breadcrumb={[{ label: 'Contact' }]}
-          description="Have a plumbing question or ready to schedule? We typically respond within 2 hours during business hours."
+          description="Have a plumbing or HVAC question or ready to schedule? We typically respond within 2 hours during business hours."
           imageSrc="/images/plumber-customer.jpg"
           imageAlt="Plumber helping customer"
         />

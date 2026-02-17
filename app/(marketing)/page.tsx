@@ -8,14 +8,14 @@ import { HomeCTASection } from '@/components/home-cta-section'
 import { fetchYouTubeVideoInfo } from '@/lib/youtube-utils'
 
 export const metadata: Metadata = {
-  title: 'Plumbing Repair, Replace, and Install Service | Brandenburg Plumbing',
-  description: 'Expert Highland Lakes & North Austin plumbers you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee. Serving Burnet County since 1997.',
+  title: 'Plumbing & HVAC Services | Brandenburg Plumbing',
+  description: 'Expert Highland Lakes & North Austin plumbing & HVAC pros you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee. Serving Burnet County since 1997.',
   alternates: {
     canonical: 'https://www.brandenburgplumbing.com',
   },
   openGraph: {
-    title: 'Brandenburg Plumbing | Expert Highland Lakes & North Austin Plumbers',
-    description: 'Expert Highland Lakes & North Austin plumbers you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
+    title: 'Brandenburg Plumbing | Expert Plumbing & HVAC in Highland Lakes & North Austin',
+    description: 'Expert Highland Lakes & North Austin plumbing & HVAC pros you can trust. 24/7 same day service, fully licensed & insured, lifetime labor guarantee.',
     url: 'https://www.brandenburgplumbing.com',
     type: 'website',
     images: [

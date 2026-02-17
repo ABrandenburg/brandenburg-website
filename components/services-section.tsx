@@ -116,7 +116,7 @@ const HeatPumpIcon = () => (
   </svg>
 )
 
-const services = [
+const plumbingServices = [
   {
     title: 'Water Heaters',
     description: 'We repair, install, and replace all varieties of water heater, including tankless, tank, and hybrid.',
@@ -134,7 +134,7 @@ const services = [
   {
     title: 'Water Filtration',
     description: 'Cleaner, better-tasting water from every tap. Remove chlorine, sediment, and contaminants for your family.',
-    image: '/images/kitchen.jpg',
+    image: '/images/water-filtration.jpg',
     icon: <WaterFilterIcon />,
     href: '/service/water-filtration',
   },
@@ -173,6 +173,9 @@ const services = [
     icon: <PipeIcon />,
     href: '/service/water-drain-lines',
   },
+]
+
+const heatingAndAirServices = [
   {
     title: 'AC Repair',
     description: 'Fast diagnostics and repair for all AC makes and models. Beat the Central Texas heat with same-day service.',
@@ -230,7 +233,7 @@ export function ServicesSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            Full Service Plumbing & HVAC
+            Full Service Plumbing, Heating & Air
           </motion.p>
           <motion.h2
             className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary text-balance"
@@ -239,13 +242,46 @@ export function ServicesSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Complete Plumbing & HVAC Solutions for Home & Business
+            Complete Plumbing, Heating & Air Solutions for Home & Business
           </motion.h2>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-          {services.map((service, index) => (
+        {/* Plumbing Services */}
+        <motion.h3
+          className="font-serif text-2xl sm:text-3xl font-bold text-text-primary mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          Plumbing
+        </motion.h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
+          {plumbingServices.map((service, index) => (
+            <ServiceCard
+              key={service.title}
+              title={service.title}
+              description={service.description}
+              image={service.image}
+              icon={service.icon}
+              href={service.href}
+              index={index}
+            />
+          ))}
+        </div>
+
+        {/* Heating & Air Services */}
+        <motion.h3
+          className="font-serif text-2xl sm:text-3xl font-bold text-text-primary mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          Heating & Air
+        </motion.h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {heatingAndAirServices.map((service, index) => (
             <ServiceCard
               key={service.title}
               title={service.title}

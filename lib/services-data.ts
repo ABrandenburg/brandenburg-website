@@ -24,7 +24,7 @@ const serviceImages: Record<string, string> = {
   'emergency': '/images/plumber-customer.jpg',
   'kitchen': '/images/kitchen.jpg',
   'toilets': '/images/toilet.jpg',
-  'water-filtration': '/images/water-softeners.jpg',
+  'water-filtration': '/images/water-filtration.jpg',
   'water-heaters': '/images/water_heater.jpg',
   'water-softeners': '/images/water-softeners.jpg',
   'water-drain-lines': '/images/service-trucks.jpg',

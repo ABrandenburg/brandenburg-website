@@ -7,13 +7,13 @@ import { getGeneralCompanyFAQs } from '@/lib/faqs-data'
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions | Brandenburg Plumbing',
-  description: 'Find answers to common questions about our plumbing services, pricing, service areas, hours, and more. Brandenburg Plumbing serves the Highland Lakes & North Austin.',
+  description: 'Find answers to common questions about our plumbing and HVAC services, pricing, service areas, hours, and more. Brandenburg Plumbing serves the Highland Lakes & North Austin.',
   alternates: {
     canonical: 'https://www.brandenburgplumbing.com/frequently-asked-questions',
   },
   openGraph: {
     title: 'Frequently Asked Questions | Brandenburg Plumbing',
-    description: 'Find answers to common questions about our plumbing services, pricing, service areas, and more.',
+    description: 'Find answers to common questions about our plumbing and HVAC services, pricing, service areas, and more.',
     type: 'website',
     url: 'https://www.brandenburgplumbing.com/frequently-asked-questions',
     images: ['/images/plumber-customer.jpg'],

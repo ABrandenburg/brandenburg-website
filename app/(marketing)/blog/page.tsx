@@ -5,14 +5,14 @@ import { Breadcrumb } from '@/components/breadcrumb'
 import { getAllPosts, getAllCategories } from '@/lib/blog-data'
 
 export const metadata: Metadata = {
-  title: 'Plumbing Tips & Advice | Brandenburg Plumbing Blog',
-  description: 'Expert plumbing tips, advice, and insights from Brandenburg Plumbing. Learn how to maintain your plumbing system, save money, and when to call a professional.',
+  title: 'Plumbing & Air Tips & Advice | Brandenburg Plumbing Blog',
+  description: 'Expert plumbing and air tips, advice, and insights from Brandenburg Plumbing. Learn how to maintain your plumbing and HVAC systems, save money, and when to call a professional.',
   alternates: {
     canonical: 'https://www.brandenburgplumbing.com/blog',
   },
   openGraph: {
-    title: 'Plumbing Tips & Advice | Brandenburg Plumbing Blog',
-    description: 'Expert plumbing tips, advice, and insights from Brandenburg Plumbing. Learn how to maintain your plumbing system.',
+    title: 'Plumbing & Air Tips & Advice | Brandenburg Plumbing Blog',
+    description: 'Expert plumbing and air tips, advice, and insights from Brandenburg Plumbing. Learn how to maintain your plumbing and HVAC systems.',
     type: 'website',
     url: 'https://www.brandenburgplumbing.com/blog',
     images: ['/images/plumber-customer.jpg'],
@@ -36,7 +36,7 @@ export default function BlogPage() {
                 Advice from the Experts
               </h1>
               <p className="text-lg text-text-muted">
-                Helpful tips, expert insights, and the latest news from your trusted local plumbers.
+                Helpful tips, expert insights, and the latest news from your trusted local plumbing & HVAC experts.
               </p>
             </div>
 
