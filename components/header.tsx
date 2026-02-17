@@ -191,7 +191,7 @@ export function Header() {
       <div className="bg-brand-red text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm font-semibold py-2">
-            Now offering HVAC services! We start running air conditioning and heating calls March 2nd.
+            Now offering air conditioning and heating services! We start running calls March 2nd.
           </p>
         </div>
       </div>
@@ -324,9 +324,9 @@ export function Header() {
                           ))}
                         </div>
                       </div>
-                      {/* HVAC Services */}
+                      {/* Air Conditioning & Heating Services */}
                       <div className="border-t border-gray-100 pt-4">
-                        <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 px-2">HVAC</p>
+                        <p className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2 px-2">Air Conditioning & Heating</p>
                         <div className="grid grid-cols-2 gap-x-8 gap-y-1">
                           <div className="space-y-1">
                             {hvacServices.slice(0, Math.ceil(hvacServices.length / 2)).map((service) => (
@@ -360,7 +360,7 @@ export function Header() {
                       </div>
                       <div className="mt-6 pt-4 border-t border-gray-100">
                         <p className="text-sm text-text-muted">
-                          Serving the Highland Lakes & North Austin with expert plumbing, HVAC, gas, and sewer services since 1997.
+                          Serving the Highland Lakes & North Austin with expert plumbing, heating, air conditioning, gas, and sewer services since 1997.
                         </p>
                       </div>
                     </motion.div>
@@ -516,7 +516,7 @@ export function Header() {
                   ))}
                 </div>
                 <div className="py-2 border-t border-gray-100">
-                  <p className="font-medium text-text-primary mb-2">HVAC Services</p>
+                  <p className="font-medium text-text-primary mb-2">Air Conditioning & Heating Services</p>
                   {hvacServices.map((service) => (
                     <Link
                       key={service.slug}
