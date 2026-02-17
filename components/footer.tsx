@@ -146,7 +146,7 @@ export function Footer() {
         <div className="border-t border-gray-200 pt-8">
           {/* Legal Text */}
           <p className="text-center text-sm text-text-muted leading-relaxed">
-            © Brandenburg Plumbing. RMP Lucas Brandenburg RMP-42793. LP Gas 10829. Texas State Board of Plumbing Examiners. 7915 Cameron Road, Austin, TX 78754. (800) 845-6584. www.tsbpe.gov
+            © Brandenburg Plumbing. RMP Lucas Brandenburg RMP-42793. LP Gas 10829. TACLA21988C. Texas State Board of Plumbing Examiners. 7915 Cameron Road, Austin, TX 78754. (800) 845-6584. www.tsbpe.gov
           </p>
         </div>
       </div>
