@@ -16,7 +16,7 @@ const ALLOWED_EMAILS = [
 ]
 
 export default async function SubmissionsPage() {
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     // Check if user is authenticated

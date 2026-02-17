@@ -12,7 +12,7 @@ const ALLOWED_EMAILS = [
 ];
 
 export default async function MarketingDashboardPage() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user || !user.email || !ALLOWED_EMAILS.includes(user.email.toLowerCase())) {

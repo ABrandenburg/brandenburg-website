@@ -40,10 +40,11 @@ function getSupabaseAdmin() {
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const technicianId = params.id;
+        const { id } = await params;
+        const technicianId = id;
         const searchParams = request.nextUrl.searchParams;
         const daysParam = searchParams.get('days') || '7';
         const days = parseInt(daysParam, 10) as ValidPeriod;

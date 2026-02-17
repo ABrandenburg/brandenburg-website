@@ -28,8 +28,8 @@ const ALLOWED_EMAILS = [
     'michael@brandenburgplumbing.com',
 ]
 
-export default async function SubmissionDetailsPage({ params }: { params: { id: string } }) {
-    const supabase = createClient()
+export default async function SubmissionDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     // Check if user is authenticated
@@ -41,7 +41,8 @@ export default async function SubmissionDetailsPage({ params }: { params: { id: 
     if (!user.email || !ALLOWED_EMAILS.includes(user.email.toLowerCase())) {
         redirect('/admin?error=unauthorized')
     }
-    const id = parseInt(params.id)
+    const { id: idParam } = await params
+    const id = parseInt(idParam)
     if (isNaN(id)) notFound()
 
     const [submission] = await db.select().from(submissions).where(eq(submissions.id, id))

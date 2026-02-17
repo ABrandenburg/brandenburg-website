@@ -13,7 +13,7 @@ const ALLOWED_EMAILS = [
 ];
 
 export default async function ReviewsDashboardPage() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user || !user.email || !ALLOWED_EMAILS.includes(user.email.toLowerCase())) {

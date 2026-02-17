@@ -18,11 +18,12 @@ async function getSubmissionCount() {
     }
 }
 
-export default async function AdminDashboard({ searchParams }: { searchParams: { error?: string | string[] } }) {
+export default async function AdminDashboard({ searchParams }: { searchParams: Promise<{ error?: string | string[] }> }) {
     const { count: submissionCount, error } = await getSubmissionCount()
-    
+
     // Show unauthorized message if redirected from submissions page
-    const errorParam = Array.isArray(searchParams?.error) ? searchParams.error[0] : searchParams?.error
+    const resolvedSearchParams = await searchParams
+    const errorParam = Array.isArray(resolvedSearchParams?.error) ? resolvedSearchParams.error[0] : resolvedSearchParams?.error
     if (errorParam === 'unauthorized') {
         return (
             <div className="space-y-8">
