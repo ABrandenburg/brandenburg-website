@@ -1,17 +1,19 @@
 // ServiceTitan API Client for Discount Calculator
-// Uses serviceTitanFetch from client.ts for authentication and API requests
-// Version: 2026-02-16-v9 (fix: body params with args + robust response parsing)
+// Computes capacity from technician shifts and appointments
+// Version: 2026-02-18-v10 (use shifts + appointments instead of dispatch capacity)
 
 import { CapacityData, getStatusFromAvailability } from './discount-calculator'
 import { serviceTitanFetch, clearTokenCache } from './servicetitan/client'
 
 export interface CapacityDebugInfo {
-  rawResponse: unknown
-  topLevelKeys: string[]
-  firstItemKeys: string[] | null
-  slotsSource: string
-  parsingPath: string
-  slotFieldsUsed: { capacityField: string; availableField: string } | null
+  totalShifts: number
+  weekdayShifts: number
+  totalShiftHours: number
+  totalAppointments: number
+  activeWeekdayAppointments: number
+  bookedHours: number
+  availableHours: number
+  method: string
 }
 
 export interface CapacityWithDebug {
@@ -86,254 +88,96 @@ export function isServiceTitanConfigured(): boolean {
 }
 
 /**
- * Extract capacity values from a slot object by trying multiple field name patterns.
- * Returns null if no recognizable capacity fields are found.
- */
-function extractCapacityFromSlot(slot: Record<string, any>): { capacity: number; available: number; capacityField: string; availableField: string } | null {
-  // Try capacity field names (total capacity / max capacity)
-  const capacityFields = ['capacity', 'totalCapacity', 'allowedCapacity', 'totalHours', 'maxCapacity']
-  // Try available field names
-  const availableFields = ['availableCapacity', 'available', 'availability', 'openCapacity', 'freeHours', 'openSlots']
-  // Try booked field names (for computing available = capacity - booked)
-  const bookedFields = ['booked', 'bookedCount', 'usedCapacity', 'scheduledHrs', 'usedHours']
-
-  let capacityVal: number | null = null
-  let capacityField = ''
-  let availableVal: number | null = null
-  let availableField = ''
-
-  for (const f of capacityFields) {
-    if (typeof slot[f] === 'number' && slot[f] > 0) {
-      capacityVal = slot[f]
-      capacityField = f
-      break
-    }
-  }
-
-  for (const f of availableFields) {
-    if (typeof slot[f] === 'number') {
-      availableVal = slot[f]
-      availableField = f
-      break
-    }
-  }
-
-  // Fallback: compute available from capacity - booked
-  if (capacityVal !== null && availableVal === null) {
-    for (const f of bookedFields) {
-      if (typeof slot[f] === 'number') {
-        availableVal = capacityVal - slot[f]
-        availableField = `computed(${capacityField} - ${f})`
-        break
-      }
-    }
-  }
-
-  if (capacityVal !== null && availableVal !== null) {
-    return { capacity: capacityVal, available: availableVal, capacityField, availableField }
-  }
-
-  return null
-}
-
-/**
  * Fetch capacity data from ServiceTitan for the next 3 days
- * and calculate availability status.
- * Returns both the capacity data and debug info about the raw API response.
+ * by comparing technician shift hours against booked appointment hours.
  */
 export async function getCapacityWithStatus(): Promise<CapacityWithDebug> {
   if (!isServiceTitanConfigured()) {
     throw new Error('ServiceTitan API not configured. Please set environment variables.')
   }
 
-  // Calculate date range (today + 3 days)
   const today = new Date()
   const endDate = new Date()
   endDate.setDate(today.getDate() + 3)
 
-  // Use ISO 8601 datetime format for capacity endpoint
   const startsOnOrAfter = today.toISOString()
   const endsOnOrBefore = endDate.toISOString()
 
-  const endpoint = `/dispatch/v2/tenant/{tenantId}/capacity`
-
-  const requestBody = {
-    startsOnOrAfter,
-    endsOnOrBefore,
-    skillBasedAvailability: false,
-    args: {},
-  }
-
-  console.log('ServiceTitan capacity API request:', {
-    endpoint,
-    method: 'POST',
-    body: requestBody,
-  })
-
-  const debug: CapacityDebugInfo = {
-    rawResponse: null,
-    topLevelKeys: [],
-    firstItemKeys: null,
-    slotsSource: 'none',
-    parsingPath: 'none',
-    slotFieldsUsed: null,
-  }
+  console.log('Fetching capacity from shifts + appointments:', { startsOnOrAfter, endsOnOrBefore })
 
   try {
-    const response = await serviceTitanFetch<any>(
-      endpoint,
-      {
-        method: 'POST',
-        body: JSON.stringify(requestBody),
-      }
-    )
+    // Fetch technician shifts and appointments in parallel
+    const [shiftsResponse, appointmentsResponse] = await Promise.all([
+      serviceTitanFetch<{ data?: any[] }>(
+        `/dispatch/v2/tenant/{tenantId}/technician-shifts?startsOnOrAfter=${startsOnOrAfter}&endsOnOrBefore=${endsOnOrBefore}`
+      ),
+      serviceTitanFetch<{ data?: any[] }>(
+        `/jpm/v2/tenant/{tenantId}/appointments?startsOnOrAfter=${startsOnOrAfter}&endsOnOrBefore=${endsOnOrBefore}`
+      ),
+    ])
 
-    // Capture debug info from raw response
-    debug.rawResponse = response
-    if (response && typeof response === 'object') {
-      debug.topLevelKeys = Object.keys(response)
-    }
+    const shifts: any[] = shiftsResponse.data || (Array.isArray(shiftsResponse) ? shiftsResponse : [])
+    const appointments: any[] = appointmentsResponse.data || (Array.isArray(appointmentsResponse) ? appointmentsResponse : [])
 
-    console.log('ServiceTitan capacity response keys:', debug.topLevelKeys)
-    console.log('ServiceTitan capacity response:', JSON.stringify(response))
-
-    // Calculate totals from all slots
-    let totalCapacity = 0
-    let availableCapacity = 0
-
-    // Handle different response structures
-    let slots: any
-    let slotsSource = 'none'
-
-    if (Array.isArray(response?.data)) {
-      slots = response.data; slotsSource = 'response.data'
-    } else if (Array.isArray(response?.items)) {
-      slots = response.items; slotsSource = 'response.items'
-    } else if (Array.isArray(response?.results)) {
-      slots = response.results; slotsSource = 'response.results'
-    } else if (Array.isArray(response?.capacities)) {
-      slots = response.capacities; slotsSource = 'response.capacities'
-    } else if (Array.isArray(response)) {
-      slots = response; slotsSource = 'response (root array)'
-    } else {
-      slots = response; slotsSource = 'response (raw object)'
-    }
-
-    debug.slotsSource = slotsSource
-
-    // Capture first item keys for debugging
-    if (Array.isArray(slots) && slots.length > 0 && typeof slots[0] === 'object') {
-      debug.firstItemKeys = Object.keys(slots[0])
-      console.log('First slot keys:', debug.firstItemKeys)
-      console.log('First slot sample:', JSON.stringify(slots[0]))
-    }
-
-    // Helper to check if a date is a weekend (Saturday = 6, Sunday = 0)
+    // Helper to check if a date is a weekend
     const isWeekend = (dateStr: string): boolean => {
-      const date = new Date(dateStr)
-      const day = date.getDay()
+      const day = new Date(dateStr).getDay()
       return day === 0 || day === 6
     }
 
-    if (Array.isArray(slots)) {
-      let parsedCount = 0
-      for (const slot of slots) {
-        // Skip weekends
-        const slotDate = slot.date || slot.start || slot.startsOnOrAfter
-        if (slotDate && isWeekend(slotDate)) {
-          console.log('Skipping weekend slot:', slotDate)
-          continue
-        }
-
-        const extracted = extractCapacityFromSlot(slot)
-        if (extracted) {
-          totalCapacity += extracted.capacity
-          availableCapacity += extracted.available
-          if (!debug.slotFieldsUsed) {
-            debug.slotFieldsUsed = { capacityField: extracted.capacityField, availableField: extracted.availableField }
-          }
-          parsedCount++
-        }
-      }
-      debug.parsingPath = `array(${slotsSource}): ${parsedCount}/${slots.length} slots parsed`
-      console.log('Processed slots (excluding weekends):', { totalCapacity, availableCapacity, parsedCount, totalSlots: slots.length })
-    } else if (typeof slots === 'object' && slots !== null) {
-      const slotDate = slots.date || slots.start || slots.startsOnOrAfter
-      if (slotDate && isWeekend(slotDate)) {
-        console.log('Skipping weekend (single object):', slotDate)
-        debug.parsingPath = 'single object: skipped (weekend)'
-      } else {
-        const extracted = extractCapacityFromSlot(slots)
-        if (extracted) {
-          totalCapacity = extracted.capacity
-          availableCapacity = extracted.available
-          debug.slotFieldsUsed = { capacityField: extracted.capacityField, availableField: extracted.availableField }
-          debug.parsingPath = `single object: used ${extracted.capacityField}/${extracted.availableField}`
-        } else {
-          debug.parsingPath = 'single object: no recognizable capacity fields'
-        }
-      }
-      console.log('Response is object, not array:', Object.keys(slots))
-    } else {
-      console.warn('Unexpected response format:', typeof slots, slots)
-      debug.parsingPath = `unexpected format: ${typeof slots}`
+    // Sum weekday shift hours (Normal shifts only)
+    let totalShiftHours = 0
+    let weekdayShifts = 0
+    for (const shift of shifts) {
+      if (shift.shiftType !== 'Normal') continue
+      if (isWeekend(shift.start)) continue
+      const hours = (new Date(shift.end).getTime() - new Date(shift.start).getTime()) / (1000 * 60 * 60)
+      totalShiftHours += hours
+      weekdayShifts++
     }
 
-    // If we got a valid API response but parsed 0 capacity, throw to trigger demo mode
-    // This prevents silently showing 0% when the response format is unrecognized
-    if (totalCapacity === 0 && debug.rawResponse !== null) {
-      const errorMsg = `ServiceTitan capacity API returned data but parsed to 0 capacity. ` +
-        `Response keys: [${debug.topLevelKeys.join(', ')}]. ` +
-        `Slots source: ${debug.slotsSource}. ` +
-        `First item keys: [${(debug.firstItemKeys || []).join(', ')}]. ` +
-        `Check /api/discount/debug?liveTest=true for raw response.`
-      console.error(errorMsg)
-      throw new Error(errorMsg)
+    // Sum weekday appointment hours (active only)
+    let bookedHours = 0
+    let activeWeekdayAppointments = 0
+    for (const appt of appointments) {
+      if (!appt.active) continue
+      if (isWeekend(appt.start)) continue
+      const hours = (new Date(appt.end).getTime() - new Date(appt.start).getTime()) / (1000 * 60 * 60)
+      bookedHours += hours
+      activeWeekdayAppointments++
     }
 
-    // Calculate availability percentage
-    const availabilityPercent = totalCapacity > 0
-      ? (availableCapacity / totalCapacity) * 100
+    const availableHours = Math.max(0, totalShiftHours - bookedHours)
+    const availabilityPercent = totalShiftHours > 0
+      ? (availableHours / totalShiftHours) * 100
       : 0
-
-    // Determine status based on availability
     const status = getStatusFromAvailability(availabilityPercent)
+
+    const debug: CapacityDebugInfo = {
+      totalShifts: shifts.length,
+      weekdayShifts,
+      totalShiftHours: Math.round(totalShiftHours * 10) / 10,
+      totalAppointments: appointments.length,
+      activeWeekdayAppointments,
+      bookedHours: Math.round(bookedHours * 10) / 10,
+      availableHours: Math.round(availableHours * 10) / 10,
+      method: 'shifts-minus-appointments',
+    }
+
+    console.log('Capacity computed:', debug)
 
     return {
       data: {
         status,
         availabilityPercent: Math.round(availabilityPercent * 10) / 10,
-        totalCapacity,
-        availableCapacity,
+        totalCapacity: Math.round(totalShiftHours * 10) / 10,
+        availableCapacity: Math.round(availableHours * 10) / 10,
       },
       debug,
     }
   } catch (error) {
-    console.error('ServiceTitan capacity API error:', error)
-
-    // Clear token cache on any error to ensure fresh token on next attempt
+    console.error('ServiceTitan capacity computation error:', error)
     clearTokenCache()
-
-    // Provide more helpful error message for specific errors
-    if (error instanceof Error) {
-      if (error.message.includes('404')) {
-        throw new Error(
-          `ServiceTitan capacity endpoint not found (404). ` +
-          `The endpoint '/dispatch/v2/tenant/{tenantId}/capacity' may not be available. ` +
-          `Please verify that Dispatch API scopes are enabled. ` +
-          `Original error: ${error.message}`
-        )
-      }
-
-      if (error.message.includes('401')) {
-        throw new Error(
-          `ServiceTitan authentication failed (401). Token may have expired. ` +
-          `The system will attempt to refresh the token on the next request. ` +
-          `Original error: ${error.message}`
-        )
-      }
-    }
-
     throw error
   }
 }

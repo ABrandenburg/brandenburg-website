@@ -39,23 +39,16 @@ export async function GET() {
       })
     }
 
-    // Fetch real capacity data from ServiceTitan
-    console.log('Fetching capacity data from ServiceTitan (v2)')
+    // Compute capacity from technician shifts and appointments
+    console.log('Computing capacity from ServiceTitan shifts + appointments')
     const { data: capacityData, debug } = await getCapacityWithStatus()
 
     return NextResponse.json({
       success: true,
       data: capacityData,
       isDemoMode: false,
-      apiVersion: 'v8-2026-02-16',
-      debug: {
-        topLevelKeys: debug.topLevelKeys,
-        firstItemKeys: debug.firstItemKeys,
-        slotsSource: debug.slotsSource,
-        parsingPath: debug.parsingPath,
-        slotFieldsUsed: debug.slotFieldsUsed,
-        rawResponse: debug.rawResponse,
-      },
+      apiVersion: 'v10-2026-02-18',
+      debug,
     })
   } catch (error) {
     console.error('Error fetching capacity:', error)
@@ -67,7 +60,7 @@ export async function GET() {
       data: demoData,
       isDemoMode: true,
       message: error instanceof Error ? error.message : 'API error - using demo data',
-      apiVersion: 'v8-2026-02-16',
+      apiVersion: 'v10-2026-02-18',
     })
   }
 }

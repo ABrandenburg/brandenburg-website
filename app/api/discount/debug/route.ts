@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
       let firstItemSample: unknown = null
       let arraySource: string | null = null
 
-      for (const key of ['data', 'items', 'results', 'capacities']) {
+      for (const key of ['data', 'availabilities', 'items', 'results', 'capacities']) {
         if (Array.isArray(rawResponse?.[key]) && rawResponse[key].length > 0) {
           firstItemKeys = typeof rawResponse[key][0] === 'object'
             ? Object.keys(rawResponse[key][0])
