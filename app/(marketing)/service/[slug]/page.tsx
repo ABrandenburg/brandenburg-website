@@ -1,15 +1,18 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getServiceBySlug, getAllServiceSlugs } from '@/lib/services-data'
+import { getServiceBySlug, getAllServiceSlugs, getHvacServices } from '@/lib/services-data'
 import { getFAQsByServiceSlug } from '@/lib/faqs-data'
 import { ServiceHero } from '@/components/service-hero'
 import { ServiceDescription } from '@/components/service-description'
 import { VideoSection } from '@/components/video-section'
 import { fetchYouTubeVideosInfo } from '@/lib/youtube-utils'
 import { FAQAccordion } from '@/components/faq-accordion'
+import { RelatedHvacServices } from '@/components/related-hvac-services'
 import { CTASection } from '@/components/cta-section'
 import { ServiceAreasList } from '@/components/service-areas-list'
 import { generateServiceSchema, generateBreadcrumbSchema } from '@/lib/json-ld'
+
+const hvacSlugs = getHvacServices().map((s) => s.slug)
 
 interface ServicePageProps {
   params: Promise<{ slug: string }>
@@ -105,6 +108,9 @@ export default async function ServicePage({ params }: ServicePageProps) {
             faqs={faqs}
             header={service.faqHeader}
           />
+        )}
+        {hvacSlugs.includes(slug) && (
+          <RelatedHvacServices currentSlug={slug} />
         )}
         <ServiceAreasList />
         <CTASection serviceName={service.name} />
