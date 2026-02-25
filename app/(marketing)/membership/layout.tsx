@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Maintenance+ Membership | Brandenburg Plumbing',
-  description: 'Join our Maintenance+ membership for $19/month. Get 15% off all services, priority scheduling, two-year repair guarantee, and annual inspections.',
+  title: 'Maintenance+ Membership Plans | Brandenburg Plumbing',
+  description: 'Choose Plumbing or AC & Heating Maintenance+ for $19/month. Get 15% off all services, 5% off installs, priority scheduling, two-year repair guarantee, and annual maintenance.',
   openGraph: {
-    title: 'Maintenance+ Membership | Brandenburg Plumbing',
-    description: 'Join our Maintenance+ membership for $19/month. Get 15% off all services, priority scheduling, and more.',
+    title: 'Maintenance+ Membership Plans | Brandenburg Plumbing',
+    description: 'Choose Plumbing or AC & Heating Maintenance+ for $19/month. Get 15% off all services, 5% off installs, priority scheduling, and more.',
     type: 'website',
     images: ['/images/kitchen.jpg'],
   },
