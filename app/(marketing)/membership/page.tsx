@@ -52,8 +52,8 @@ const comparisonRows = [
 
 const faqs = [
   {
-    question: 'Can I cancel anytime?',
-    answer: 'Yes. There are no long-term contracts. You can cancel your membership at any time by calling our office.',
+    question: 'Is there a minimum commitment?',
+    answer: 'Memberships must be held for at least 6 months to be eligible for discounts. If a membership is cancelled before 6 months, any discounts received during that period will be charged back.',
   },
   {
     question: 'When does my membership start?',
