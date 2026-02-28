@@ -144,6 +144,22 @@ export function Footer() {
 
         {/* Divider */}
         <div className="border-t border-gray-200 pt-8">
+          {/* Legal Links */}
+          <div className="flex justify-center gap-6 mb-4">
+            <Link
+              href="/privacy-policy"
+              className="text-sm text-text-muted hover:text-brand-blue transition-colors duration-200"
+            >
+              Privacy Policy
+            </Link>
+            <span className="text-text-muted/40">|</span>
+            <Link
+              href="/terms-of-service"
+              className="text-sm text-text-muted hover:text-brand-blue transition-colors duration-200"
+            >
+              Terms of Service
+            </Link>
+          </div>
           {/* Legal Text */}
           <p className="text-center text-sm text-text-muted leading-relaxed">
             © Brandenburg Plumbing. RMP Lucas Brandenburg RMP-42793. LP Gas 10829. TACLA21988C. Texas State Board of Plumbing Examiners. 7915 Cameron Road, Austin, TX 78754. (800) 845-6584. www.tsbpe.gov. Texas Department of Licensing and Regulation. P.O. Box 12157, Austin, TX 78711. (800) 803-9202. www.tdlr.texas.gov
