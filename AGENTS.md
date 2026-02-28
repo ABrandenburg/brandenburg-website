@@ -6,19 +6,18 @@ Use this file as the default operating guide for coding agents in this repo.
 
 ### Codebase overview
 
-This monorepo contains two separate Next.js applications:
+This repository contains one Next.js application:
 
 | App | Path | Framework | Port | Notes |
 |-----|------|-----------|------|-------|
-| **Brandenburg Plumbing** (main) | `/workspace` | Next.js 15.5 | 3000 | Primary production site; includes admin dashboard and API routes |
-| **Local News Engine** | `/workspace/local-news-engine` | Next.js 16.1 | 3001 (`--port 3001`) | Scaffolded app with a known Turbopack workspace-root issue |
+| **Brandenburg Plumbing** | `/workspace` | Next.js 15.5 | 3000 | Production site with static pages, admin dashboard, and API routes |
 
-Both apps use `npm` and maintain separate `package-lock.json` and `node_modules` trees.
+Package manager: `npm`.
 
 ### Quick agent workflow
 
-1. Determine which app is affected (`/workspace` or `/workspace/local-news-engine`).
-2. Run commands from the correct working directory.
+1. Identify the affected route/component/API area.
+2. Run commands from `/workspace`.
 3. Make minimal, scoped edits.
 4. Run high-signal validation for the change (usually lint + targeted manual/terminal verification).
 5. Summarize what changed, what was tested, and any known limitations.
@@ -29,16 +28,12 @@ Both apps use `npm` and maintain separate `package-lock.json` and `node_modules`
 - Dev server: `npm run dev` (clears `.next/cache` first, then starts Next.js)
 - Lint: `npm run lint`
 - Production build: `npm run build`
-
-#### Local News Engine (`/workspace/local-news-engine`)
-- Dev server: `npm run dev -- --port 3001`
-- Lint: `npm run lint`
-- Production build: `npm run build`
+- Production start: `npm run start`
 
 ### Testing expectations
 
-- There is currently no automated unit/integration test suite in either app.
-- For non-trivial code changes, run at least linting for the affected app.
+- There is currently no automated unit/integration test suite.
+- For non-trivial code changes, run at least linting.
 - For UI changes, also validate manually in the browser for the affected route(s).
 - For API/backend logic changes, run lint and exercise the changed path(s) via browser/terminal.
 - For docs-only changes, basic file verification is sufficient.
@@ -57,6 +52,3 @@ Integrations such as ServiceTitan, Google Ads, and Twilio degrade gracefully or 
 ### Known gotchas
 
 - Main app `npm run dev` removes `.next/cache`, so first compile is slower (~8-10 seconds).
-- Local News Engine has a pre-existing Next.js 16 Turbopack issue: workspace-root inference can incorrectly include root `middleware.ts`, which imports `@/lib/supabase/middleware` unavailable in the sub-app.
-- Pages in Local News Engine may still render despite that middleware error.
-- Potential fix for Local News Engine: set `turbopack.root` in `local-news-engine/next.config.ts`.
