@@ -35,7 +35,7 @@ export const teamMembers: TeamMember[] = [
     position: "Office Manager",
     bio: "A former paratrooper born and raised in Burnet County, Mike brings a positive attitude and a wide breadth of plumbing and construction knowledge to every customer interaction.",
     photo: "/images/team/michael-hamilton.jpg",
-    orderNumber: 3,
+    orderNumber: 4,
     showOnAboutPage: true,
   },
   {
@@ -44,7 +44,7 @@ export const teamMembers: TeamMember[] = [
     position: "Licensed Plumber",
     bio: "Austin grew up in Florence, Texas and is an avid guitar player. He enjoys rock music and spending time with his family. He has been with Brandenburg Plumbing since 2017 and brings a wealth of experience and knowledge to every job he does.",
     photo: "/images/team/austin-brown.jpg",
-    orderNumber: 4,
+    orderNumber: 5,
     showOnAboutPage: true,
   },
   {
@@ -53,7 +53,7 @@ export const teamMembers: TeamMember[] = [
     position: "Licensed Plumber",
     bio: "Brendan is a true outdoorsman who loves to hang out on the lake, and his favorite spots include Lake LBJ, Llano, and Lake Buchanan. He has a Golden Retriever named Amethyst and a python (basilisk) named Nagini. He knows a little sign language, and possibly Parseltongue.",
     photo: "/images/team/brendan-whitney.jpg",
-    orderNumber: 5,
+    orderNumber: 6,
     showOnAboutPage: false,
   },
   {
@@ -62,7 +62,7 @@ export const teamMembers: TeamMember[] = [
     position: "Licensed Plumber",
     bio: "Nick is a friendly Tradesman plumber with almost 5 years of experience. He's an avid fisherman, and his favorite local hangout spot is Black Rock Park in Lake Buchanan.",
     photo: "/images/team/nick-mcbride.jpg",
-    orderNumber: 6,
+    orderNumber: 7,
     showOnAboutPage: false,
   },
   {
@@ -71,7 +71,7 @@ export const teamMembers: TeamMember[] = [
     position: "Licensed Plumber",
     bio: "Gabriel loves to read and is one of a set of quintuplets. He graduated from Lampasas High School and has been with Brandenburg Plumbing since January of 2023.",
     photo: "/images/team/gabriel-brown.jpg",
-    orderNumber: 7,
+    orderNumber: 8,
     showOnAboutPage: false,
   },
   {
@@ -80,7 +80,7 @@ export const teamMembers: TeamMember[] = [
     position: "Licensed Plumber",
     bio: "Colin is a Journeyman plumber who started plumbing in 2017 and has been working full-time since 2020. He enjoys fishing, golfing, and exploring the Highland Lakes with his dog, Roscoe. An early riser, Colin loves starting his days by watching the sunrise.",
     photo: "/images/team/colin-mason.jpg",
-    orderNumber: 8,
+    orderNumber: 9,
     showOnAboutPage: false,
   },
   {
@@ -89,7 +89,7 @@ export const teamMembers: TeamMember[] = [
     position: "Operations Manager",
     bio: "A licensed plumber since 1985, Monty brings decades of hands-on experience to his role as Operations Manager. When he's not keeping the team running smoothly, you'll find him playing guitar and singing to his wife, building things out of wood, or splashing in the river with his English Springer Spaniels, Willie Nelson and Dolly Parton. He's left-handed, dyslexic, artistic, and a devoted Steinbeck fan.",
     photo: "/images/team/monty-lamb.jpg",
-    orderNumber: 9,
+    orderNumber: 3,
     showOnAboutPage: true,
   },
   {
@@ -122,7 +122,7 @@ export const teamMembers: TeamMember[] = [
   {
     name: "Colton Snively",
     slug: "colton-snively",
-    position: "Apprentice Plumber",
+    position: "Licensed Plumber",
     bio: "Colton is a Tradesman plumber who enjoys surfing, spending time on the lake, running, hunting, and traveling to new places whenever he gets the chance. He and his girlfriend love the local food scene\u2014Jardin Coronas and the Texaco in Granite Shoals are go-to spots, Boat Town is great for live music, and Bay View is saved for special occasions. And yes, he's 6'6\", before you ask.",
     photo: "/images/team/colton-snively.jpg",
     orderNumber: 13,
@@ -131,7 +131,7 @@ export const teamMembers: TeamMember[] = [
   {
     name: "Lane Spaulding",
     slug: "lane-spaulding",
-    position: "Apprentice Plumber",
+    position: "Licensed Plumber",
     bio: "Lane loves offshore fishing and hunting game in his free time. His favorite local spots include Wake Point and Highland Lakes Marina. He has a Pitbull/Catahoula mix named Marty and comes from a big family of eight siblings\u2014adopted, half, full, and step.",
     photo: "/images/team/lane-spaulding.jpg",
     orderNumber: 14,
