@@ -10,13 +10,21 @@ export function TeamMemberCard({ member }: TeamMemberCardProps) {
     <article className="group">
       {/* Portrait Image */}
       <div className="relative aspect-[4/5] mb-4 overflow-hidden rounded-lg">
-        <Image
-          src={member.photo}
-          alt={`${member.name} - ${member.position}`}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="object-cover object-top transition-transform duration-500 ease-smooth group-hover:scale-105"
-        />
+        {member.photo ? (
+          <Image
+            src={member.photo}
+            alt={`${member.name} - ${member.position}`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover object-top transition-transform duration-500 ease-smooth group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-brand-secondary flex items-center justify-center">
+            <span className="text-4xl font-serif text-white/80">
+              {member.name.split(' ').map(n => n[0]).join('')}
+            </span>
+          </div>
+        )}
       </div>
       
       {/* Name */}
