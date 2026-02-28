@@ -1,4 +1,6 @@
 // Team member data parsed from Brandenburg Plumbing - Team Members.csv
+import fs from 'node:fs'
+import path from 'node:path'
 
 export interface TeamMember {
   name: string
@@ -8,6 +10,99 @@ export interface TeamMember {
   photo: string
   orderNumber: number
   showOnAboutPage: boolean
+}
+
+const TEAM_IMAGE_DIR = path.join(process.cwd(), 'public', 'images', 'team')
+const TEAM_IMAGE_EXTENSIONS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif'])
+
+function normalizeImageKey(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function buildTeamImageLookup(): Map<string, string> {
+  const lookup = new Map<string, string>()
+
+  if (!fs.existsSync(TEAM_IMAGE_DIR)) {
+    return lookup
+  }
+
+  const entries = fs.readdirSync(TEAM_IMAGE_DIR, { withFileTypes: true })
+
+  for (const entry of entries) {
+    if (!entry.isFile()) continue
+
+    const ext = path.extname(entry.name).toLowerCase()
+    if (!TEAM_IMAGE_EXTENSIONS.has(ext)) continue
+
+    const fileNameWithoutExt = path.basename(entry.name, ext)
+    const normalizedKey = normalizeImageKey(fileNameWithoutExt)
+
+    // Keep the first match to avoid unstable behavior with duplicates.
+    if (!lookup.has(normalizedKey)) {
+      lookup.set(normalizedKey, entry.name)
+    }
+  }
+
+  return lookup
+}
+
+const teamImageLookup = buildTeamImageLookup()
+
+function resolveTeamMemberPhoto(member: TeamMember): string {
+  const slugMatch = teamImageLookup.get(normalizeImageKey(member.slug))
+  if (slugMatch) {
+    return `/images/team/${slugMatch}`
+  }
+
+  const nameMatch = teamImageLookup.get(normalizeImageKey(member.name))
+  if (nameMatch) {
+    return `/images/team/${nameMatch}`
+  }
+
+  return member.photo
+}
+
+function withResolvedPhoto(member: TeamMember): TeamMember {
+  return {
+    ...member,
+    photo: resolveTeamMemberPhoto(member),
+  }
+}
+
+function formatNameFromSlug(slug: string): string {
+  return slug
+    .split('-')
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+function buildTeamMembersWithDiscoveredImages(): TeamMember[] {
+  const normalizedKnownSlugs = new Set(teamMembers.map(member => normalizeImageKey(member.slug)))
+  const maxOrder = teamMembers.reduce((maxOrderNumber, member) => {
+    return Math.max(maxOrderNumber, member.orderNumber)
+  }, 0)
+
+  let nextOrderNumber = maxOrder + 1
+
+  const discoveredMembers: TeamMember[] = [...teamImageLookup.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .filter(([normalizedKey]) => !normalizedKnownSlugs.has(normalizedKey))
+    .map(([normalizedKey, fileName]) => ({
+      name: formatNameFromSlug(normalizedKey),
+      slug: normalizedKey,
+      position: 'Team Member',
+      bio: 'Bio coming soon.',
+      photo: `/images/team/${fileName}`,
+      orderNumber: nextOrderNumber++,
+      showOnAboutPage: false,
+    }))
+
+  return [...teamMembers, ...discoveredMembers]
 }
 
 export const teamMembers: TeamMember[] = [
@@ -159,17 +254,21 @@ export const teamMembers: TeamMember[] = [
 
 // Get all team members sorted by order number
 export function getAllTeamMembers(): TeamMember[] {
-  return [...teamMembers].sort((a, b) => a.orderNumber - b.orderNumber)
+  return buildTeamMembersWithDiscoveredImages()
+    .map(withResolvedPhoto)
+    .sort((a, b) => a.orderNumber - b.orderNumber)
 }
 
 // Get team members that should be shown on the about page
 export function getFeaturedTeamMembers(): TeamMember[] {
-  return teamMembers
+  return buildTeamMembersWithDiscoveredImages()
+    .map(withResolvedPhoto)
     .filter(member => member.showOnAboutPage)
     .sort((a, b) => a.orderNumber - b.orderNumber)
 }
 
 // Get a team member by slug
 export function getTeamMemberBySlug(slug: string): TeamMember | undefined {
-  return teamMembers.find(member => member.slug === slug)
+  const member = buildTeamMembersWithDiscoveredImages().find(teamMember => teamMember.slug === slug)
+  return member ? withResolvedPhoto(member) : undefined
 }

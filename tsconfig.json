@@ -37,7 +37,6 @@
   "exclude": [
     "node_modules",
     "node_modules_old",
-    "migration-assets",
-    "local-news-engine"
+    "migration-assets"
   ]
 }
