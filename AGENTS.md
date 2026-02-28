@@ -2,40 +2,61 @@
 
 ## Cursor Cloud specific instructions
 
+Use this file as the default operating guide for coding agents in this repo.
+
 ### Codebase overview
 
-This is a monorepo with two Next.js apps:
+This monorepo contains two separate Next.js applications:
 
 | App | Path | Framework | Port | Notes |
 |-----|------|-----------|------|-------|
-| **Brandenburg Plumbing** (main) | `/workspace` | Next.js 15.5 | 3000 | Fully functional; 71+ static pages, admin dashboard, API routes |
-| **Local News Engine** | `/workspace/local-news-engine` | Next.js 16.1 | 3001 (use `--port 3001`) | Scaffolded; has pre-existing middleware issue (see Gotchas) |
+| **Brandenburg Plumbing** (main) | `/workspace` | Next.js 15.5 | 3000 | Primary production site; includes admin dashboard and API routes |
+| **Local News Engine** | `/workspace/local-news-engine` | Next.js 16.1 | 3001 (`--port 3001`) | Scaffolded app with a known Turbopack workspace-root issue |
 
-Both use `npm` as the package manager (`package-lock.json` present).
+Both apps use `npm` and maintain separate `package-lock.json` and `node_modules` trees.
+
+### Quick agent workflow
+
+1. Determine which app is affected (`/workspace` or `/workspace/local-news-engine`).
+2. Run commands from the correct working directory.
+3. Make minimal, scoped edits.
+4. Run high-signal validation for the change (usually lint + targeted manual/terminal verification).
+5. Summarize what changed, what was tested, and any known limitations.
 
 ### Running the applications
 
-- **Main site dev**: `npm run dev` (from root) — clears `.next/cache` before starting
-- **Main site lint**: `npm run lint` (root) — uses `next lint` with ESLint 8 + `next/core-web-vitals`
-- **Main site build**: `npm run build` (root) — generates ~100 static + dynamic pages
-- **Local News Engine dev**: `npm run dev` (from `local-news-engine/`) — use `--port 3001` to avoid port conflict
-- **Local News Engine lint**: `npm run lint` (from `local-news-engine/`) — uses ESLint 9
-- No automated test suite exists in either project.
-- Standard npm scripts are documented in `package.json`; see also `README.md` and `QUICK_START.md`.
+#### Main app (`/workspace`)
+- Dev server: `npm run dev` (clears `.next/cache` first, then starts Next.js)
+- Lint: `npm run lint`
+- Production build: `npm run build`
+
+#### Local News Engine (`/workspace/local-news-engine`)
+- Dev server: `npm run dev -- --port 3001`
+- Lint: `npm run lint`
+- Production build: `npm run build`
+
+### Testing expectations
+
+- There is currently no automated unit/integration test suite in either app.
+- For non-trivial code changes, run at least linting for the affected app.
+- For UI changes, also validate manually in the browser for the affected route(s).
+- For API/backend logic changes, run lint and exercise the changed path(s) via browser/terminal.
+- For docs-only changes, basic file verification is sufficient.
 
 ### Environment variables
 
-A `.env.local` file is required at the project root. Copy from `.env.example`. The minimum for the dev server to start and serve static pages:
+A root `.env.local` file is expected (copy from `.env.example` if needed). Minimum values to boot the main app and serve static pages:
 
-- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — required by middleware on every request; placeholder values (e.g. `https://placeholder.supabase.co`) are sufficient to start the dev server
-- `DATABASE_URL` — can be a placeholder; only needed when DB code runs
-- `RESEND_API_KEY` — required for contact/career form submission API routes
-- `CRON_SECRET` — required for cron endpoint auth
+- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (placeholder values are acceptable for local boot)
+- `DATABASE_URL` (placeholder acceptable unless DB code is executed)
+- `RESEND_API_KEY` (required for contact/career form submissions)
+- `CRON_SECRET` (required by cron endpoint auth)
 
-All external integrations (ServiceTitan, Google Ads, Twilio, etc.) degrade gracefully or operate in demo mode when credentials are absent. The ServiceTitan discount calculator falls back to demo mode. Admin features (`/admin/*`) require real Supabase credentials.
+Integrations such as ServiceTitan, Google Ads, and Twilio degrade gracefully or fall back to demo behavior when credentials are absent. Admin routes under `/admin/*` require valid Supabase credentials.
 
-### Gotchas
+### Known gotchas
 
-- The main app's `npm run dev` script runs `rm -rf .next/cache && next dev`, so first compilation takes ~8-10 seconds.
-- The Local News Engine has a **pre-existing build/dev issue**: Next.js 16 Turbopack infers the workspace root from the parent `package-lock.json`, causing it to pick up the root `middleware.ts` which references `@/lib/supabase/middleware` — a file that doesn't exist in the sub-app. Pages still serve despite the error. The fix would be to add `turbopack.root` to `local-news-engine/next.config.ts`.
-- The main site uses Next.js 15.5 while Local News Engine uses Next.js 16.1 — they have separate `node_modules` and separate lockfiles.
+- Main app `npm run dev` removes `.next/cache`, so first compile is slower (~8-10 seconds).
+- Local News Engine has a pre-existing Next.js 16 Turbopack issue: workspace-root inference can incorrectly include root `middleware.ts`, which imports `@/lib/supabase/middleware` unavailable in the sub-app.
+- Pages in Local News Engine may still render despite that middleware error.
+- Potential fix for Local News Engine: set `turbopack.root` in `local-news-engine/next.config.ts`.
