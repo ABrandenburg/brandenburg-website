@@ -51,7 +51,8 @@ export default async function SubmissionDetailsPage({ params }: { params: Promis
 
     const payload = submission.payload as any
     const typeLabel = submission.type === 'contact' ? 'Contact Form' :
-        submission.type === 'career' ? 'Job Application' : submission.type
+        submission.type === 'career' ? 'Job Application' :
+        submission.type === 'wedding' ? 'Wedding Questionnaire' : submission.type
 
     return (
         <div className="space-y-6">
@@ -73,19 +74,28 @@ export default async function SubmissionDetailsPage({ params }: { params: Promis
                     <CardContent className="space-y-6">
                         <div className="grid gap-6">
                             {Object.entries(payload).map(([key, value]) => {
-                                // Skip already displayed system fields (shown in sidebar)
                                 if (['fullName', 'email', 'phone'].includes(key)) return null
 
-                                // Format key (camelCase to Title Case)
                                 const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())
 
-                                // Check if value is long text (like message or cover letter) for better formatting
-                                const isLongText = ['message', 'coverLetter', 'experience'].includes(key) || String(value).length > 100
+                                const isArray = Array.isArray(value)
+                                const isLongText = !isArray && (
+                                    ['message', 'coverLetter', 'experience', 'additionalDetails'].includes(key) ||
+                                    String(value).length > 100
+                                )
 
                                 return (
-                                    <div key={key} className={isLongText ? 'col-span-full' : ''}>
+                                    <div key={key} className={(isLongText || isArray) ? 'col-span-full' : ''}>
                                         <h3 className="text-sm font-medium text-slate-500 mb-2">{label}</h3>
-                                        {isLongText ? (
+                                        {isArray ? (
+                                            <div className="flex flex-wrap gap-2">
+                                                {(value as string[]).map((item, i) => (
+                                                    <span key={i} className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700">
+                                                        {item}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        ) : isLongText ? (
                                             <div className="p-4 bg-slate-50 rounded-md border border-slate-100 text-slate-800 whitespace-pre-wrap font-sans text-sm leading-relaxed">
                                                 {String(value)}
                                             </div>
@@ -108,6 +118,7 @@ export default async function SubmissionDetailsPage({ params }: { params: Promis
                             <h3 className="text-sm font-medium text-slate-500 mb-1">Type</h3>
                             <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${submission.type === 'contact' ? 'border-transparent bg-blue-100 text-blue-800' :
                                     submission.type === 'career' ? 'border-transparent bg-purple-100 text-purple-800' :
+                                    submission.type === 'wedding' ? 'border-transparent bg-pink-100 text-pink-800' :
                                         'border-transparent bg-slate-100 text-slate-800'
                                 }`}>
                                 {typeLabel}
