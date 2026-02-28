@@ -73,6 +73,38 @@ function withResolvedPhoto(member: TeamMember): TeamMember {
   }
 }
 
+function formatNameFromSlug(slug: string): string {
+  return slug
+    .split('-')
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ')
+}
+
+function buildTeamMembersWithDiscoveredImages(): TeamMember[] {
+  const normalizedKnownSlugs = new Set(teamMembers.map(member => normalizeImageKey(member.slug)))
+  const maxOrder = teamMembers.reduce((maxOrderNumber, member) => {
+    return Math.max(maxOrderNumber, member.orderNumber)
+  }, 0)
+
+  let nextOrderNumber = maxOrder + 1
+
+  const discoveredMembers: TeamMember[] = [...teamImageLookup.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .filter(([normalizedKey]) => !normalizedKnownSlugs.has(normalizedKey))
+    .map(([normalizedKey, fileName]) => ({
+      name: formatNameFromSlug(normalizedKey),
+      slug: normalizedKey,
+      position: 'Team Member',
+      bio: 'Bio coming soon.',
+      photo: `/images/team/${fileName}`,
+      orderNumber: nextOrderNumber++,
+      showOnAboutPage: false,
+    }))
+
+  return [...teamMembers, ...discoveredMembers]
+}
+
 export const teamMembers: TeamMember[] = [
   {
     name: "Lucas Brandenburg",
@@ -150,7 +182,7 @@ export const teamMembers: TeamMember[] = [
     name: "Colton Snively",
     slug: "colton-snively",
     position: "Apprentice Plumber",
-    bio: "",
+    bio: "Colton is part of our apprentice plumbing team, supporting our licensed plumbers on service calls and helping deliver dependable work for every customer.",
     photo: "/images/team/colton-snively.jpg",
     orderNumber: 9,
     showOnAboutPage: false,
@@ -159,7 +191,7 @@ export const teamMembers: TeamMember[] = [
     name: "Lane Spaulding",
     slug: "lane-spaulding",
     position: "Apprentice Plumber",
-    bio: "",
+    bio: "Lane works alongside our field team as an apprentice plumber, focused on hands-on learning and delivering great customer service across every job.",
     photo: "/images/team/lane-spaulding.jpg",
     orderNumber: 10,
     showOnAboutPage: false,
@@ -177,14 +209,14 @@ export const teamMembers: TeamMember[] = [
 
 // Get all team members sorted by order number
 export function getAllTeamMembers(): TeamMember[] {
-  return teamMembers
+  return buildTeamMembersWithDiscoveredImages()
     .map(withResolvedPhoto)
     .sort((a, b) => a.orderNumber - b.orderNumber)
 }
 
 // Get team members that should be shown on the about page
 export function getFeaturedTeamMembers(): TeamMember[] {
-  return teamMembers
+  return buildTeamMembersWithDiscoveredImages()
     .map(withResolvedPhoto)
     .filter(member => member.showOnAboutPage)
     .sort((a, b) => a.orderNumber - b.orderNumber)
@@ -192,6 +224,6 @@ export function getFeaturedTeamMembers(): TeamMember[] {
 
 // Get a team member by slug
 export function getTeamMemberBySlug(slug: string): TeamMember | undefined {
-  const member = teamMembers.find(teamMember => teamMember.slug === slug)
+  const member = buildTeamMembersWithDiscoveredImages().find(teamMember => teamMember.slug === slug)
   return member ? withResolvedPhoto(member) : undefined
 }
