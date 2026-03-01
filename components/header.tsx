@@ -187,15 +187,6 @@ export function Header() {
 
   return (
     <>
-      {/* Announcement Banner */}
-      <div className="bg-brand-red text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm font-semibold py-2">
-            Now offering air conditioning and heating services! We start running calls March 2nd.
-          </p>
-        </div>
-      </div>
-
       {/* Top Banner */}
       <div className="bg-brand-blue text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
