@@ -16,7 +16,9 @@ export function CTASection({ locationName, serviceName, headline: customHeadline
   const headline = customHeadline
     ? customHeadline
     : serviceName
-      ? `Need ${serviceName} Service?`
+      ? serviceName.toLowerCase().includes('service')
+        ? `Need ${serviceName}?`
+        : `Need ${serviceName} Service?`
       : locationName
         ? `Ready to Schedule Service in ${locationName}?`
         : 'Ready to Schedule Service?'

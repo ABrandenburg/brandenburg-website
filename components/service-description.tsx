@@ -86,7 +86,7 @@ export function ServiceDescription({ service }: ServiceDescriptionProps) {
           >
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-soft-lg">
               <Image
-                src="/images/team-photo.jpg"
+                src={service.slug === 'commercial' ? '/images/service-trucks.jpg' : '/images/team-photo.jpg'}
                 alt="Brandenburg Plumbing team"
                 fill
                 className="object-cover"
