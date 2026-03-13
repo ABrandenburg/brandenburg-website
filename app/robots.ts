@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/', '/service-agreement-thanks'],
+      disallow: ['/api/', '/service-agreement-thanks', '/email-signature/'],
     },
     sitemap: 'https://www.brandenburgplumbing.com/sitemap.xml',
   }

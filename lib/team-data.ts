@@ -105,7 +105,7 @@ export const teamMembers: TeamMember[] = [
     name: "Kyle Shafer",
     slug: "kyle-shafer",
     position: "Registered HVAC Technician",
-    bio: "Kyle is a registered HVAC technician dedicated to delivering reliable heating and cooling solutions. He's passionate about the trade and committed to growing his skills while providing outstanding service to every Brandenburg Plumbing customer.",
+    bio: "Kyle is dedicated to getting the job done right on every call. When he's not on the clock, you can find him playing guitar, riding dirtbikes, fishing, or exploring local favorites like Inks Lake and Longhorn Caverns with his black lab, Camper.",
     photo: "/images/team/kyle-shafer.jpg",
     orderNumber: 11,
     showOnAboutPage: false,
