@@ -108,7 +108,7 @@ export function Footer() {
         {/* Social Links */}
         <div className="flex justify-end gap-2 mb-10">
           <Link
-            href="https://facebook.com/brandenburgplumbing"
+            href="https://www.facebook.com/BrandenburgPlumbingTX"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2.5 text-text-muted hover:text-brand-blue hover:bg-white rounded-lg transition-all duration-200"

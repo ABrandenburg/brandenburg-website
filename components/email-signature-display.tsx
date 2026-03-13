@@ -53,6 +53,19 @@ export function EmailSignatureDisplay({ person }: EmailSignatureDisplayProps) {
                 }}
               >
                 <img
+                  src={person.photo}
+                  alt={person.name}
+                  width="100"
+                  style={{
+                    width: "100px",
+                    height: "100px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    display: "block",
+                    marginBottom: "8px",
+                  }}
+                />
+                <img
                   src="https://www.brandenburgplumbing.com/images/Brandenburg%20Logo_Dark_Red%20Mark-01.png"
                   alt="Brandenburg Plumbing"
                   width="100"
@@ -162,7 +175,7 @@ export function EmailSignatureDisplay({ person }: EmailSignatureDisplayProps) {
                         </a>
                         <span style={{ color: "#999999", padding: "0 6px" }}>|</span>
                         <a
-                          href="https://www.facebook.com/BrandenburgPlumbing/"
+                          href="https://www.facebook.com/BrandenburgPlumbingTX"
                           style={{ color: "#324759", textDecoration: "none" }}
                         >
                           Facebook

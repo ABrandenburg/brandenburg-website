@@ -115,7 +115,7 @@ const organizationJsonLd = {
     },
   ],
   sameAs: [
-    'https://facebook.com/brandenburgplumbing',
+    'https://www.facebook.com/BrandenburgPlumbingTX',
   ],
   hasOfferCatalog: {
     '@type': 'OfferCatalog',

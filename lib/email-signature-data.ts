@@ -4,6 +4,7 @@ export interface EmailSignaturePerson {
   position: string
   email: string
   phone: string
+  photo: string
 }
 
 export const emailSignatureMembers: EmailSignaturePerson[] = [
@@ -13,6 +14,7 @@ export const emailSignatureMembers: EmailSignaturePerson[] = [
     position: "Operations Manager",
     email: "monty@brandenburgplumbing.com",
     phone: "(512) 756-9847",
+    photo: "https://www.brandenburgplumbing.com/images/team/monty-lamb.jpg",
   },
   {
     name: "Michael Hamilton",
@@ -20,6 +22,7 @@ export const emailSignatureMembers: EmailSignaturePerson[] = [
     position: "Office Manager",
     email: "michael@brandenburgplumbing.com",
     phone: "(512) 756-9847",
+    photo: "https://www.brandenburgplumbing.com/images/team/michael-hamilton.jpg",
   },
   {
     name: "Lucas Brandenburg",
@@ -27,6 +30,7 @@ export const emailSignatureMembers: EmailSignaturePerson[] = [
     position: "General Manager",
     email: "lucas@brandenburgplumbing.com",
     phone: "(512) 756-9847",
+    photo: "https://www.brandenburgplumbing.com/images/team/lucas-brandenburg.jpg",
   },
   {
     name: "Adam Brandenburg",
@@ -34,6 +38,7 @@ export const emailSignatureMembers: EmailSignaturePerson[] = [
     position: "Marketing & Technology",
     email: "adam@brandenburgplumbing.com",
     phone: "(512) 756-9847",
+    photo: "https://www.brandenburgplumbing.com/images/team/adam-brandenburg.jpg",
   },
 ]
 
