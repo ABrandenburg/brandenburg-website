@@ -359,12 +359,21 @@ export async function processWithAI(ctx: ConversationContext): Promise<string | 
 
         return validated;
     } catch (error: any) {
-        console.error('AI engine error:', {
+        const errorDetails = {
             message: error.message,
             status: error.status,
             name: error.name,
             type: error.type,
-        });
+            stack: error.stack?.split('\n').slice(0, 3).join(' | '),
+        };
+        console.error('AI engine error:', JSON.stringify(errorDetails));
+
+        // Log error to conversation metadata for debugging
+        const supabaseForError = getSupabaseAdmin();
+        await supabaseForError
+            .from('conversations')
+            .update({ metadata: { ai_error: errorDetails } })
+            .eq('id', ctx.conversationId);
 
         return getFallbackMessage();
     }
