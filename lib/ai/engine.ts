@@ -20,7 +20,7 @@ function getSupabaseAdmin() {
 
 const TIMEZONE = process.env.TIMEZONE || 'America/Chicago';
 const AI_MODEL = 'claude-sonnet-4-20250514';
-const AI_TIMEOUT_MS = 15000;
+const AI_TIMEOUT_MS = 60000;
 const MAX_AI_TURNS = 10;
 
 interface ConversationContext {
@@ -282,8 +282,7 @@ export async function processWithAI(ctx: ConversationContext): Promise<string | 
         });
 
         // Call Claude with tools
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+        console.log('Calling Claude API...', { model: AI_MODEL, messageCount: claudeMessages.length });
 
         let response = await client.messages.create({
             model: AI_MODEL,
@@ -295,7 +294,7 @@ export async function processWithAI(ctx: ConversationContext): Promise<string | 
             tools: AI_TOOLS,
         });
 
-        clearTimeout(timeout);
+        console.log('Claude API response received', { stopReason: response.stop_reason });
 
         // Process tool calls in a loop (Claude may chain multiple tool calls)
         let maxToolCalls = 5;
@@ -360,12 +359,12 @@ export async function processWithAI(ctx: ConversationContext): Promise<string | 
 
         return validated;
     } catch (error: any) {
-        console.error('AI engine error:', error);
-
-        // If timeout or API failure, return fallback
-        if (error.name === 'AbortError' || error.status >= 500) {
-            return getFallbackMessage();
-        }
+        console.error('AI engine error:', {
+            message: error.message,
+            status: error.status,
+            name: error.name,
+            type: error.type,
+        });
 
         return getFallbackMessage();
     }
