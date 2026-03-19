@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { LogOut, LayoutDashboard, FileText, Settings, ChevronLeft, ChevronRight, ChevronDown, BarChart3, Calculator, TrendingUp, MessageSquare } from 'lucide-react'
+import { LogOut, LayoutDashboard, FileText, Settings, ChevronLeft, ChevronRight, ChevronDown, BarChart3, Calculator, TrendingUp, MessageSquare, Inbox } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAdminContext } from '@/lib/admin-context'
 
@@ -82,6 +82,7 @@ export function Sidebar({ userEmail, signOutAction }: SidebarProps) {
 
             <nav className="flex-1 p-4 space-y-1 overflow-hidden overflow-y-auto">
                 <NavItem href="/admin" icon={LayoutDashboard} label="Dashboard" isCollapsed={effectiveCollapsed} isActive={pathname === '/admin'} />
+                <NavItem href="/admin/inbox" icon={Inbox} label="Inbox" isCollapsed={effectiveCollapsed} isActive={pathname.startsWith('/admin/inbox')} />
                 <NavItem href="/admin/submissions" icon={FileText} label="Submissions" isCollapsed={effectiveCollapsed} isActive={pathname.startsWith('/admin/submissions')} />
 
                 {/* Tools with sub-navigation */}

@@ -9,3 +9,25 @@ export const submissions = pgTable('submissions', {
     status: text('status').default('new'), // 'new', 'read', 'archived'
     createdAt: timestamp('created_at').defaultNow(),
 });
+
+// Re-export all inbox/follow-up system tables
+export {
+    customers,
+    conversations,
+    messages,
+    dripSequences,
+    dripSteps,
+    dripEnrollments,
+    pendingDripMessages,
+    webhookEvents,
+    staffNotifications,
+    suppressionList,
+    oauthTokens,
+    systemMetrics,
+    customersRelations,
+    conversationsRelations,
+    messagesRelations,
+    dripSequencesRelations,
+    dripStepsRelations,
+    dripEnrollmentsRelations,
+} from './schemas/inbox';

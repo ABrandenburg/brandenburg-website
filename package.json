@@ -15,6 +15,7 @@
     "sync-env:dev": "node scripts/sync-env-to-vercel.js development"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-dialog": "^1.1.4",
     "@radix-ui/react-popover": "^1.1.15",
