@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { logWebhookEvent, markWebhookProcessed, markWebhookFailed } from '@/lib/webhooks/log';
 import { verifyGoogleLsaWebhook } from '@/lib/webhooks/verify';
 import { normalizePhone } from '@/lib/webhooks/phone';
@@ -81,14 +81,20 @@ export async function POST(request: NextRequest) {
         await markWebhookProcessed(eventId);
 
         // 9. Speed-to-lead
-        triggerSpeedToLead({
-            conversationId,
-            customerId,
-            customerPhone: phone,
-            customerName: [firstName, lastName].filter(Boolean).join(' ') || undefined,
-            source: 'lsa',
-            serviceType,
-        }).catch(err => console.error('Speed-to-lead error (LSA):', err));
+        after(async () => {
+            try {
+                await triggerSpeedToLead({
+                    conversationId,
+                    customerId,
+                    customerPhone: phone,
+                    customerName: [firstName, lastName].filter(Boolean).join(' ') || undefined,
+                    source: 'lsa',
+                    serviceType,
+                });
+            } catch (err) {
+                console.error('Speed-to-lead error (LSA):', err);
+            }
+        });
 
         return NextResponse.json({ received: true, conversationId }, { status: 200 });
     } catch (error: any) {

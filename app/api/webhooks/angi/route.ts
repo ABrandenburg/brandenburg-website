@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
 import { logWebhookEvent, markWebhookProcessed, markWebhookFailed } from '@/lib/webhooks/log';
 import { verifyAngiWebhook } from '@/lib/webhooks/verify';
 import { normalizePhone } from '@/lib/webhooks/phone';
@@ -86,15 +87,21 @@ export async function POST(request: NextRequest) {
         // 9. Mark webhook processed
         await markWebhookProcessed(eventId);
 
-        // 10. Fire-and-forget: speed-to-lead AI response
-        triggerSpeedToLead({
-            conversationId,
-            customerId,
-            customerPhone: phone,
-            customerName: [firstName, lastName].filter(Boolean).join(' ') || undefined,
-            source: 'angi',
-            serviceType,
-        }).catch(err => console.error('Speed-to-lead error (Angi):', err));
+        // 10. Speed-to-lead AI response — use after() so it runs after response is sent
+        after(async () => {
+            try {
+                await triggerSpeedToLead({
+                    conversationId,
+                    customerId,
+                    customerPhone: phone,
+                    customerName: [firstName, lastName].filter(Boolean).join(' ') || undefined,
+                    source: 'angi',
+                    serviceType,
+                });
+            } catch (err) {
+                console.error('Speed-to-lead error (Angi):', err);
+            }
+        });
 
         return NextResponse.json({ received: true, conversationId }, { status: 200 });
     } catch (error: any) {
