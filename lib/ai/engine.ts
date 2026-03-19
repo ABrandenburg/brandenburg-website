@@ -401,6 +401,13 @@ function validateAiResponse(response: string): string {
  * Called fire-and-forget from webhook handlers
  */
 export async function triggerSpeedToLead(ctx: ConversationContext): Promise<void> {
+    // Log to DB that speed-to-lead was triggered
+    const supabase = getSupabaseAdmin();
+    await supabase
+        .from('conversations')
+        .update({ metadata: { speed_to_lead_triggered: new Date().toISOString() } })
+        .eq('id', ctx.conversationId);
+
     try {
         const aiResponse = await processWithAI(ctx);
 
@@ -414,8 +421,14 @@ export async function triggerSpeedToLead(ctx: ConversationContext): Promise<void
                 isUrgent: true, // Speed-to-lead bypasses hours + rate limits
             });
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error('Speed-to-lead failed:', error);
+
+        // Log error to DB
+        await supabase
+            .from('conversations')
+            .update({ metadata: { speed_to_lead_error: error.message, speed_to_lead_stack: error.stack?.split('\n').slice(0, 3) } })
+            .eq('id', ctx.conversationId);
 
         // Send fallback
         await sendMessage({
