@@ -1,6 +1,3 @@
-"use client"
-
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
@@ -122,66 +119,47 @@ export function LocationServices({ locationName, header }: LocationServicesProps
     <section className="py-16 lg:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-blue mb-4">
             {header}
           </h2>
           <p className="text-lg text-text-muted max-w-2xl mx-auto">
             From routine plumbing maintenance to HVAC installation and emergency repairs, our licensed technicians handle it all.
           </p>
-        </motion.div>
+        </div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => (
-            <motion.div
+          {services.map((service) => (
+            <Link
               key={service.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              href={service.href}
+              className="block group bg-white p-6 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300"
             >
-              <Link
-                href={service.href}
-                className="block group bg-white p-6 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300"
-              >
-                {/* Icon */}
-                <div className="w-14 h-14 bg-brand-blue/10 rounded-xl flex items-center justify-center text-brand-blue mb-4 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300">
-                  {service.icon}
-                </div>
+              {/* Icon */}
+              <div className="w-14 h-14 bg-brand-blue/10 rounded-xl flex items-center justify-center text-brand-blue mb-4 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300">
+                {service.icon}
+              </div>
 
-                {/* Content */}
-                <h3 className="font-semibold text-lg text-text-primary mb-2 group-hover:text-brand-blue transition-colors">
-                  {service.name}
-                </h3>
-                <p className="text-text-muted text-sm mb-4">
-                  {service.description}
-                </p>
+              {/* Content */}
+              <h3 className="font-semibold text-lg text-text-primary mb-2 group-hover:text-brand-blue transition-colors">
+                {service.name}
+              </h3>
+              <p className="text-text-muted text-sm mb-4">
+                {service.description}
+              </p>
 
-                {/* Link */}
-                <span className="inline-flex items-center gap-2 text-brand-blue font-medium text-sm">
-                  Learn more
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Link>
-            </motion.div>
+              {/* Link */}
+              <span className="inline-flex items-center gap-2 text-brand-blue font-medium text-sm">
+                Learn more
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </Link>
           ))}
         </div>
 
         {/* Contact CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-center mt-10"
-        >
+        <div className="text-center mt-10">
           <Link
             href="/contact"
             className="inline-flex items-center gap-2 bg-brand-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-blue/90 transition-colors"
@@ -189,7 +167,7 @@ export function LocationServices({ locationName, header }: LocationServicesProps
             Contact Us
             <ArrowRight className="w-4 h-4" />
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

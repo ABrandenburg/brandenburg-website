@@ -1,9 +1,6 @@
-"use client"
-
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { motion } from 'framer-motion'
 
 interface ServiceCardProps {
   title: string
@@ -14,19 +11,10 @@ interface ServiceCardProps {
   index?: number
 }
 
-export function ServiceCard({ title, description, image, icon, href, index = 0 }: ServiceCardProps) {
+export function ServiceCard({ title, description, image, icon, href }: ServiceCardProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ 
-        duration: 0.5, 
-        delay: index * 0.1,
-        ease: [0.25, 0.1, 0.25, 1]
-      }}
-    >
-      <Link 
+    <div>
+      <Link
         href={href}
         className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-card hover:shadow-card-hover hover:-translate-y-2 transition-all duration-400"
       >
@@ -69,6 +57,6 @@ export function ServiceCard({ title, description, image, icon, href, index = 0 }
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   )
 }

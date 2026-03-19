@@ -1,6 +1,3 @@
-"use client"
-
-import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { getHvacServices } from '@/lib/services-data'
@@ -69,30 +66,18 @@ export function RelatedHvacServices({ currentSlug }: RelatedHvacServicesProps) {
   return (
     <section className="py-16 lg:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
+        <div className="text-center mb-12">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-blue mb-4">
             Our Other HVAC Services
           </h2>
           <p className="text-lg text-text-muted max-w-2xl mx-auto">
             We offer a full range of heating and air conditioning services to keep your home comfortable year-round.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          {relatedServices.map((service, index) => (
-            <motion.div
-              key={service.slug}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.08 }}
-            >
+          {relatedServices.map((service) => (
+            <div key={service.slug}>
               <Link
                 href={`/service/${service.slug}`}
                 className="group block bg-white rounded-xl p-5 border border-gray-100 shadow-soft hover:shadow-soft-lg hover:-translate-y-1 transition-all duration-300"
@@ -113,18 +98,12 @@ export function RelatedHvacServices({ currentSlug }: RelatedHvacServicesProps) {
                   <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
               </Link>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Link to main HVAC page */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className="text-center mt-8"
-        >
+        <div className="text-center mt-8">
           <Link
             href="/hvac"
             className="inline-flex items-center gap-2 text-brand-blue font-medium hover:underline"
@@ -132,7 +111,7 @@ export function RelatedHvacServices({ currentSlug }: RelatedHvacServicesProps) {
             View All HVAC Services
             <ArrowRight className="w-4 h-4" />
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

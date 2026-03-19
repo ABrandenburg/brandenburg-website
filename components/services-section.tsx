@@ -1,7 +1,4 @@
-"use client"
-
 import { ServiceCard } from './service-card'
-import { motion } from 'framer-motion'
 
 // Service icons as inline SVGs for better control
 const WaterHeaterIcon = () => (
@@ -226,36 +223,18 @@ export function ServicesSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-14 lg:mb-20">
-          <motion.p
-            className="text-brand-blue text-sm lg:text-base font-semibold uppercase tracking-wider mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            Full Service Plumbing, Heating & Air
-          </motion.p>
-          <motion.h2
-            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary text-balance"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            Complete Plumbing, Heating & Air Solutions for Home & Business
-          </motion.h2>
+          <p className="text-brand-blue text-sm lg:text-base font-semibold uppercase tracking-wider mb-4">
+            Full Service Plumbing, Heating &amp; Air
+          </p>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary text-balance">
+            Complete Plumbing, Heating &amp; Air Solutions for Home &amp; Business
+          </h2>
         </div>
 
         {/* Plumbing Services */}
-        <motion.h3
-          className="font-serif text-2xl sm:text-3xl font-bold text-text-primary mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
+        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-text-primary mb-8">
           Plumbing
-        </motion.h3>
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
           {plumbingServices.map((service, index) => (
             <ServiceCard
@@ -271,15 +250,9 @@ export function ServicesSection() {
         </div>
 
         {/* Heating & Air Services */}
-        <motion.h3
-          className="font-serif text-2xl sm:text-3xl font-bold text-text-primary mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          Heating & Air
-        </motion.h3>
+        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-text-primary mb-8">
+          Heating &amp; Air
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {heatingAndAirServices.map((service, index) => (
             <ServiceCard

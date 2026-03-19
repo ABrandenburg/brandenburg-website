@@ -1,6 +1,3 @@
-"use client"
-
-import { motion } from 'framer-motion'
 import {
   Heart,
   DollarSign,
@@ -78,31 +75,21 @@ export function CareersBenefits() {
     <section id="benefits" className="py-16 lg:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          className="text-center max-w-3xl mx-auto mb-12 lg:mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
+        <div className="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary mb-4">
             Benefits
           </h2>
           <p className="text-lg text-text-muted">
             We are creating the best place to work through thoughtful benefits designed to increase our financial, physical, and emotional wellbeing for our employees and their loved ones.
           </p>
-        </motion.div>
+        </div>
 
         {/* Benefits Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {benefits.map((benefit, index) => (
-            <motion.div
+          {benefits.map((benefit) => (
+            <div
               key={benefit.title}
               className="bg-white rounded-xl p-6 lg:p-8 shadow-card hover:shadow-card-hover transition-all duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
             >
               {/* Icon */}
               <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
@@ -116,7 +103,7 @@ export function CareersBenefits() {
               <p className="text-text-muted text-sm leading-relaxed">
                 {benefit.description}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

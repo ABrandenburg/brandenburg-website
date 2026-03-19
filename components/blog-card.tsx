@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { motion } from 'framer-motion'
 import type { BlogPost } from '@/lib/blog-data'
 import { formatDate } from '@/lib/blog-data'
 
@@ -34,17 +33,8 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
   const [imageSrc, setImageSrc] = useState(post.image)
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ 
-        duration: 0.5, 
-        delay: index * 0.1,
-        ease: [0.25, 0.1, 0.25, 1]
-      }}
-    >
-      <Link 
+    <article>
+      <Link
         href={`/blog-posts/${post.slug}`}
         className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-card hover:shadow-card-hover hover:-translate-y-2 transition-all duration-400 h-full"
       >
@@ -61,7 +51,7 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
           />
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          
+
           {/* Category Badge */}
           <div className="absolute top-4 left-4 flex flex-wrap gap-2">
             <span className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${getCategoryColor(post.categoryDisplay)}`}>
@@ -101,6 +91,6 @@ export function BlogCard({ post, index = 0 }: BlogCardProps) {
           </div>
         </div>
       </Link>
-    </motion.article>
+    </article>
   )
 }

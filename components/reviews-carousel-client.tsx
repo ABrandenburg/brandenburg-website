@@ -1,8 +1,7 @@
 "use client"
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import { Star, Quote, Loader2 } from 'lucide-react'
+import { Star, Loader2 } from 'lucide-react'
 import type { GoogleReview } from '@/lib/google-reviews'
 
 // Static fallback reviews in case API fails
@@ -83,13 +82,7 @@ export function ReviewsCarouselClient({ locationName }: ReviewsCarouselClientPro
         <section className="py-16 lg:py-24 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Section Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5 }}
-                    className="text-center mb-12"
-                >
+                <div className="text-center mb-12">
                     <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-blue mb-4">
                         What Our Customers Say
                     </h2>
@@ -113,7 +106,7 @@ export function ReviewsCarouselClient({ locationName }: ReviewsCarouselClientPro
                         <span className="font-semibold text-text-primary">4.9</span>
                         <span className="text-text-muted">on Google</span>
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Loading State */}
                 {isLoading && (
@@ -126,22 +119,10 @@ export function ReviewsCarouselClient({ locationName }: ReviewsCarouselClientPro
                 {!isLoading && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {reviews.slice(0, 6).map((review, index) => (
-                            <motion.div
+                            <div
                                 key={review.authorName + index}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: index * 0.1 }}
                                 className="bg-white p-6 rounded-xl shadow-card hover:shadow-card-hover transition-shadow duration-300"
                             >
-                                {/* Quote Icon */}
-                                <Quote className="w-8 h-8 text-brand-blue/20 mb-4" />
-
-                                {/* Review Text */}
-                                <p className="text-text-muted mb-4 line-clamp-4">
-                                    &ldquo;{review.text}&rdquo;
-                                </p>
-
                                 {/* Stars */}
                                 <div className="flex items-center gap-1 mb-4">
                                     {[...Array(5)].map((_, i) => (
@@ -149,31 +130,23 @@ export function ReviewsCarouselClient({ locationName }: ReviewsCarouselClientPro
                                     ))}
                                 </div>
 
+                                {/* Review Text */}
+                                <p className="text-text-muted mb-4 line-clamp-4">
+                                    &ldquo;{review.text}&rdquo;
+                                </p>
+
                                 {/* Author */}
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-brand-blue/10 rounded-full flex items-center justify-center">
-                                        <span className="text-brand-blue font-semibold text-sm">
-                                            {review.authorName.charAt(0)}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold text-text-primary">{review.authorName}</p>
-                                        <p className="text-sm text-text-muted">{review.relativeTimeDescription}</p>
-                                    </div>
+                                <div>
+                                    <p className="font-semibold text-text-primary">{review.authorName}</p>
+                                    <p className="text-sm text-text-muted">{review.relativeTimeDescription}</p>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
                     </div>
                 )}
 
                 {/* View All Link */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                    className="text-center mt-10"
-                >
+                <div className="text-center mt-10">
                     <a
                         href="https://www.google.com/maps/place/Brandenburg+Plumbing/@30.6364174,-98.2637329,17z/data=!4m8!3m7!1s0x865ae6951006c25b:0x7849318679044709!8m2!3d30.6364174!4d-98.2637329!9m1!1b1!16s%2Fg%2F1x5fbsfc"
                         target="_blank"
@@ -185,7 +158,7 @@ export function ReviewsCarouselClient({ locationName }: ReviewsCarouselClientPro
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                         </svg>
                     </a>
-                </motion.div>
+                </div>
             </div>
         </section>
     )

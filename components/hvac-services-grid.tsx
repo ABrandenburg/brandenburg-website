@@ -1,6 +1,3 @@
-"use client"
-
-import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
@@ -24,35 +21,19 @@ export function HvacServicesGrid({ services }: HvacServicesGridProps) {
     <section className="py-16 lg:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-14"
-        >
+        <div className="text-center mb-14">
           <p className="text-brand-blue text-sm lg:text-base font-semibold uppercase tracking-wider mb-4">
             Complete HVAC Solutions
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-text-primary text-balance">
             Our Heating & Air Conditioning Services
           </h2>
-        </motion.div>
+        </div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {services.map((service, index) => (
-            <motion.div
-              key={service.slug}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1,
-                ease: [0.25, 0.1, 0.25, 1],
-              }}
-            >
+          {services.map((service) => (
+            <div key={service.slug}>
               <Link
                 href={`/service/${service.slug}`}
                 className="group block bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-card hover:shadow-card-hover hover:-translate-y-2 transition-all duration-400"
@@ -84,7 +65,7 @@ export function HvacServicesGrid({ services }: HvacServicesGridProps) {
                   </div>
                 </div>
               </Link>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

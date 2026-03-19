@@ -1,7 +1,6 @@
 "use client"
 
-import { motion } from 'framer-motion'
-import { Check, Shield, Clock, Percent, Wrench, Calendar, Home, Snowflake, Flame, MessageCircle, X, HelpCircle, Star } from 'lucide-react'
+import { Check, Shield, Clock, Percent, Wrench, Calendar, Home, Snowflake, Flame, MessageCircle, HelpCircle, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/page-header'
 import { openScheduler } from '@/lib/scheduler'
@@ -86,16 +85,6 @@ function getSeasonalMessage(): { text: string; icon: typeof Snowflake } {
   }
 }
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-}
-
-const scaleIn = {
-  initial: { opacity: 0, scale: 0.95 },
-  animate: { opacity: 1, scale: 1 },
-}
-
 export default function MembershipPage() {
   const seasonal = getSeasonalMessage()
   const SeasonalIcon = seasonal.icon
@@ -126,13 +115,9 @@ export default function MembershipPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               {plans.map((plan) => (
-                <motion.div
+                <div
                   key={plan.name}
                   className="bg-brand-blue rounded-2xl p-8 md:p-10 text-white shadow-soft-xl"
-                  variants={scaleIn}
-                  initial="initial"
-                  animate="animate"
-                  transition={{ duration: 0.6, delay: plan.delay }}
                 >
                   {/* Badge */}
                   <span className="inline-block bg-white/20 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1 rounded-full mb-4">
@@ -167,18 +152,15 @@ export default function MembershipPage() {
                     </p>
                     <ul className="space-y-4">
                       {sharedFeatures.map((feature, index) => (
-                        <motion.li
+                        <li
                           key={index}
                           className="flex items-start gap-3"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.4, delay: plan.delay + 0.2 + index * 0.08 }}
                         >
                           <div className="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mt-0.5">
                             <Check className="w-3 h-3 text-white" strokeWidth={3} />
                           </div>
                           <span className="text-white/90">{feature.text}</span>
-                        </motion.li>
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -193,12 +175,9 @@ export default function MembershipPage() {
                     </p>
                     <ul className="space-y-4">
                       {plan.specificFeatures.map((feature, index) => (
-                        <motion.li
+                        <li
                           key={index}
                           className="flex items-start gap-3"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.4, delay: plan.delay + 0.2 + (sharedFeatures.length + index) * 0.08 }}
                         >
                           <div className="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mt-0.5">
                             <Check className="w-3 h-3 text-white" strokeWidth={3} />
@@ -209,11 +188,11 @@ export default function MembershipPage() {
                               <p className="text-white/50 text-sm mt-1">{feature.details}</p>
                             )}
                           </div>
-                        </motion.li>
+                        </li>
                       ))}
                     </ul>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -222,13 +201,8 @@ export default function MembershipPage() {
         {/* Member vs Non-Member Comparison */}
         <section className="py-16 md:py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
+            <div
               className="text-center mb-12"
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
             >
               <h2 className="text-3xl md:text-4xl font-serif text-text-primary mb-4">
                 Members Save More
@@ -236,15 +210,10 @@ export default function MembershipPage() {
               <p className="text-lg text-text-muted max-w-2xl mx-auto">
                 See how Maintenance+ membership compares to standard pricing.
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
+            <div
               className="max-w-2xl mx-auto overflow-hidden rounded-xl border border-gray-200 bg-white shadow-card"
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
             >
               <table className="w-full">
                 <thead>
@@ -264,20 +233,15 @@ export default function MembershipPage() {
                   ))}
                 </tbody>
               </table>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* Benefits Highlight Section */}
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
+            <div
               className="text-center mb-12"
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
             >
               <h2 className="text-3xl md:text-4xl font-serif text-text-primary mb-4">
                 Why Join Maintenance+?
@@ -285,16 +249,12 @@ export default function MembershipPage() {
               <p className="text-lg text-text-muted max-w-2xl mx-auto">
                 Protect your plumbing and HVAC systems with preventive maintenance from the experts you trust.
               </p>
-            </motion.div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {/* Benefit 1 */}
-              <motion.div
+              <div
                 className="bg-gray-50 rounded-xl p-8 shadow-card text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
               >
                 <div className="w-14 h-14 bg-brand-blue/10 rounded-full flex items-center justify-center mx-auto mb-5">
                   <Percent className="w-7 h-7 text-brand-blue" />
@@ -303,15 +263,11 @@ export default function MembershipPage() {
                 <p className="text-text-muted">
                   Every service call, every repair—members always save 15% on the total cost.
                 </p>
-              </motion.div>
+              </div>
 
               {/* Benefit 2 */}
-              <motion.div
+              <div
                 className="bg-gray-50 rounded-xl p-8 shadow-card text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <div className="w-14 h-14 bg-brand-blue/10 rounded-full flex items-center justify-center mx-auto mb-5">
                   <Shield className="w-7 h-7 text-brand-blue" />
@@ -320,15 +276,11 @@ export default function MembershipPage() {
                 <p className="text-text-muted">
                   Two-year warranty on all repairs gives you confidence in every job we do.
                 </p>
-              </motion.div>
+              </div>
 
               {/* Benefit 3 */}
-              <motion.div
+              <div
                 className="bg-gray-50 rounded-xl p-8 shadow-card text-center"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
               >
                 <div className="w-14 h-14 bg-brand-blue/10 rounded-full flex items-center justify-center mx-auto mb-5">
                   <Clock className="w-7 h-7 text-brand-blue" />
@@ -337,7 +289,7 @@ export default function MembershipPage() {
                 <p className="text-text-muted">
                   Skip the wait with priority scheduling and guaranteed two-hour arrival windows.
                 </p>
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
@@ -345,13 +297,8 @@ export default function MembershipPage() {
         {/* Social Proof */}
         <section className="py-16 md:py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
+            <div
               className="max-w-3xl mx-auto text-center"
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
             >
               <div className="flex items-center justify-center gap-1 mb-6">
                 {[...Array(5)].map((_, i) => (
@@ -362,20 +309,15 @@ export default function MembershipPage() {
                 &ldquo;The membership pays for itself. Between the discounted trip charge and 15% off every repair, we&rsquo;ve saved hundreds this year alone. Plus the annual inspections caught a small leak before it became a big problem.&rdquo;
               </blockquote>
               <p className="text-text-muted font-medium">— Brandenburg Maintenance+ Member, Georgetown TX</p>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* Add-Ons Section */}
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
+            <div
               className="max-w-3xl mx-auto bg-brand-blue/5 border border-brand-blue/15 rounded-2xl p-8 md:p-10"
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0 w-12 h-12 bg-brand-blue/10 rounded-full flex items-center justify-center">
@@ -400,42 +342,33 @@ export default function MembershipPage() {
                   </ul>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
 
         {/* FAQ Section */}
         <section className="py-16 md:py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
+            <div
               className="text-center mb-12"
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
             >
               <h2 className="text-3xl md:text-4xl font-serif text-text-primary mb-4">
                 Frequently Asked Questions
               </h2>
-            </motion.div>
+            </div>
 
             <div className="max-w-3xl mx-auto space-y-6">
               {faqs.map((faq, index) => (
-                <motion.div
+                <div
                   key={index}
                   className="bg-white rounded-xl p-6 md:p-8 shadow-card"
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
                   <h3 className="text-lg font-semibold text-text-primary mb-2 flex items-start gap-3">
                     <HelpCircle className="w-5 h-5 text-brand-blue flex-shrink-0 mt-0.5" />
                     {faq.question}
                   </h3>
                   <p className="text-text-muted ml-8">{faq.answer}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -444,12 +377,7 @@ export default function MembershipPage() {
         {/* CTA Section */}
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <motion.div
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+            <div
             >
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif text-text-primary mb-4">
                 Ready to Join?
@@ -473,7 +401,7 @@ export default function MembershipPage() {
                   <a href="tel:512-756-9847">(512) 756-9847</a>
                 </Button>
               </div>
-            </motion.div>
+            </div>
           </div>
         </section>
       </main>

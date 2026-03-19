@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, HelpCircle } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import type { FAQ } from '@/lib/faqs-data'
 
 interface FAQAccordionProps {
@@ -52,33 +52,17 @@ export function FAQAccordion({ faqs, header }: FAQAccordionProps) {
     <section className="py-16 lg:py-24 bg-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <div className="inline-flex items-center gap-2 bg-brand-blue/10 px-4 py-2 rounded-full mb-4">
-            <HelpCircle className="w-5 h-5 text-brand-blue" />
-            <span className="text-brand-blue font-medium text-sm">FAQ</span>
-          </div>
+        <div className="text-center mb-12">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-brand-blue mb-4">
             {header}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Find answers to common plumbing and HVAC questions from our expert team.
           </p>
-        </motion.div>
+        </div>
 
         {/* FAQ List */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-gray-50 rounded-2xl p-6 sm:p-8"
-        >
+        <div className="bg-gray-50 rounded-2xl p-6 sm:p-8">
           {faqs.map((faq, index) => (
             <FAQItem
               key={faq.id}
@@ -87,16 +71,10 @@ export function FAQAccordion({ faqs, header }: FAQAccordionProps) {
               onToggle={() => setOpenIndex(openIndex === index ? -1 : index)}
             />
           ))}
-        </motion.div>
+        </div>
 
         {/* Contact CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-center mt-8"
-        >
+        <div className="text-center mt-8">
           <p className="text-gray-600">
             Have a question that&apos;s not listed here?{' '}
             <a href="tel:512-756-9847" className="text-brand-blue font-semibold hover:underline">
@@ -104,7 +82,7 @@ export function FAQAccordion({ faqs, header }: FAQAccordionProps) {
             </a>{' '}
             and we&apos;ll be happy to help.
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

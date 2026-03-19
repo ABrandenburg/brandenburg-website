@@ -144,11 +144,7 @@ export function BlogListing({ posts, categories }: BlogListingProps) {
 
       {/* No Results */}
       {filteredPosts.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-16"
-        >
+        <div className="text-center py-16">
           <p className="text-text-muted text-lg mb-2">
             No articles found{searchQuery && ` for "${searchQuery}"`}
             {activeCategory !== 'All' && ` in ${activeCategory}`}.
@@ -165,7 +161,7 @@ export function BlogListing({ posts, categories }: BlogListingProps) {
               Clear filters
             </button>
           )}
-        </motion.div>
+        </div>
       )}
 
       {/* Pagination */}
