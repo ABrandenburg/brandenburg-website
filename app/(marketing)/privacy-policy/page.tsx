@@ -26,7 +26,7 @@ export default function PrivacyPolicyPage() {
             
             <div className="prose prose-lg max-w-none text-text-primary">
               <p className="text-lg text-text-muted mb-8">
-                Last updated: January 2026
+                Last updated: March 2026
               </p>
 
               <h2 className="text-2xl font-serif mt-8 mb-4">Information We Collect</h2>
@@ -45,6 +45,40 @@ export default function PrivacyPolicyPage() {
                 <li>Respond to your comments, questions, and requests</li>
                 <li>Communicate with you about services, offers, and promotions</li>
               </ul>
+
+              <h2 className="text-2xl font-serif mt-8 mb-4">SMS / Text Message Communications</h2>
+              <p>
+                When you provide your phone number in connection with a service request, appointment,
+                estimate, or completed job, we may use it to send you text messages related to your
+                service. These messages may include:
+              </p>
+              <ul>
+                <li>Responses to service requests submitted through third-party platforms (Angi, Thumbtack, Google Local Services)</li>
+                <li>Estimate follow-ups and appointment confirmations</li>
+                <li>Service status updates and notifications</li>
+                <li>Post-service review requests</li>
+                <li>Membership and maintenance reminders</li>
+              </ul>
+              <p>
+                With your prior express written consent, we may also send marketing or promotional
+                text messages about special offers, seasonal promotions, and new services. Marketing
+                messages will not exceed 8 messages per month.
+              </p>
+              <p>
+                You may opt out of text messages at any time by replying <strong>STOP</strong> to
+                any message. After opting out, you will receive a one-time confirmation and will no
+                longer receive text messages from us. You may opt back in by
+                replying <strong>START</strong> or by contacting us directly.
+              </p>
+              <p>
+                Your phone number and opt-in data will not be sold, rented, or shared with third
+                parties for their marketing purposes. We use trusted third-party service providers
+                (such as Twilio) to deliver text messages on our behalf, and these providers are
+                contractually required to protect your information. Message and data rates may apply.
+                For full details on message frequency, carrier liability, and your rights, see
+                Section 10 of our{' '}
+                <a href="/terms-of-service" className="text-brand-blue underline">Terms of Service</a>.
+              </p>
 
               <h2 className="text-2xl font-serif mt-8 mb-4">Information Sharing</h2>
               <p>
