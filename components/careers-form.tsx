@@ -265,7 +265,7 @@ export function CareersForm() {
             <label className="text-sm font-medium">How did you hear about us? *</label>
             <select
               {...form.register("source")}
-              className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white"
+              className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
             >
               <option value="">Select...</option>
               {["Indeed", "Facebook", "Instagram", "Referral", "Truck Wrap", "Other"].map(opt => (
@@ -319,7 +319,7 @@ export function CareersForm() {
                   <label className="text-sm font-medium">Trade *</label>
                   <select
                     {...form.register("trade")}
-                    className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white"
+                    className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
                   >
                     <option value="">Select...</option>
                     {["HVAC", "Plumbing", "Electrical", "General"].map(opt => (
@@ -335,7 +335,7 @@ export function CareersForm() {
                   <label className="text-sm font-medium">Experience Level *</label>
                   <select
                     {...form.register("experienceYears")}
-                    className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white"
+                    className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
                   >
                     <option value="">Select...</option>
                     {["0-1 (Apprentice)", "2-4", "5-9", "10+"].map(opt => (
@@ -385,7 +385,7 @@ export function CareersForm() {
                       <label className="text-sm font-medium block mb-2">Which license?</label>
                       <select
                         {...form.register("licenseType")}
-                        className="w-full md:w-1/2 p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white"
+                        className="w-full md:w-1/2 p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
                       >
                         <option value="">Select License...</option>
                         {/* Dynamic options based on Trade */}
@@ -448,7 +448,7 @@ export function CareersForm() {
                   <label className="text-sm font-medium">Experience Level *</label>
                   <select
                     {...form.register("officeExperience")}
-                    className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white"
+                    className="w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-brand-blue outline-none bg-white appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%236B7280%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m6%209%206%206%206-6%22%2F%3E%3C%2Fsvg%3E')] bg-[length:16px] bg-[right_12px_center] bg-no-repeat pr-10"
                   >
                     <option value="">Select...</option>
                     {["Entry Level", "1-3 Years", "3+ Years"].map(opt => (
