@@ -5,15 +5,22 @@
 import crypto from 'crypto';
 
 /**
- * Verify Angi webhook via x-api-key header
+ * Timing-safe string comparison that handles different lengths
+ */
+function safeCompare(a: string, b: string): boolean {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    if (bufA.length !== bufB.length) return false;
+    return crypto.timingSafeEqual(bufA, bufB);
+}
+
+/**
+ * Verify Angi webhook via crmKey in payload or x-api-key header
  */
 export function verifyAngiWebhook(apiKey: string | null): boolean {
     const expected = process.env.ANGI_API_KEY;
     if (!expected || !apiKey) return false;
-    return crypto.timingSafeEqual(
-        Buffer.from(apiKey),
-        Buffer.from(expected)
-    );
+    return safeCompare(apiKey, expected);
 }
 
 /**
@@ -31,10 +38,7 @@ export function verifyThumbtackWebhook(
         .update(payload)
         .digest('hex');
 
-    return crypto.timingSafeEqual(
-        Buffer.from(signature),
-        Buffer.from(expected)
-    );
+    return safeCompare(signature, expected);
 }
 
 /**
@@ -43,10 +47,7 @@ export function verifyThumbtackWebhook(
 export function verifyGoogleLsaWebhook(googleKey: string | null): boolean {
     const expected = process.env.GOOGLE_LSA_WEBHOOK_KEY;
     if (!expected || !googleKey) return false;
-    return crypto.timingSafeEqual(
-        Buffer.from(googleKey),
-        Buffer.from(expected)
-    );
+    return safeCompare(googleKey, expected);
 }
 
 /**
@@ -64,10 +65,7 @@ export function verifyServiceTitanWebhook(
         .update(payload)
         .digest('hex');
 
-    return crypto.timingSafeEqual(
-        Buffer.from(signature),
-        Buffer.from(expected)
-    );
+    return safeCompare(signature, expected);
 }
 
 /**

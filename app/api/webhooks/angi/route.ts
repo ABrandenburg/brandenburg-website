@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
         // 1. ALWAYS log raw payload first
         eventId = await logWebhookEvent({
             source: 'angi',
-            idempotencyKey: payload.leadId || payload.id,
+            idempotencyKey: payload.leadOid || payload.srOid || payload.leadId || payload.id,
             rawPayload: payload,
         });
 
