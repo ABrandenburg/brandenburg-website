@@ -4,6 +4,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import Anthropic from '@anthropic-ai/sdk';
 import { buildSystemPrompt, SERVICE_AREA_ZIPS, SERVICE_AREA_CITIES } from './system-prompt';
 import { AI_TOOLS } from './tools';
 import { sendMessage } from '@/lib/messaging/send';
@@ -276,7 +277,6 @@ export async function processWithAI(ctx: ConversationContext): Promise<string | 
     }));
 
     try {
-        const Anthropic = (await import('@anthropic-ai/sdk')).default;
         const client = new Anthropic({
             apiKey: process.env.ANTHROPIC_API_KEY,
         });
