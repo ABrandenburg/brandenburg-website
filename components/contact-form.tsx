@@ -260,6 +260,20 @@ export function ContactForm() {
               </>
             )}
           </Button>
+          <p className="text-xs text-text-muted leading-relaxed mt-3">
+            By submitting this form, you agree to receive text messages from Brandenburg Plumbing, Heating &amp; Air
+            including appointment confirmations, service updates, and promotional offers.
+            Message frequency varies, up to 8 msgs/month. Msg &amp; data rates may apply.
+            Reply STOP to opt out at any time. Reply HELP for help.
+            View our{' '}
+            <a href="/privacy-policy" target="_blank" className="text-brand-blue underline hover:text-brand-blue/80">
+              Privacy Policy
+            </a>{' '}
+            and{' '}
+            <a href="/terms-of-service" target="_blank" className="text-brand-blue underline hover:text-brand-blue/80">
+              Terms of Service
+            </a>.
+          </p>
         </div>
       </div>
     </motion.form>
