@@ -12,7 +12,10 @@
     "db:studio": "drizzle-kit studio",
     "sync-env:prod": "node scripts/sync-env-to-vercel.js production",
     "sync-env:preview": "node scripts/sync-env-to-vercel.js preview",
-    "sync-env:dev": "node scripts/sync-env-to-vercel.js development"
+    "sync-env:dev": "node scripts/sync-env-to-vercel.js development",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
@@ -53,12 +56,14 @@
     "@types/pg": "^8.16.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.1",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.31.8",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.0"
   }
 }
